@@ -25,13 +25,15 @@ const config = {
       title: "Senior Developer",
       company: "Tech Corp",
       period: "2022-Present",
-      description: "Leading full-stack development projects using React, Node.js, and cloud technologies.",
+      description:
+        "Leading full-stack development projects using React, Node.js, and cloud technologies.",
     },
     {
       title: "Full Stack Developer",
       company: "StartupXYZ",
       period: "2020-2022",
-      description: "Built scalable web applications and APIs, implemented CI/CD pipelines.",
+      description:
+        "Built scalable web applications and APIs, implemented CI/CD pipelines.",
     },
   ],
   education: [
@@ -48,7 +50,8 @@ const config = {
   ],
 };
 
-export const Sidebar = () => {  return (
+export const Sidebar = () => {
+  return (
     <aside className="col-span-1 lg:col-span-4 order-1 lg:order-2">
       <div className="sticky top-32 bg-gradient-to-br from-white/80 via-neutral-50/60 to-transparent dark:from-neutral-800/80 dark:via-neutral-900/60 dark:to-transparent backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-700/50 rounded-3xl shadow-2xl shadow-neutral-200/20 dark:shadow-neutral-900/40">
         <div>
@@ -65,7 +68,8 @@ export const Sidebar = () => {  return (
                 {config.profile.title}
               </p>
               <div className="w-20 h-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full mx-auto"></div>
-            </div>            {/* Resume Content */}
+            </div>{" "}
+            {/* Resume Content */}
             <div className="space-y-8">
               {/* Contact Info */}
               <div>
@@ -75,9 +79,14 @@ export const Sidebar = () => {  return (
                 </h3>
                 <div className="space-y-3 text-sm">
                   {config.contact.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-2 rounded-lg transition-colors duration-200">
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-2 rounded-lg transition-colors duration-200"
+                    >
                       <span className="text-lg">{item.icon}</span>
-                      <span className="text-neutral-700 dark:text-neutral-300 font-medium">{item.value}</span>
+                      <span className="text-neutral-700 dark:text-neutral-300 font-medium">
+                        {item.value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -93,8 +102,12 @@ export const Sidebar = () => {  return (
                   {config.skills.map((skill, index) => (
                     <div key={index}>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-neutral-800 dark:text-neutral-200 font-medium">{skill.name}</span>
-                        <span className="text-amber-600 dark:text-amber-400 font-semibold">{skill.proficiency}</span>
+                        <span className="text-neutral-800 dark:text-neutral-200 font-medium">
+                          {skill.name}
+                        </span>
+                        <span className="text-amber-600 dark:text-amber-400 font-semibold">
+                          {skill.proficiency}
+                        </span>
                       </div>
                       <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2 overflow-hidden">
                         <div
@@ -115,10 +128,19 @@ export const Sidebar = () => {  return (
                 </h3>
                 <div className="space-y-6">
                   {config.experience.map((exp, index) => (
-                    <div key={index} className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-3 rounded-lg transition-colors duration-200 -m-3">
-                      <h4 className="text-base font-bold text-neutral-900 dark:text-white">{exp.title}</h4>
-                      <p className="text-sm text-amber-600 dark:text-amber-400 mb-2 font-medium">{exp.company} • {exp.period}</p>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{exp.description}</p>
+                    <div
+                      key={index}
+                      className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-3 rounded-lg transition-colors duration-200 -m-3"
+                    >
+                      <h4 className="text-base font-bold text-neutral-900 dark:text-white">
+                        {exp.title}
+                      </h4>
+                      <p className="text-sm text-amber-600 dark:text-amber-400 mb-2 font-medium">
+                        {exp.company} • {exp.period}
+                      </p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                        {exp.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -131,17 +153,25 @@ export const Sidebar = () => {  return (
                   Education
                 </h3>
                 {config.education.map((edu, index) => (
-                  <div key={index} className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-3 rounded-lg transition-colors duration-200 -m-3">
-                    <h4 className="text-base font-bold text-neutral-900 dark:text-white">{edu.degree}</h4>
-                    <p className="text-sm text-amber-600 dark:text-amber-400 mb-2 font-medium">{edu.institution} • {edu.year}</p>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">{edu.details}</p>
+                  <div
+                    key={index}
+                    className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 p-3 rounded-lg transition-colors duration-200 -m-3"
+                  >
+                    <h4 className="text-base font-bold text-neutral-900 dark:text-white">
+                      {edu.degree}
+                    </h4>
+                    <p className="text-sm text-amber-600 dark:text-amber-400 mb-2 font-medium">
+                      {edu.institution} • {edu.year}
+                    </p>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                      {edu.details}
+                    </p>
                   </div>
                 ))}
               </div>
 
               {/* Links */}
               <div className="pt-2 border-t border-neutral-200 dark:border-neutral-700">
-                
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {config.links.map((link, index) => (
                     <a
@@ -153,7 +183,7 @@ export const Sidebar = () => {  return (
                     </a>
                   ))}
                 </div>
-                
+
                 <button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-xl px-6 py-4 text-white text-sm font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0">
                   Download Resume
                 </button>

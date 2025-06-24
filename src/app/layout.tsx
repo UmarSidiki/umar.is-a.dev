@@ -36,7 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {/* Universal Background with subtle pattern */}
-          <div className="fixed inset-0 bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 z-0">
+          <div className="fixed inset-0 bg-gradient-to-br from-amber-50 via-amber to-amber-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 z-0">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgb(163_163_163_/_15%)_1px,_transparent_0)] [background-size:20px_20px] dark:bg-[radial-gradient(circle_at_1px_1px,_rgb(255_255_255_/_15%)_1px,_transparent_0)]"></div>
           </div>
           

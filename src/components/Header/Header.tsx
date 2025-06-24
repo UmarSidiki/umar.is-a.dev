@@ -9,8 +9,8 @@ const Header = () => {
 
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
+    { label: "Blog", href: "/blog" },
   ];
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <li>
@@ -25,7 +25,8 @@ const Header = () => {
     </li>
   );
 
-  return (    <header
+  return (
+    <header
       className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4
              transition-all duration-300"
     >
@@ -44,7 +45,8 @@ const Header = () => {
                 Full-Stack Developer
               </p>
             </div>
-          </div>          {/* Desktop Navigation */}
+          </div>{" "}
+          {/* Desktop Navigation */}
           <nav
             role="navigation"
             aria-label="Main Menu"
@@ -56,14 +58,17 @@ const Header = () => {
               ))}
             </ul>
           </nav>
-
           {/* Desktop Actions */}
           <div className="hidden md:flex md:items-center md:gap-3">
             <ModeToggle />
-            <Button size="sm" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+            >
               Get in Touch
             </Button>
-          </div>          {/* Mobile Menu Button */}
+          </div>{" "}
+          {/* Mobile Menu Button */}
           <button
             className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -85,18 +90,15 @@ const Header = () => {
               }`}
             ></div>
           </button>
-        </div>        {/* Mobile Navigation Menu */}
+        </div>{" "}
+        {/* Mobile Navigation Menu */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? "max-h-80 opacity-100 mt-4" : "max-h-0 opacity-0"
           }`}
         >
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl shadow-lg border border-neutral-200/30 dark:border-neutral-700/30">
-            <nav
-              role="navigation"
-              aria-label="Mobile Menu"
-              className="p-6"
-            >
+            <nav role="navigation" aria-label="Mobile Menu" className="p-6">
               <ul className="flex flex-col space-y-2 text-neutral-700 dark:text-neutral-300 mb-6">
                 {navItems.map((item) => (
                   <NavLink key={item.href} {...item} />
@@ -104,7 +106,10 @@ const Header = () => {
               </ul>
               <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row gap-3">
                 <ModeToggle />
-                <Button size="sm" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                >
                   Get in Touch
                 </Button>
               </div>
