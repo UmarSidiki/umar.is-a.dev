@@ -53,7 +53,7 @@ const config = {
 export const Sidebar = () => {
   return (
     <aside className="col-span-1 lg:col-span-4 order-1 lg:order-2">
-      <div className="sticky top-32 bg-gradient-to-br from-white/80 via-neutral-50/60 to-transparent dark:from-neutral-800/80 dark:via-neutral-900/60 dark:to-transparent backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-700/50 rounded-3xl shadow-2xl shadow-neutral-200/20 dark:shadow-neutral-900/40">
+      <div className="sticky top-32 bg-gradient-to-br from-white/80 via-neutral-50/60 to-white/70 dark:from-neutral-800/80 dark:via-neutral-900/60 dark:to-transparent backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-700/50 rounded-3xl shadow-2xl shadow-neutral-200/20 dark:shadow-neutral-900/40">
         <div>
           <div className="p-8">
             {/* Profile Header */}
