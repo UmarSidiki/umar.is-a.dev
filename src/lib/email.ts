@@ -207,7 +207,7 @@ const generateEmailTemplate = (data: EmailData, isReply = false) => {
             border: 1px solid rgba(229, 231, 235, 0.5);
           }
           .header { 
-            background: linear-gradient(135deg, rgba(115, 115, 115, 0.9), rgba(82, 82, 82, 0.9)); 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%);
             backdrop-filter: blur(12px);
             padding: 32px; 
             text-align: center; 
