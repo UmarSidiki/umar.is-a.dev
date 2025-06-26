@@ -6,7 +6,7 @@ import React from "react";
 const config = {
   profile: {
     initials: "U",
-    name: "Umar SIddiqui",
+    name: "Umar Siddiqui",
     title: "Full-Stack Developer",
   },
   contact: [
