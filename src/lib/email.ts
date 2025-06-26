@@ -113,7 +113,7 @@ const generateEmailTemplate = (data: EmailData, isReply = false) => {
             .cta-button {
               display: inline-block;
               background: linear-gradient(135deg, #f59e0b, #d97706);
-              color: white;
+              color: white !important;
               padding: 10px 20px;
               border-radius: 8px;
               text-decoration: none;
@@ -304,7 +304,7 @@ const generateEmailTemplate = (data: EmailData, isReply = false) => {
           .action-button {
             display: inline-block;
             background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
+            color: white !important;
             padding: 10px 20px;
             border-radius: 8px;
             text-decoration: none;
