@@ -12,33 +12,25 @@ if (!uri) {
 
 // Optimize MongoDB options for Vercel serverless functions
 const options = {
-  maxPoolSize: 10, // Maintain up to 10 socket connections
-  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-  bufferMaxEntries: 0, // Disable mongoose buffering
-  bufferCommands: false, // Disable mongoose buffering
-  maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
-  family: 4, // Use IPv4, skip trying IPv6
+  maxPoolSize: 5, // Reduce pool size for serverless
+  serverSelectionTimeoutMS: 10000, // Increase timeout for serverless
+  socketTimeoutMS: 45000,
+  connectTimeoutMS: 10000,
+  maxIdleTimeMS: 30000,
+  family: 4,
   retryWrites: true,
-  w: 'majority' as const
+  w: 'majority' as const,
 };
 
 let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === 'development') {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
+const clientPromise: Promise<MongoClient> = (() => {
+  // Use global variable in all environments to prevent connection issues
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
+  return global._mongoClientPromise;
+})();
 
 export async function getDatabase(): Promise<Db> {
   try {
@@ -54,8 +46,7 @@ export async function getDatabase(): Promise<Db> {
 export async function checkConnection(): Promise<boolean> {
   try {
     const client = await clientPromise;
-    const adminDb = client.db('admin');
-    await adminDb.command({ ping: 1 });
+    await client.db('admin').command({ ping: 1 });
     return true;
   } catch (error) {
     console.error('MongoDB ping failed:', error);
