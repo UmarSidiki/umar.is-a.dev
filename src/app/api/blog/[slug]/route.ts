@@ -11,14 +11,14 @@ const client = new MongoClient(uri);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     await client.connect();
     const database = client.db('portfolio');
     const collection = database.collection('blog_posts');
 
-    const { slug } = params;
+    const { slug } = await params;
     
     // Find post by slug
     const post = await collection.findOne({ 
