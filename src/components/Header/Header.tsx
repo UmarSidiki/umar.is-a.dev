@@ -60,14 +60,17 @@ const Header = () => {
                 <NavLink key={item.href} {...item} />
               ))}
             </ul>
-          </nav>          {/* Desktop Actions */}
+          </nav>{" "}
+          {/* Desktop Actions */}
           <div className="hidden md:flex md:items-center md:gap-3">
             <ModeToggle />
             <Button
               size="sm"
               className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              {isOnBlogPage ? "Publish" : "Get in Touch"}
+              <Link href={isOnBlogPage ? "/admin" : "/contact"}>
+                {isOnBlogPage ? "Publish" : "Get in Touch"}
+              </Link>
             </Button>
           </div>{" "}
           {/* Mobile Menu Button */}
@@ -105,13 +108,16 @@ const Header = () => {
                 {navItems.map((item) => (
                   <NavLink key={item.href} {...item} />
                 ))}
-              </ul>              <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row gap-3">
+              </ul>{" "}
+              <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row gap-3">
                 <ModeToggle />
                 <Button
                   size="sm"
                   className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                 >
-                  {isOnBlogPage ? "Publish" : "Get in Touch"}
+                  <Link href={isOnBlogPage ? "/admin" : "/contact"}>
+                    {isOnBlogPage ? "Publish" : "Get in Touch"}
+                  </Link>
                 </Button>
               </div>
             </nav>

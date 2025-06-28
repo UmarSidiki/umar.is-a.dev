@@ -1,4 +1,3 @@
-import "@/styles/app.css";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 
 export const BaseTemplate = (props: { children: React.ReactNode }) => {

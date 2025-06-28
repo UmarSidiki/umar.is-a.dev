@@ -7,6 +7,7 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+import "@/styles/app.css";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
