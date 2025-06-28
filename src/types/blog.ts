@@ -15,6 +15,9 @@ export interface BlogPost {
   updatedAt: Date;
   publishedAt?: Date;
   readTime?: number;
+  commentsEnabled?: boolean;
+  commentCount?: number;
+  comments?: Comment[]; // Add comments field
 }
 
 export interface BlogPostFormData {
@@ -26,6 +29,27 @@ export interface BlogPostFormData {
   category: string;
   status: 'draft' | 'published';
   featuredImage?: string;
+  commentsEnabled?: boolean;
+}
+
+export interface Comment {
+  _id?: ObjectId | string;
+  postSlug: string;
+  author: string;
+  email: string;
+  content: string;
+  createdAt: Date;
+  status: 'pending' | 'approved' | 'rejected';
+  replies?: Comment[];
+  parentId?: string;
+  likes?: number;
+  dislikes?: number;
+}
+
+export interface CommentFormData {
+  author: string;
+  email: string;
+  content: string;
 }
 
 // Generate slug from title

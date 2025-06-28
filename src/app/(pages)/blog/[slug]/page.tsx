@@ -6,6 +6,7 @@ import { BlogTemplate } from "@/templates/Blog";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import CommentSection from "@/components/CommentSection";
 
 const BlogPostPage = () => {
   const params = useParams();
@@ -213,6 +214,12 @@ const BlogPostPage = () => {
             </div>
           </div>
         </footer>
+
+        {/* Comment Section */}
+        <CommentSection 
+          postSlug={slug} 
+          commentsEnabled={post.commentsEnabled !== false} 
+        />
       </div>
     </BlogTemplate>
   );
