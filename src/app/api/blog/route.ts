@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { BlogPost, BlogPostFormData, generateSlug, calculateReadTime, validateBlogPost } from '@/types/blog';
 import { ObjectId } from 'mongodb';
+import { verifyAdminToken } from '@/lib/auth';
 
 // GET - Fetch all blog posts or a specific post
 export async function GET(request: NextRequest) {
@@ -70,9 +71,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create a new blog post
+// POST - Create a new blog post (admin only)
 export async function POST(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
+
     console.log('POST /api/blog - Starting...');
     const body: BlogPostFormData = await request.json();
     console.log('Request body:', body);
@@ -148,9 +158,18 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update an existing blog post
+// PUT - Update an existing blog post (admin only)
 export async function PUT(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { id, ...updateData } = body;
 
@@ -240,9 +259,18 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete a blog post
+// DELETE - Delete a blog post (admin only)
 export async function DELETE(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

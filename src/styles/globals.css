@@ -120,3 +120,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  /* Additional z-index utilities for admin panel */
+  .z-header {
+    z-index: 50;
+  }
+  .z-nav {
+    z-index: 40;
+  }
+  .z-content {
+    z-index: 30;
+  }
+  .z-interactive {
+    z-index: 20;
+  }
+}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import { verifyAdminToken } from '@/lib/auth';
 
 // GET - Fetch comments for a blog post
 export async function GET(request: NextRequest) {
@@ -15,6 +16,15 @@ export async function GET(request: NextRequest) {
 
     // If fetching all comments (for admin)
     if (all) {
+      // Verify admin authentication for fetching all comments
+      const user = verifyAdminToken(request);
+      if (!user) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized: Admin access required' },
+          { status: 401 }
+        );
+      }
+
       const allComments = await collection
         .find({})
         .sort({ createdAt: -1 })
@@ -169,6 +179,15 @@ export async function POST(request: NextRequest) {
 // PUT - Approve/reject a comment (admin only)
 export async function PUT(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { commentId, status } = body;
 
@@ -211,6 +230,15 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete a comment (admin only)
 export async function DELETE(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const commentId = searchParams.get('id');
 

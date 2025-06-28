@@ -1,9 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
+import { verifyAdminToken } from '@/lib/auth';
 
-// GET - Fetch analytics data
-export async function GET() {
+// GET - Fetch analytics data (admin only)
+export async function GET(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const user = verifyAdminToken(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      );
+    }
     const db = await getDatabase();
     const postsCollection = db.collection('blogposts');
     const commentsCollection = db.collection('comments');
