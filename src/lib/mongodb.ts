@@ -5,11 +5,23 @@ declare global {
 }
 
 const uri = process.env.MONGODB_URI;
-const options = {};
 
 if (!uri) {
   throw new Error('Please add your MongoDB URI to .env.local');
 }
+
+// Optimize MongoDB options for Vercel serverless functions
+const options = {
+  maxPoolSize: 10, // Maintain up to 10 socket connections
+  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  bufferMaxEntries: 0, // Disable mongoose buffering
+  bufferCommands: false, // Disable mongoose buffering
+  maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
+  family: 4, // Use IPv4, skip trying IPv6
+  retryWrites: true,
+  w: 'majority' as const
+};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
@@ -29,8 +41,26 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export async function getDatabase(): Promise<Db> {
-  const client = await clientPromise;
-  return client.db('portfolio');
+  try {
+    const client = await clientPromise;
+    return client.db('portfolio');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
+  }
+}
+
+// Helper function to check MongoDB connection
+export async function checkConnection(): Promise<boolean> {
+  try {
+    const client = await clientPromise;
+    const adminDb = client.db('admin');
+    await adminDb.command({ ping: 1 });
+    return true;
+  } catch (error) {
+    console.error('MongoDB ping failed:', error);
+    return false;
+  }
 }
 
 export default clientPromise;
