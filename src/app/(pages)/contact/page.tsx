@@ -4,22 +4,24 @@ import ContactClient from "./ContactClient";
 
 export const metadata: Metadata = {
   title: "Contact - Get In Touch",
-  description: "Ready to start your next project? Get in touch with Umar Siddiqui, an experienced full-stack developer. Available for freelance projects, consultations, and full-time opportunities.",
+  description:
+    "Ready to start your next project? Get in touch with Umar Siddiqui, an experienced full-stack developer. Available for freelance projects, consultations, and full-time opportunities.",
   keywords: [
     "Contact Developer",
     "Hire Full-Stack Developer",
-    "React Developer for Hire", 
+    "React Developer for Hire",
     "Next.js Consultant",
     "Web Development Services",
     "Freelance Developer",
     "Project Consultation",
     "Custom Web Development",
     "Software Development Services",
-    "Technical Consulting"
+    "Technical Consulting",
   ],
   openGraph: {
     title: "Contact Umar Siddiqui - Full-Stack Developer",
-    description: "Ready to start your next project? Get in touch for web development services and technical consultation.",
+    description:
+      "Ready to start your next project? Get in touch for web development services and technical consultation.",
     type: "website",
     images: [
       {
@@ -32,7 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Contact Umar Siddiqui - Full-Stack Developer",
-    description: "Ready to start your next project? Get in touch for web development services.",
+    description:
+      "Ready to start your next project? Get in touch for web development services.",
   },
   alternates: {
     canonical: `${process.env.SITE_URL || "https://umarsiddiqui.dev"}/contact`,
@@ -48,7 +51,10 @@ export default function ContactPage() {
       {/* JSON-LD Structured Data for Contact */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(structuredData, null, 0) 
+        }}
+        suppressHydrationWarning={true}
       />
       <ContactClient />
     </>

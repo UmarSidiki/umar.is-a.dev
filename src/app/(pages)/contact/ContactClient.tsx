@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 
@@ -19,75 +19,82 @@ interface FormErrors {
 }
 
 const Contact = () => {
+  const email: string = "siddiquiumar0007@gmail.com";
+  const address: string = "H# A1408/191, Old Sukkur, Sukkur, Sindh, Pakistan";
+
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    subject: '',
-    message: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = "Last name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
+      newErrors.subject = "Subject is required";
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters long';
+      newErrors.message = "Message must be at least 10 characters long";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setSubmitStatus("idle");
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
+      const response = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -95,23 +102,30 @@ const Contact = () => {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        setSubmitStatus('success');
-        setSubmitMessage(result.message || 'Thank you! Your message has been sent successfully.');
+        setSubmitStatus("success");
+        setSubmitMessage(
+          result.message ||
+            "Thank you! Your message has been sent successfully."
+        );
         setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          subject: '',
-          message: '',
+          firstName: "",
+          lastName: "",
+          email: "",
+          subject: "",
+          message: "",
         });
       } else {
-        setSubmitStatus('error');
-        setSubmitMessage(result.error || 'Something went wrong. Please try again.');
+        setSubmitStatus("error");
+        setSubmitMessage(
+          result.error || "Something went wrong. Please try again."
+        );
       }
     } catch (error) {
-      console.error('Form submission error:', error);
-      setSubmitStatus('error');
-      setSubmitMessage('Network error. Please check your connection and try again.');
+      console.error("Form submission error:", error);
+      setSubmitStatus("error");
+      setSubmitMessage(
+        "Network error. Please check your connection and try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -129,244 +143,298 @@ const Contact = () => {
                   Get In Touch
                 </h1>
                 <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                  I&apos;m always open to new opportunities and interesting projects. 
-                  Let&apos;s discuss how we can work together to bring your ideas to life.
+                  I&apos;m always open to new opportunities and interesting
+                  projects. Let&apos;s discuss how we can work together to bring
+                  your ideas to life.
                 </p>
               </div>
 
               <div className="grid lg:grid-cols-2 gap-12">
+                {/* Contact Information */}
+                <div className="order-2 lg:order-1">
+                  <div className="mb-8">
+                    <h2 className="text-xl font-medium text-neutral-900 dark:text-white mb-2">
+                      Get in touch
+                    </h2>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                      Let&apos;s discuss your next project
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 text-sm">
+                      <div className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-neutral-700 dark:text-neutral-300">
+                        {email}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center space-x-3 text-sm">
+                      <div className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-neutral-700 dark:text-neutral-300">
+                        {address}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center space-x-3 text-sm">
+                      <div className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-neutral-700 dark:text-neutral-300">
+                        24-48h response
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 p-4 bg-neutral-50/50 dark:bg-neutral-800/30 rounded-lg border border-neutral-200/30 dark:border-neutral-700/30">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                      Available for new projects and collaborations.
+                      <span className="text-amber-600 dark:text-amber-400 font-medium">
+                        {" "}
+                        Let&apos;s build something great together.
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
                 {/* Contact Form */}
-                <div>
-                  <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-6">
-                    Send Message
-                  </h2>
+                <div className="order-1 lg:order-2">
+                  <div className="mb-6">
+                    <h2 className="text-xl font-medium text-neutral-900 dark:text-white mb-2">
+                      Send a message
+                    </h2>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                      I&apos;ll get back to you within 24-48 hours
+                    </p>
+                  </div>
 
                   {/* Success/Error Messages */}
-                  {submitStatus === 'success' && (
-                    <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  {submitStatus === "success" && (
+                    <div className="mb-4 p-3 bg-green-50/50 dark:bg-green-900/20 border border-green-200/50 dark:border-green-800/50 rounded-lg">
+                      <div className="flex items-center text-sm">
+                        <div className="w-4 h-4 text-green-500 mr-2 flex-shrink-0">
+                          <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         </div>
-                        <div className="ml-3">
-                          <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                            {submitMessage}
-                          </p>
-                        </div>
+                        <p className="text-green-700 dark:text-green-300">
+                          {submitMessage}
+                        </p>
                       </div>
                     </div>
                   )}
 
-                  {submitStatus === 'error' && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  {submitStatus === "error" && (
+                    <div className="mb-4 p-3 bg-red-50/50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50 rounded-lg">
+                      <div className="flex items-center text-sm">
+                        <div className="w-4 h-4 text-red-500 mr-2 flex-shrink-0">
+                          <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         </div>
-                        <div className="ml-3">
-                          <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                            {submitMessage}
-                          </p>
-                        </div>
+                        <p className="text-red-700 dark:text-red-300">
+                          {submitMessage}
+                        </p>
                       </div>
                     </div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid sm:grid-cols-2 gap-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                          First Name *
-                        </label>
                         <input
                           type="text"
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/50 dark:bg-neutral-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 ${
-                            errors.firstName 
-                              ? 'border-red-300 dark:border-red-700' 
-                              : 'border-neutral-200/50 dark:border-neutral-700/50'
+                          className={`w-full px-4 py-3 bg-white/60 dark:bg-neutral-800/60 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 ${
+                            errors.firstName
+                              ? "border-red-300 dark:border-red-700"
+                              : "border-neutral-200 dark:border-neutral-700"
                           }`}
-                          placeholder="John"
+                          placeholder="First name *"
                           disabled={isSubmitting}
                         />
                         {errors.firstName && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.firstName}</p>
+                          <p className="mt-1 text-xs text-red-600 dark:text-red-400 pl-1">
+                            {errors.firstName}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                          Last Name *
-                        </label>
                         <input
                           type="text"
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/50 dark:bg-neutral-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 ${
-                            errors.lastName 
-                              ? 'border-red-300 dark:border-red-700' 
-                              : 'border-neutral-200/50 dark:border-neutral-700/50'
+                          className={`w-full px-4 py-3 bg-white/60 dark:bg-neutral-800/60 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 ${
+                            errors.lastName
+                              ? "border-red-300 dark:border-red-700"
+                              : "border-neutral-200 dark:border-neutral-700"
                           }`}
-                          placeholder="Doe"
+                          placeholder="Last name *"
                           disabled={isSubmitting}
                         />
                         {errors.lastName && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lastName}</p>
+                          <p className="mt-1 text-xs text-red-600 dark:text-red-400 pl-1">
+                            {errors.lastName}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        Email *
-                      </label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/50 dark:bg-neutral-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 ${
-                          errors.email 
-                            ? 'border-red-300 dark:border-red-700' 
-                            : 'border-neutral-200/50 dark:border-neutral-700/50'
+                        className={`w-full px-4 py-3 bg-white/60 dark:bg-neutral-800/60 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 ${
+                          errors.email
+                            ? "border-red-300 dark:border-red-700"
+                            : "border-neutral-200 dark:border-neutral-700"
                         }`}
-                        placeholder="john@example.com"
+                        placeholder="Email address *"
                         disabled={isSubmitting}
                       />
                       {errors.email && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>
+                        <p className="mt-1 text-xs text-red-600 dark:text-red-400 pl-1">
+                          {errors.email}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        Subject *
-                      </label>
                       <input
                         type="text"
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/50 dark:bg-neutral-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 ${
-                          errors.subject 
-                            ? 'border-red-300 dark:border-red-700' 
-                            : 'border-neutral-200/50 dark:border-neutral-700/50'
+                        className={`w-full px-4 py-3 bg-white/60 dark:bg-neutral-800/60 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 ${
+                          errors.subject
+                            ? "border-red-300 dark:border-red-700"
+                            : "border-neutral-200 dark:border-neutral-700"
                         }`}
-                        placeholder="Project Discussion"
+                        placeholder="Subject *"
                         disabled={isSubmitting}
                       />
                       {errors.subject && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.subject}</p>
+                        <p className="mt-1 text-xs text-red-600 dark:text-red-400 pl-1">
+                          {errors.subject}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        Message *
-                      </label>
                       <textarea
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
-                        rows={6}
-                        className={`w-full px-4 py-3 bg-white/50 dark:bg-neutral-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 resize-none ${
-                          errors.message 
-                            ? 'border-red-300 dark:border-red-700' 
-                            : 'border-neutral-200/50 dark:border-neutral-700/50'
+                        rows={5}
+                        className={`w-full px-4 py-3 bg-white/60 dark:bg-neutral-800/60 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 resize-none text-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 ${
+                          errors.message
+                            ? "border-red-300 dark:border-red-700"
+                            : "border-neutral-200 dark:border-neutral-700"
                         }`}
-                        placeholder="Tell me about your project..."
+                        placeholder="Tell me about your project... *"
                         disabled={isSubmitting}
                       />
                       {errors.message && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.message}</p>
+                        <p className="mt-1 text-xs text-red-600 dark:text-red-400 pl-1">
+                          {errors.message}
+                        </p>
                       )}
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-amber-400 disabled:to-amber-500 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:hover:translate-y-0 disabled:cursor-not-allowed flex items-center justify-center"
+                      className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-amber-400/50 text-white px-6 py-3 rounded-lg font-medium text-sm transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center"
                     >
                       {isSubmitting ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
                           Sending...
                         </>
                       ) : (
-                        'Send Message'
+                        "Send Message"
                       )}
                     </button>
 
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
                       * Required fields
                     </p>
                   </form>
-                </div>
-
-                {/* Contact Information */}
-                <div>
-                  <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-6">
-                    Contact Information
-                  </h2>
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Email</h3>
-                        <p className="text-neutral-600 dark:text-neutral-400">hello@yourname.com</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Location</h3>
-                        <p className="text-neutral-600 dark:text-neutral-400">Your City, Country</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Response Time</h3>
-                        <p className="text-neutral-600 dark:text-neutral-400">Usually within 24-48 hours</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl border border-amber-200 dark:border-amber-800">
-                    <h3 className="font-semibold text-amber-900 dark:text-amber-200 mb-2">
-                      Let&apos;s Build Something Amazing Together!
-                    </h3>
-                    <p className="text-amber-800 dark:text-amber-300 text-sm">
-                      Whether you have a project in mind, need consultation, or just want to connect, 
-                      I&apos;m here to help. Feel free to reach out and let&apos;s discuss how we can 
-                      bring your vision to life.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
