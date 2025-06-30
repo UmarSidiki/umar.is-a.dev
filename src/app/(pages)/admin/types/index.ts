@@ -25,7 +25,7 @@ export interface DashboardStats {
   topCategories: Array<{ name: string; posts: number }>;
 }
 
-export type AdminTab = "dashboard" | "create" | "manage" | "comments";
+export type AdminTab = "dashboard" | "create" | "manage" | "comments" | "projects";
 
 export interface MessageState {
   type: "success" | "error";
@@ -36,4 +36,52 @@ export interface AdminFilters {
   searchTerm: string;
   selectedCategory: string;
   selectedStatus: string;
+}
+
+export interface Project {
+  _id: string;
+  title: string;
+  description: string;
+  longDescription?: string;
+  technologies: string[];
+  category: string;
+  status: "active" | "completed" | "archived";
+  featured: boolean;
+  githubUrl?: string;
+  liveUrl?: string;
+  imageUrl?: string;
+  images?: string[];
+  createdAt: string;
+  updatedAt: string;
+  startDate?: string;
+  endDate?: string;
+  client?: string;
+  teamSize?: number;
+  role?: string;
+}
+
+export interface ProjectFormData {
+  title: string;
+  description: string;
+  longDescription: string;
+  technologies: string;
+  category: string;
+  status: "active" | "completed" | "archived";
+  featured: boolean;
+  githubUrl: string;
+  liveUrl: string;
+  imageUrl: string;
+  images: string;
+  startDate: string;
+  endDate: string;
+  client: string;
+  teamSize: string;
+  role: string;
+}
+
+export interface ProjectStats {
+  totalProjects: number;
+  activeProjects: number;
+  completedProjects: number;
+  featuredProjects: number;
 }

@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
-import { BlogPostListItem, DashboardStats, MessageState } from "../types";
+import { BlogPostListItem, DashboardStats, MessageState, Project } from "../types";
 import { Comment, BlogPost } from "@/types/blog";
 import { getAuthHeaders } from "../utils/helpers";
 
 export const useAdminData = () => {
   const [posts, setPosts] = useState<BlogPostListItem[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     publishedPosts: 0,
@@ -94,15 +95,41 @@ export const useAdminData = () => {
     }
   }, []);
 
+  const fetchProjects = useCallback(async (onError: (message: MessageState) => void, logout: () => void) => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/projects?admin=true&limit=100", {
+        headers: getAuthHeaders(),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setProjects(result.data);
+      } else if (response.status === 401) {
+        onError({
+          type: "error",
+          text: "Authentication failed. Please login again.",
+        });
+        logout();
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     posts,
     setPosts,
     comments,
     setComments,
+    projects,
     stats,
     loading,
     fetchStats,
     fetchComments,
     fetchPosts,
+    fetchProjects,
   };
 };

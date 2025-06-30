@@ -3,3 +3,5 @@ export { DashboardStats } from './DashboardStats';
 export { CreatePostForm } from './CreatePostForm';
 export { ManagePosts } from './ManagePosts';
 export { CommentsManagement } from './CommentsManagement';
+export { CreateProjectForm } from './CreateProjectForm';
+export { ManageProjects } from './ManageProjects';

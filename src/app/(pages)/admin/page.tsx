@@ -9,14 +9,18 @@ import {
   CreatePostForm,
   ManagePosts,
   CommentsManagement,
+  CreateProjectForm,
+  ManageProjects,
 } from "./components";
 import {
   useAdminData,
   useFormManagement,
   usePostActions,
   useCommentActions,
+  useProjectFormManagement,
+  useProjectActions,
 } from "./hooks";
-import { AdminTab, MessageState, AdminFilters } from "./types";
+import { AdminTab, MessageState, AdminFilters, Project } from "./types";
 
 const AdminDashboard = () => {
   const { isAuthenticated, loading: authLoading, logout } = useAuth();
@@ -29,7 +33,7 @@ const AdminDashboard = () => {
   });
 
   // Custom hooks
-  const { posts, comments, stats, loading, fetchStats, fetchComments, fetchPosts } = useAdminData();
+  const { posts, comments, projects, stats, loading, fetchStats, fetchComments, fetchPosts, fetchProjects } = useAdminData();
   const { 
     formData, 
     editingPost, 
@@ -39,7 +43,17 @@ const AdminDashboard = () => {
     resetForm, 
     loadPostForEditing 
   } = useFormManagement();
+  const { 
+    formData: projectFormData,
+    editingProject,
+    loading: projectFormLoading,
+    handleInputChange: handleProjectInputChange,
+    handleSubmit: handleProjectSubmit,
+    resetForm: resetProjectForm,
+    loadProjectForEditing
+  } = useProjectFormManagement();
   const { handleEdit, handleDelete } = usePostActions();
+  const { handleDelete: handleProjectDelete } = useProjectActions();
   const { handleCommentAction, deleteComment } = useCommentActions();
 
   // Auto-dismiss messages
@@ -58,8 +72,10 @@ const AdminDashboard = () => {
       fetchComments(setMessage, logout);
     } else if (activeTab === "dashboard") {
       fetchStats(setMessage, logout);
+    } else if (activeTab === "projects") {
+      fetchProjects(setMessage, logout);
     }
-  }, [activeTab, fetchPosts, fetchComments, fetchStats, logout]);
+  }, [activeTab, fetchPosts, fetchComments, fetchStats, fetchProjects, logout]);
 
   // Wrapped handlers for components
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -67,6 +83,17 @@ const AdminDashboard = () => {
       if (activeTab === "manage") fetchPosts(setMessage);
       if (activeTab === "dashboard") fetchStats(setMessage, logout);
     }, logout);
+  };
+
+  const handleProjectFormSubmit = async (e: React.FormEvent) => {
+    const result = await handleProjectSubmit(e);
+    setMessage({ type: result.success ? "success" : "error", text: result.message });
+    
+    if (result.success) {
+      resetProjectForm();
+      fetchProjects(setMessage, logout);
+      if (activeTab === "dashboard") fetchStats(setMessage, logout);
+    }
   };
 
   const handlePostEdit = (id: string) => {
@@ -96,6 +123,20 @@ const AdminDashboard = () => {
 
   const handleFiltersChange = (newFilters: Partial<AdminFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+
+  const handleProjectEditWrapper = (project: Project) => {
+    loadProjectForEditing(project);
+  };
+
+  const handleProjectDeleteWrapper = async (id: string) => {
+    const result = await handleProjectDelete(id);
+    setMessage({ type: result.success ? "success" : "error", text: result.message });
+    
+    if (result.success) {
+      fetchProjects(setMessage, logout);
+      if (activeTab === "dashboard") fetchStats(setMessage, logout);
+    }
   };
 
   return (
@@ -195,6 +236,31 @@ const AdminDashboard = () => {
                     onCommentAction={handleCommentActionWrapper}
                     onDeleteComment={handleDeleteCommentWrapper}
                   />
+                </div>
+              )}
+
+              {/* Projects Tab */}
+              {activeTab === "projects" && (
+                <div className="p-4 sm:p-6 lg:p-8">
+                  <div className="space-y-8">
+                    {/* Project Creation Form */}
+                    <CreateProjectForm
+                      formData={projectFormData}
+                      editingProject={editingProject}
+                      loading={projectFormLoading}
+                      onInputChange={handleProjectInputChange}
+                      onSubmit={handleProjectFormSubmit}
+                      onReset={resetProjectForm}
+                    />
+                    
+                    {/* Projects Management */}
+                    <ManageProjects
+                      projects={projects}
+                      loading={loading}
+                      onEdit={handleProjectEditWrapper}
+                      onDelete={handleProjectDeleteWrapper}
+                    />
+                  </div>
                 </div>
               )}
             </div>

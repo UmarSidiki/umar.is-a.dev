@@ -17,6 +17,7 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
     { id: "create" as AdminTab, label: "Create", icon: "✏️" },
     { id: "manage" as AdminTab, label: "Manage", icon: "📝" },
     { id: "comments" as AdminTab, label: "Comments", icon: "💬" },
+    { id: "projects" as AdminTab, label: "Projects", icon: "🚀" },
   ];
 
   return (
