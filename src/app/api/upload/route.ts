@@ -78,13 +78,13 @@ export async function POST(request: NextRequest) {
       originalName: file.name,
       size: file.size,
       type: file.type,
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(
       { error: 'Failed to upload file' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }
@@ -112,7 +112,10 @@ export async function DELETE(request: NextRequest) {
 
     await s3Client.send(deleteCommand);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(
+      { success: true },
+      { headers: { 'Cache-Control': 'no-store, must-revalidate' } }
+    );
 
   } catch (error) {
     console.error('Delete error:', error);

@@ -20,20 +20,26 @@ export async function GET(
     if (!post) {
       return NextResponse.json(
         { success: false, error: 'Post not found' },
-        { status: 404, headers: { 'Cache-Control': 'no-store' } }
+        { status: 404, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
       );
     }
 
+    // Enhanced caching for individual blog posts
     return NextResponse.json({
       success: true,
       data: post
-    }, { headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600' } });
+    }, { 
+      headers: { 
+        'Cache-Control': 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400',
+        'Vary': 'Accept-Encoding'
+      } 
+    });
 
   } catch (error) {
     console.error('Error fetching blog post:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch blog post' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }

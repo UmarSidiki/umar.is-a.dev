@@ -95,13 +95,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: analytics
-    }, { headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' } });
+    }, { 
+      headers: { 
+        'Cache-Control': 'private, max-age=60, s-maxage=120, stale-while-revalidate=300',
+        'Vary': 'Authorization, Accept-Encoding'
+      } 
+    });
 
   } catch (error) {
     console.error('Error fetching analytics:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch analytics' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }

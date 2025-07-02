@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const admin = searchParams.get('admin') === 'true';
     
-    // Don't cache admin requests
+    // Set cache headers based on request type
     const headers = admin ? 
-      { 'Cache-Control': 'no-store' } : 
-      { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' };
+      { 'Cache-Control': 'no-store, must-revalidate' } : 
+      { 'Cache-Control': 'public, max-age=120, s-maxage=300, stale-while-revalidate=604800' };
 
     const db = await getDatabase();
     const collection = db.collection('projects');
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching projects:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch projects' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Project created successfully',
       data: { ...project, _id: result.insertedId }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error creating project:', error);
@@ -236,7 +236,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       message: 'Project updated successfully',
       data: { ...updatedProject, _id: id }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error updating project:', error);
@@ -284,7 +284,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Project deleted successfully'
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error deleting project:', error);

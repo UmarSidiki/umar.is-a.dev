@@ -17,10 +17,10 @@ export async function GET(request: NextRequest) {
     // Determine if request is for admin (either explicitly or by status parameter)
     const isAdminRequest = searchParams.has('admin') || status === 'draft' || status === 'pending';
     
-    // Set cache headers based on request type
+    // Improved cache headers
     const headers = isAdminRequest ?
-      { 'Cache-Control': 'no-store' } :
-      { 'Cache-Control': 'public, max-age=120, stale-while-revalidate=600' };
+      { 'Cache-Control': 'no-store, must-revalidate' } :
+      { 'Cache-Control': 'public, max-age=180, s-maxage=600, stale-while-revalidate=86400' };
 
     const db = await getDatabase();
     const collection = db.collection<BlogPost>('blogposts');
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching blog posts:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch blog posts' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Blog post created successfully',
       data: { ...blogPost, _id: result.insertedId }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error creating blog post:', error);
@@ -256,7 +256,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       message: 'Blog post updated successfully',
       data: { ...updatedPost, _id: id }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error updating blog post:', error);
@@ -304,7 +304,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Blog post deleted successfully'
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error deleting blog post:', error);

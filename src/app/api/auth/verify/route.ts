@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           username: decoded.username,
           role: decoded.role
         }
-      });
+      }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
     } catch {
       return NextResponse.json(
         { success: false, error: 'Invalid token' },
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     console.error('Token verification error:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }

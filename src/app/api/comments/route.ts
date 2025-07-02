@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: allComments
-      }, { headers: { 'Cache-Control': 'private, max-age=10' } });
+      }, { headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' } });
     }
     
     if (!postSlug) {
@@ -96,10 +96,14 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Enhanced caching for public comments
     return NextResponse.json({
       success: true,
       data: rootComments
-    }, { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' } });
+    }, { headers: { 
+      'Cache-Control': 'public, max-age=120, s-maxage=300, stale-while-revalidate=3600',
+      'Vary': 'Accept-Encoding'
+    } });
 
   } catch (error) {
     console.error('Error fetching comments:', error);
@@ -165,7 +169,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Comment submitted successfully and is pending approval',
       data: { ...comment, _id: result.insertedId }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error creating comment:', error);
@@ -216,7 +220,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Comment ${status} successfully`
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error updating comment:', error);
@@ -264,7 +268,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Comment deleted successfully'
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error deleting comment:', error);

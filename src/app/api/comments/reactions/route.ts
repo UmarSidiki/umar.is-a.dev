@@ -50,13 +50,13 @@ export async function POST(request: NextRequest) {
         commentId,
         [updateField]: currentCount + 1
       }
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error updating comment reaction:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update comment reaction' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }

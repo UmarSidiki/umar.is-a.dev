@@ -58,14 +58,17 @@ export async function GET(request: NextRequest) {
       images,
       total: images.length,
     }, { 
-      headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' }
+      headers: { 
+        'Cache-Control': 'private, max-age=60, s-maxage=300, stale-while-revalidate=600',
+        'Vary': 'Authorization, Accept-Encoding'
+      }
     });
 
   } catch (error) {
     console.error('List images error:', error);
     return NextResponse.json(
       { error: 'Failed to list images' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }
@@ -96,7 +99,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ 
       success: true,
       message: 'Image deleted successfully'
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Delete image error:', error);

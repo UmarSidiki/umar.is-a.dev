@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       message: 'Your message has been sent successfully! I\'ll get back to you soon.' 
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 
   } catch (error) {
     console.error('Error processing contact form:', error);
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         success: false, 
         error: 'An unexpected error occurred. Please try again later.' 
       },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
 }
@@ -68,6 +68,6 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
   );
 }
