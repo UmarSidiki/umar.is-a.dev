@@ -342,12 +342,21 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
       {showLightbox && (
         <div 
           className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60]"
-          onClick={closeLightbox}
+          onClick={(e) => {
+            e.stopPropagation();
+            closeLightbox();
+          }}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]">
+          <div 
+            className="relative max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Close button */}
             <button
-              onClick={closeLightbox}
+              onClick={(e) => {
+                e.stopPropagation();
+                closeLightbox();
+              }}
               className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
               aria-label="Close lightbox"
             >
