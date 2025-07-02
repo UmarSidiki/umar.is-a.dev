@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       if (!user) {
         return NextResponse.json(
           { success: false, error: 'Unauthorized: Admin access required' },
-          { status: 401 }
+          { status: 401, headers: { 'Cache-Control': 'no-store' } }
         );
       }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: allComments
-      });
+      }, { headers: { 'Cache-Control': 'private, max-age=10' } });
     }
     
     if (!postSlug) {
@@ -99,13 +99,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: rootComments
-    });
+    }, { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' } });
 
   } catch (error) {
     console.error('Error fetching comments:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch comments' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

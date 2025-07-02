@@ -13,6 +13,14 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '10');
     const page = parseInt(searchParams.get('page') || '1');
+    
+    // Determine if request is for admin (either explicitly or by status parameter)
+    const isAdminRequest = searchParams.has('admin') || status === 'draft' || status === 'pending';
+    
+    // Set cache headers based on request type
+    const headers = isAdminRequest ?
+      { 'Cache-Control': 'no-store' } :
+      { 'Cache-Control': 'public, max-age=120, stale-while-revalidate=600' };
 
     const db = await getDatabase();
     const collection = db.collection<BlogPost>('blogposts');
@@ -21,18 +29,18 @@ export async function GET(request: NextRequest) {
       // Fetch single post by ID
       const post = await collection.findOne({ _id: new ObjectId(id) });
       if (!post) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Post not found' }, { status: 404, headers });
       }
-      return NextResponse.json({ success: true, data: post });
+      return NextResponse.json({ success: true, data: post }, { headers });
     }
 
     if (slug) {
       // Fetch single post by slug
       const post = await collection.findOne({ slug });
       if (!post) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Post not found' }, { status: 404, headers });
       }
-      return NextResponse.json({ success: true, data: post });
+      return NextResponse.json({ success: true, data: post }, { headers });
     }
 
     // Fetch multiple posts with pagination
@@ -60,13 +68,13 @@ export async function GET(request: NextRequest) {
         total,
         totalPages: Math.ceil(total / limit)
       }
-    });
+    }, { headers });
 
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch blog posts' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

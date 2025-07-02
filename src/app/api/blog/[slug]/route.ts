@@ -20,20 +20,20 @@ export async function GET(
     if (!post) {
       return NextResponse.json(
         { success: false, error: 'Post not found' },
-        { status: 404 }
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
     return NextResponse.json({
       success: true,
       data: post
-    });
+    }, { headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600' } });
 
   } catch (error) {
     console.error('Error fetching blog post:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch blog post' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

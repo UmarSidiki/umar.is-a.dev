@@ -25,7 +25,7 @@ export async function GET() {
       database: db.databaseName,
       collections: collections.map(c => c.name),
       environment: process.env.NODE_ENV
-    });
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     console.error('MongoDB connection failed:', error);
     return NextResponse.json(
@@ -36,7 +36,7 @@ export async function GET() {
         environment: process.env.NODE_ENV,
         hasMongoUri: !!process.env.MONGODB_URI
       },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

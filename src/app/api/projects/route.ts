@@ -14,6 +14,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const page = parseInt(searchParams.get('page') || '1');
     const admin = searchParams.get('admin') === 'true';
+    
+    // Don't cache admin requests
+    const headers = admin ? 
+      { 'Cache-Control': 'no-store' } : 
+      { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' };
 
     const db = await getDatabase();
     const collection = db.collection('projects');
@@ -24,7 +29,7 @@ export async function GET(request: NextRequest) {
       if (!user) {
         return NextResponse.json(
           { success: false, error: 'Unauthorized: Admin access required' },
-          { status: 401 }
+          { status: 401, headers }
         );
       }
     }
@@ -33,9 +38,9 @@ export async function GET(request: NextRequest) {
       // Fetch single project by ID
       const project = await collection.findOne({ _id: new ObjectId(id) });
       if (!project) {
-        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Project not found' }, { status: 404, headers });
       }
-      return NextResponse.json({ success: true, data: project });
+      return NextResponse.json({ success: true, data: project }, { headers });
     }
 
     // Build query
@@ -63,13 +68,13 @@ export async function GET(request: NextRequest) {
         total,
         totalPages: Math.ceil(total / limit)
       }
-    });
+    }, { headers });
 
   } catch (error) {
     console.error('Error fetching projects:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch projects' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

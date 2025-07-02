@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized: Admin access required' },
-        { status: 401 }
+        { status: 401, headers: { 'Cache-Control': 'no-store' } }
       );
     }
     const db = await getDatabase();
@@ -95,13 +95,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: analytics
-    });
+    }, { headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' } });
 
   } catch (error) {
     console.error('Error fetching analytics:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch analytics' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

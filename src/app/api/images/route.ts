@@ -19,7 +19,10 @@ export async function GET(request: NextRequest) {
     // Check if user is authenticated
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { 
+        status: 401,
+        headers: { 'Cache-Control': 'no-store' }
+      });
     }
 
     const { searchParams } = new URL(request.url);
@@ -54,13 +57,15 @@ export async function GET(request: NextRequest) {
       success: true,
       images,
       total: images.length,
+    }, { 
+      headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' }
     });
 
   } catch (error) {
     console.error('List images error:', error);
     return NextResponse.json(
       { error: 'Failed to list images' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }
