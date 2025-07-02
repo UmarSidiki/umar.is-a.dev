@@ -25,7 +25,7 @@ export interface DashboardStats {
   topCategories: Array<{ name: string; posts: number }>;
 }
 
-export type AdminTab = "dashboard" | "create" | "manage" | "comments" | "projects";
+export type AdminTab = "dashboard" | "create" | "manage" | "comments" | "projects" | "images";
 
 export interface MessageState {
   type: "success" | "error";

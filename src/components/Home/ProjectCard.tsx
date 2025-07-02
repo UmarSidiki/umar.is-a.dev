@@ -44,6 +44,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             width={400}
             height={300}
             className="w-full h-full object-cover rounded-xl"
+            priority={false}
+            unoptimized={false}
           />
         ) : (
           <span className="text-4xl opacity-50">🚀</span>

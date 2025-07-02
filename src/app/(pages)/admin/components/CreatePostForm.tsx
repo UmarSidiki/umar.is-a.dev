@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { BlogPostFormData, BlogPost } from "@/types/blog";
 import { categories } from "../utils/helpers";
+import ImageUpload from "@/components/ImageUpload";
 
 interface CreatePostFormProps {
   formData: BlogPostFormData;
@@ -27,6 +28,37 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [uploadingInlineImage, setUploadingInlineImage] = useState(false);
+  
+  const handleInlineImageUpload = async (file: File) => {
+    setUploadingInlineImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'posts/inline');
+
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        insertText(`![Image](${data.url})`);
+      } else {
+        throw new Error(data.error || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingInlineImage(false);
+    }
+  };
   
   const insertText = (before: string, after = "", placeholder = "") => {
     const textarea = contentRef.current;
@@ -77,7 +109,12 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     { icon: "•", action: () => insertText("- ", "", "List item"), title: "Bullet List", style: "" },
     { icon: "1.", action: () => insertText("1. ", "", "List item"), title: "Numbered List", style: "" },
     { icon: "🔗", action: () => insertText("[", "](url)", "link text"), title: "Link", style: "" },
-    { icon: "📷", action: () => setShowImageDialog(true), title: "Insert Image", style: "" },
+    { 
+      icon: uploadingInlineImage ? "⏳" : "📷", 
+      action: () => setShowImageDialog(true), 
+      title: uploadingInlineImage ? "Uploading..." : "Insert Image", 
+      style: uploadingInlineImage ? "opacity-50" : "" 
+    },
   ];
   return (
     <div>
@@ -174,14 +211,39 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-card border border-border rounded-lg p-4 w-96 max-w-[90vw]">
                 <h3 className="text-sm font-medium text-foreground mb-3">Insert Image</h3>
-                <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-card/50 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200 text-sm text-foreground placeholder-muted-foreground mb-3"
-                  placeholder="https://example.com/image.jpg"
-                  autoFocus
-                />
+                
+                {/* Upload Option */}
+                <div className="mb-4">
+                  <label className="block text-xs text-muted-foreground mb-2">Upload Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleInlineImageUpload(file);
+                        setShowImageDialog(false);
+                      }
+                    }}
+                    className="w-full text-xs"
+                  />
+                </div>
+                
+                <div className="text-xs text-muted-foreground text-center mb-3">or</div>
+                
+                {/* URL Option */}
+                <div className="mb-4">
+                  <label className="block text-xs text-muted-foreground mb-2">Image URL</label>
+                  <input
+                    type="url"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="w-full px-3 py-2 bg-card/50 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200 text-sm text-foreground placeholder-muted-foreground"
+                    placeholder="https://example.com/image.jpg"
+                    autoFocus
+                  />
+                </div>
+                
                 <div className="flex gap-2 justify-end">
                   <button
                     type="button"
@@ -194,6 +256,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                     type="button"
                     onClick={insertImage}
                     className="px-3 py-1.5 bg-primary text-primary-foreground text-xs rounded transition-colors hover:bg-primary/90"
+                    disabled={!imageUrl.trim()}
                   >
                     Insert
                   </button>
@@ -291,19 +354,18 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         </div>
 
         {/* Featured Image */}
-        <div>
-          <label className="block text-xs font-medium text-foreground mb-1.5">
-            Featured Image URL
-          </label>
-          <input
-            type="url"
-            name="featuredImage"
-            value={formData.featuredImage}
-            onChange={onInputChange}
-            className="w-full px-3 py-2 bg-card/50 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200 text-sm text-foreground placeholder-muted-foreground"
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
+        <ImageUpload
+          currentImage={formData.featuredImage}
+          onImageChange={(url) => {
+            const event = {
+              target: { name: 'featuredImage', value: url }
+            } as React.ChangeEvent<HTMLInputElement>;
+            onInputChange(event);
+          }}
+          folder="posts"
+          label="Featured Image"
+          className="w-full"
+        />
 
         {/* Comments Enabled */}
         <div>

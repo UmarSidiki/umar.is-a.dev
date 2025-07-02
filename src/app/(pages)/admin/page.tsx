@@ -11,6 +11,7 @@ import {
   CommentsManagement,
   CreateProjectForm,
   ManageProjects,
+  ImageManagement,
 } from "./components";
 import {
   useAdminData,
@@ -261,6 +262,12 @@ const AdminDashboard = () => {
                       onDelete={handleProjectDeleteWrapper}
                     />
                   </div>
+                </div>
+              )}
+              {/* Images Tab */}
+              {activeTab === "images" && (
+                <div className="p-4 sm:p-6 lg:p-8">
+                  <ImageManagement />
                 </div>
               )}
             </div>

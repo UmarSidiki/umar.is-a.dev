@@ -1,5 +1,6 @@
 import React from "react";
 import { ProjectFormData, Project } from "../types";
+import ImageUpload from "@/components/ImageUpload";
 
 interface CreateProjectFormProps {
   formData: ProjectFormData;
@@ -196,18 +197,13 @@ export const CreateProjectForm: React.FC<CreateProjectFormProps> = ({
 
         {/* Images */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              Main Image URL
-            </label>
-            <input
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) => onInputChange("imageUrl", e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+          <ImageUpload
+            currentImage={formData.imageUrl}
+            onImageChange={(url) => onInputChange("imageUrl", url)}
+            folder="projects"
+            label="Main Project Image"
+            className="w-full"
+          />
 
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
