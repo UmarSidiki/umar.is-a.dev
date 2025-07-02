@@ -6,3 +6,5 @@ export { CommentsManagement } from "./CommentsManagement";
 export { CreateProjectForm } from "./CreateProjectForm";
 export { ManageProjects } from "./ManageProjects";
 export { ImageManagement } from "./ImageManagement";
+export { PostsManagement } from "./PostsManagement";
+export { ProjectsManagement } from "./ProjectsManagement";

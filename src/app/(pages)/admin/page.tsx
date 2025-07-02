@@ -6,11 +6,8 @@ import LoginForm from "@/components/LoginForm";
 import {
   AdminNavigation,
   DashboardStats,
-  CreatePostForm,
-  ManagePosts,
-  CommentsManagement,
-  CreateProjectForm,
-  ManageProjects,
+  PostsManagement,
+  ProjectsManagement,
   ImageManagement,
 } from "./components";
 import {
@@ -67,9 +64,8 @@ const AdminDashboard = () => {
 
   // Fetch data based on active tab
   useEffect(() => {
-    if (activeTab === "manage") {
+    if (activeTab === "posts") {
       fetchPosts(setMessage);
-    } else if (activeTab === "comments") {
       fetchComments(setMessage, logout);
     } else if (activeTab === "dashboard") {
       fetchStats(setMessage, logout);
@@ -81,7 +77,7 @@ const AdminDashboard = () => {
   // Wrapped handlers for components
   const handleFormSubmit = (e: React.FormEvent) => {
     handleSubmit(e, setMessage, () => {
-      if (activeTab === "manage") fetchPosts(setMessage);
+      if (activeTab === "posts") fetchPosts(setMessage);
       if (activeTab === "dashboard") fetchStats(setMessage, logout);
     }, logout);
   };
@@ -98,7 +94,8 @@ const AdminDashboard = () => {
   };
 
   const handlePostEdit = (id: string) => {
-    handleEdit(id, loadPostForEditing, setActiveTab, setMessage);
+    // Note: We'll handle tab switching within PostsManagement component
+    handleEdit(id, loadPostForEditing, () => {}, setMessage);
   };
 
   const handlePostDelete = (id: string) => {
@@ -200,70 +197,48 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              {/* Create/Edit Post Tab */}
-              {activeTab === "create" && (
+              {/* Posts Tab - Unified Posts Management */}
+              {activeTab === "posts" && (
                 <div className="p-4 sm:p-6 lg:p-8">
-                  <CreatePostForm
+                  <PostsManagement
                     formData={formData}
                     editingPost={editingPost}
-                    loading={formLoading}
+                    formLoading={formLoading}
                     onInputChange={handleInputChange}
                     onSubmit={handleFormSubmit}
                     onReset={resetForm}
-                  />
-                </div>
-              )}
-
-              {/* Manage Posts Tab */}
-              {activeTab === "manage" && (
-                <div className="p-4 sm:p-6 lg:p-8">
-                  <ManagePosts
                     posts={posts}
-                    loading={loading}
+                    postsLoading={loading}
                     filters={filters}
                     onFiltersChange={handleFiltersChange}
                     onEdit={handlePostEdit}
                     onDelete={handlePostDelete}
-                  />
-                </div>
-              )}
-
-              {/* Comments Tab */}
-              {activeTab === "comments" && (
-                <div className="p-4 sm:p-6 lg:p-8">
-                  <CommentsManagement
                     comments={comments}
-                    loading={loading}
+                    commentsLoading={loading}
                     onCommentAction={handleCommentActionWrapper}
                     onDeleteComment={handleDeleteCommentWrapper}
                   />
                 </div>
               )}
 
-              {/* Projects Tab */}
+              {/* Projects Tab - Unified Projects Management */}
               {activeTab === "projects" && (
                 <div className="p-4 sm:p-6 lg:p-8">
-                  <div className="space-y-8">
-                    {/* Project Creation Form */}
-                    <CreateProjectForm
-                      formData={projectFormData}
-                      editingProject={editingProject}
-                      loading={projectFormLoading}
-                      onInputChange={handleProjectInputChange}
-                      onSubmit={handleProjectFormSubmit}
-                      onReset={resetProjectForm}
-                    />
-                    
-                    {/* Projects Management */}
-                    <ManageProjects
-                      projects={projects}
-                      loading={loading}
-                      onEdit={handleProjectEditWrapper}
-                      onDelete={handleProjectDeleteWrapper}
-                    />
-                  </div>
+                  <ProjectsManagement
+                    formData={projectFormData}
+                    editingProject={editingProject}
+                    formLoading={projectFormLoading}
+                    onInputChange={handleProjectInputChange}
+                    onSubmit={handleProjectFormSubmit}
+                    onReset={resetProjectForm}
+                    projects={projects}
+                    projectsLoading={loading}
+                    onEdit={handleProjectEditWrapper}
+                    onDelete={handleProjectDeleteWrapper}
+                  />
                 </div>
               )}
+
               {/* Images Tab */}
               {activeTab === "images" && (
                 <div className="p-4 sm:p-6 lg:p-8">
