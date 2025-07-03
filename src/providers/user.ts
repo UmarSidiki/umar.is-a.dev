@@ -2,53 +2,51 @@
 export const user = {
     name: "Umar Siddiqui",
     initials: "U",
-    title: "Full-Stack Developer",
+    title: "Front-End Developer",
     email: "siddiquiumar0007@gmail.com",
     phone: "+92 318 9009633",
     location: {
         city: "Sukkur",
         region: "Sindh",
         country: "Pakistan",
-        address: "H# A1408/191, Old Sukkur, Sukkur, Sindh, Pakistan"
+        address: "H# A1408/191, Colony 5, Sukkur, Sindh, Pakistan"
     },
     social: {
-        twitter: "https://twitter.com/umarsiddiqui",
-        linkedin: "https://linkedin.com/in/umarsiddiqui",
-        github: "https://github.com/umarsiddiqui"
+        twitter: "", // not provided in resume
+        linkedin: "https://linkedin.com/in/umarsidiki",
+        github: "https://github.com/UmarSidiki"
     },
-    // Homepage content
     homepage: {
         headline: {
-            main: "Building Digital",
-            highlight: "Experiences"
+            main: "Crafting Modern",
+            highlight: "Web Interfaces"
         },
-        tagline: "Full-stack developer passionate about creating innovative web solutions that bridge the gap between design and functionality.",
+        tagline: "Front-end developer focused on building responsive, dynamic, and user-friendly web applications using React, Tailwind, and modern JavaScript.",
         callToAction: {
-            primary: "View My Work",
+            primary: "View My Projects",
             secondary: "Download Resume"
         },
         availability: {
-            status: "Available for new opportunities",
+            status: "Open to frontend roles and internships",
             showStatus: true
         }
     },
-    // Technologies showcase on homepage
     technologies: [
+        { name: "HTML", icon: "🟧" },
+        { name: "CSS", icon: "🟦" },
+        { name: "JavaScript", icon: "🟨" },
+        { name: "TypeScript", icon: "📘" },
         { name: "React", icon: "⚛️" },
         { name: "Next.js", icon: "▲" },
-        { name: "TypeScript", icon: "📘" },
-        { name: "Node.js", icon: "🟢" },
-        { name: "Python", icon: "🐍" },
-        { name: "Docker", icon: "🐳" },
-        { name: "AWS", icon: "☁️" },
-        { name: "MongoDB", icon: "🍃" }
+        { name: "Tailwind CSS", icon: "💨" },
+        { name: "Flutter", icon: "📱" },
+        { name: "Git/GitHub", icon: "🔧" }
     ],
-    // Contact form settings
     contact: {
-        formTitle: "Get In Touch",
-        formSubtitle: "Have a project in mind or want to discuss opportunities? Send me a message!",
-        emailSubjectPrefix: "[Portfolio Contact]",
-        submitButtonText: "Send Message",
+        formTitle: "Let's Connect",
+        formSubtitle: "Have a project idea or opportunity? I'm happy to talk.",
+        emailSubjectPrefix: "[Contact]",
+        submitButtonText: "Send",
         formFields: {
             name: {
                 label: "Your Name",
@@ -62,48 +60,56 @@ export const user = {
             },
             subject: {
                 label: "Subject",
-                placeholder: "What is this regarding?",
+                placeholder: "What is this about?",
                 required: true
             },
             message: {
                 label: "Message",
-                placeholder: "Tell me about your project or inquiry...",
+                placeholder: "Write your message here...",
                 required: true
             }
         }
     },
     skills: [
-        { name: "React/Next.js", proficiency: "95%" },
-        { name: "TypeScript", proficiency: "90%" },
-        { name: "Node.js", proficiency: "85%" },
-        { name: "Python", proficiency: "80%" },
-        { name: "Web Development", proficiency: "90%" },
+        { name: "HTML/CSS", proficiency: "95%" },
+        { name: "JavaScript", proficiency: "90%" },
+        { name: "React/Next.js", proficiency: "85%" },
+        { name: "Flutter", proficiency: "80%" },
+        { name: "Tailwind CSS", proficiency: "85%" },
+        { name: "TypeScript", proficiency: "75%" },
+        { name: "Git/GitHub", proficiency: "80%" }
     ],
     experience: [
         {
-            title: "Senior Developer",
-            company: "Tech Corp",
-            period: "2022-Present",
-            description: "Leading full-stack development projects using React, Node.js, and cloud technologies."
-        },
-        {
-            title: "Full Stack Developer",
-            company: "StartupXYZ",
-            period: "2020-2022",
-            description: "Built scalable web applications and APIs, implemented CI/CD pipelines."
+            title: "Personal Projects",
+            company: "Freelance / Self-Driven",
+            period: "2021-Present",
+            description: "Developed landing pages, booking forms, and WebView apps using React, Flutter, and PHP. Focused on responsive design and user experience."
         }
     ],
     education: [
         {
-            degree: "B.S. Computer Science",
-            institution: "University of Technology",
-            year: "2020",
-            details: "Magna Cum Laude, GPA: 3.8/4.0"
+            degree: "BS Software Engineering",
+            institution: "The Islamia University of Bahawalpur",
+            year: "2021-Present",
+            details: ""
+        },
+        {
+            degree: "Intermediate (FSc)",
+            institution: "BISE Sukkur",
+            year: "2019-2021",
+            details: ""
+        },
+        {
+            degree: "Matriculation (Science)",
+            institution: "BISE Sukkur",
+            year: "2017-2019",
+            details: ""
         }
     ],
     links: [
-        { name: "GitHub", url: "https://github.com/umarsiddiqui" },
-        { name: "LinkedIn", url: "https://linkedin.com/in/umarsiddiqui" }
+        { name: "GitHub", url: "https://github.com/UmarSidiki" },
+        { name: "LinkedIn", url: "https://linkedin.com/in/umarsidiki" }
     ],
     Resume: "https://pub-c84c7d98fbfc4fba9d6c5c4f9efeefb3.r2.dev/Umar%20Siddiqui%20Resume.pdf",
 };
