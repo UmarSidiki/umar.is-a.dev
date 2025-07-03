@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header/Header";
 import CustomCursor from "@/components/CustomCursor";
+import BarbaWrapper from "@/components/BarbaWrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -137,7 +138,9 @@ export default function RootLayout({
             </div>
             
             <Header />
-            {children}
+            <BarbaWrapper>
+              {children}
+            </BarbaWrapper>
             <CustomCursor />
           </AuthProvider>
         </ThemeProvider>

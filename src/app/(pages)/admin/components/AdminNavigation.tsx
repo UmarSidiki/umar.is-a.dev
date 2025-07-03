@@ -1,5 +1,5 @@
 import React from "react";
-import { BarChart, FileText, Rocket, Image } from "lucide-react";
+import { BarChart, FileText, Rocket, Image as ImageIcon } from "lucide-react";
 import { AdminTab } from "../types";
 
 interface AdminNavigationProps {
@@ -32,7 +32,7 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
     {
       id: "images" as AdminTab,
       label: "Images",
-      icon: <Image className="w-5 h-5" />,
+      icon: <ImageIcon className="w-5 h-5" />,
     },
   ];
 
