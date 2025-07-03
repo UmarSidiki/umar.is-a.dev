@@ -278,19 +278,19 @@ const CustomCursor = () => {
       {/* Enhanced cursor ring with liquid glass effect - Desktop only */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl hidden md:block"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-neutral-400/40 backdrop-blur-xl hidden md:block"
         style={{
           zIndex: 999998,
           background:
-            "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(251, 191, 36, 0.15) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(251, 191, 36, 0.2) 75%, rgba(255, 255, 255, 0.15) 100%)",
+            "linear-gradient(135deg, rgba(200, 200, 200, 0.35) 0%, rgba(251, 191, 36, 0.25) 25%, rgba(180, 180, 180, 0.2) 50%, rgba(251, 191, 36, 0.3) 75%, rgba(200, 200, 200, 0.25) 100%)",
           backdropFilter: "blur(20px) saturate(1.8)",
           boxShadow: 
             "0 0 25px rgba(251, 191, 36, 0.3), " +
             "inset 0 1px 1px rgba(255, 255, 255, 0.3), " +
-            "inset 0 -1px 1px rgba(0, 0, 0, 0.1), " +
-            "0 4px 15px rgba(0, 0, 0, 0.1)",
-          filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.4))",
-          border: "1px solid transparent",
+            "inset 0 -1px 1px rgba(0, 0, 0, 0.15), " +
+            "0 4px 15px rgba(0, 0, 0, 0.15)",
+          filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)) drop-shadow(0 0 3px rgba(0, 0, 0, 0.2))",
+          border: "1px solid rgba(100, 100, 100, 0.2)",
           backgroundClip: "padding-box",
         }}
       />
@@ -302,7 +302,7 @@ const CustomCursor = () => {
         style={{
           zIndex: 999994,
           background:
-            "radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(245, 158, 11, 0.2) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(251, 191, 36, 0.5) 0%, rgba(245, 158, 11, 0.3) 40%, transparent 70%)",
           filter: "blur(8px)",
         }}
       />
