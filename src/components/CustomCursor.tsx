@@ -255,7 +255,7 @@ const CustomCursor = () => {
       {/* Main cursor dot with dynamic scaling and gradient */}
       <div
         ref={cursorRef}
-        className={`fixed pointer-events-none top-0 left-0 w-5 h-5 bg-gradient-to-br from-amber-500/95 to-amber-600/95 rounded-full mix-blend-difference transition-all duration-200 shadow-lg ${
+        className={`fixed pointer-events-none top-0 left-0 w-5 h-5 bg-gradient-to-br from-amber-500/95 to-amber-600/95 rounded-full mix-blend-difference transition-all duration-200 shadow-lg hidden ${
           isMoving ? "scale-110 shadow-amber-500/60" : "scale-100"
         }`}
         style={{ zIndex: 999999 }}
@@ -264,11 +264,11 @@ const CustomCursor = () => {
       {/* Enhanced cursor ring with animated gradient border */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-10 h-10 rounded-full border-2 border-amber-400/85 mix-blend-difference backdrop-blur-sm"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border-2 border-amber-400/85 mix-blend-difference backdrop-blur-sm"
         style={{
           zIndex: 999998,
-        //   background:
-        //     "linear-gradient(45deg, transparent, rgba(251, 191, 36, 0.15), transparent)",
+          background:
+            "linear-gradient(45deg, transparent, rgba(251, 191, 36, 0.15), transparent)",
           boxShadow: "0 0 20px rgba(251, 191, 36, 0.2)",
         }}
       />
