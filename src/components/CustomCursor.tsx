@@ -47,17 +47,17 @@ const CustomCursor = () => {
           .timeline()
           .set([popElement, popRing], { scale: 0, opacity: 1 })
           .to(popElement, {
-            scale: 1.5,
-            opacity: 0.7,
+            scale: 0.8,
+            opacity: 0.6,
             duration: 0.15,
             ease: "power2.out",
           })
           .to(
             popElement,
             {
-              scale: 3,
+              scale: 1.5,
               opacity: 0,
-              duration: 0.4,
+              duration: 0.3,
               ease: "power3.out",
             },
             0.1
@@ -65,8 +65,8 @@ const CustomCursor = () => {
           .to(
             popRing,
             {
-              scale: 1.2,
-              opacity: 0.5,
+              scale: 0.6,
+              opacity: 0.4,
               duration: 0.12,
               ease: "power2.out",
             },
@@ -75,9 +75,9 @@ const CustomCursor = () => {
           .to(
             popRing,
             {
-              scale: 4,
+              scale: 2,
               opacity: 0,
-              duration: 0.5,
+              duration: 0.4,
               ease: "power3.out",
             },
             0.12
