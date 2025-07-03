@@ -22,7 +22,79 @@ const CustomCursor = () => {
       );
     };
 
-    if (isMobile()) return;
+    const isTouch = isMobile();
+
+    // Mobile touch pulse effect
+    if (isTouch) {
+      const handleTouchStart = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        const popElement = popRef.current;
+        const popRing = popRingRef.current;
+
+        if (!popElement || !popRing) return;
+
+        // Position the pop elements at touch position
+        gsap.set([popElement, popRing], {
+          x: touch.clientX,
+          y: touch.clientY,
+          xPercent: -50,
+          yPercent: -50,
+          transformOrigin: "center",
+        });
+
+        // Show and animate pulse effect
+        gsap
+          .timeline()
+          .set([popElement, popRing], { scale: 0, opacity: 1 })
+          .to(popElement, {
+            scale: 1.5,
+            opacity: 0.7,
+            duration: 0.15,
+            ease: "power2.out",
+          })
+          .to(
+            popElement,
+            {
+              scale: 3,
+              opacity: 0,
+              duration: 0.4,
+              ease: "power3.out",
+            },
+            0.1
+          )
+          .to(
+            popRing,
+            {
+              scale: 1.2,
+              opacity: 0.5,
+              duration: 0.12,
+              ease: "power2.out",
+            },
+            0
+          )
+          .to(
+            popRing,
+            {
+              scale: 4,
+              opacity: 0,
+              duration: 0.5,
+              ease: "power3.out",
+            },
+            0.12
+          );
+      };
+
+      // Add touch event listener
+      document.addEventListener("touchstart", handleTouchStart, { passive: true });
+
+      // Cleanup function for mobile
+      return () => {
+        document.removeEventListener("touchstart", handleTouchStart);
+      };
+    }
+
+    // Desktop cursor logic
+    if (isTouch) return;
 
     // Hide the default cursor
     document.body.style.cursor = "none";
@@ -202,11 +274,11 @@ const CustomCursor = () => {
   }, []);
 
   return (
-    <div className="hidden md:block">
-      {/* Enhanced cursor ring with liquid glass effect */}
+    <>
+      {/* Enhanced cursor ring with liquid glass effect - Desktop only */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl hidden md:block"
         style={{
           zIndex: 999998,
           background:
@@ -223,10 +295,10 @@ const CustomCursor = () => {
         }}
       />
 
-      {/* Magnetic attraction element with radial gradient */}
+      {/* Magnetic attraction element with radial gradient - Desktop only */}
       <div
         ref={magnetRef}
-        className="fixed pointer-events-none top-0 left-0 w-24 h-24 rounded-full mix-blend-screen"
+        className="fixed pointer-events-none top-0 left-0 w-24 h-24 rounded-full mix-blend-screen hidden md:block"
         style={{
           zIndex: 999994,
           background:
@@ -235,34 +307,36 @@ const CustomCursor = () => {
         }}
       />
 
-      {/* Enhanced pop animation element with gradient */}
+      {/* Enhanced pop animation element with gradient - Works on both mobile and desktop */}
       <div
         ref={popRef}
-        className="fixed pointer-events-none top-0 left-0 w-16 h-16 rounded-full mix-blend-screen backdrop-blur-sm"
+        className="fixed pointer-events-none top-0 left-0 w-16 h-16 rounded-full mix-blend-screen backdrop-blur-sm opacity-0"
         style={{
           zIndex: 999997,
           background:
             "radial-gradient(circle, rgba(251, 191, 36, 0.7) 0%, rgba(245, 158, 11, 0.5) 50%, transparent 80%)",
           filter: "blur(2px)",
+          transform: "scale(0)",
         }}
       />
 
-      {/* Enhanced pop ring with animated border */}
+      {/* Enhanced pop ring with animated border - Works on both mobile and desktop */}
       <div
         ref={popRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-20 h-20 rounded-full border-2 border-amber-400/75 mix-blend-screen"
+        className="fixed pointer-events-none top-0 left-0 w-20 h-20 rounded-full border-2 border-amber-400/75 mix-blend-screen opacity-0"
         style={{
           zIndex: 999996,
           background:
             "radial-gradient(circle, transparent 60%, rgba(251, 191, 36, 0.15) 80%, transparent)",
           boxShadow: "0 0 30px rgba(251, 191, 36, 0.3)",
+          transform: "scale(0)",
         }}
       />
 
-      {/* Enhanced cursor text tooltip with arrow */}
+      {/* Enhanced cursor text tooltip with arrow - Desktop only */}
       {cursorText && (
         <div
-          className="fixed pointer-events-none top-0 left-0 bg-gradient-to-r from-neutral-900/98 to-neutral-800/98 text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transform -translate-x-1/2 -translate-y-full -mt-4 shadow-2xl border border-amber-500/30 backdrop-blur-md"
+          className="fixed pointer-events-none top-0 left-0 bg-gradient-to-r from-neutral-900/98 to-neutral-800/98 text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transform -translate-x-1/2 -translate-y-full -mt-4 shadow-2xl border border-amber-500/30 backdrop-blur-md hidden md:block"
           style={{
             zIndex: 1000000,
             boxShadow:
@@ -273,7 +347,7 @@ const CustomCursor = () => {
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-neutral-800/98"></div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
