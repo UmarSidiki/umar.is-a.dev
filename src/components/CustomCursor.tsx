@@ -198,7 +198,7 @@ const CustomCursor = () => {
       {/* Enhanced cursor ring with liquid glass effect */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl max-md:hidden"
         style={{
           zIndex: 999998,
           background:
