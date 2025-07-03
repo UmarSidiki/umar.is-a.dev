@@ -2,7 +2,7 @@
 export const user = {
     name: "Umar Siddiqui",
     initials: "U",
-    title: "Front-End Developer",
+    title: "Full-Stack Web & Mobile App Developer",
     email: "siddiquiumar0007@gmail.com",
     phone: "+92 318 9009633",
     location: {
@@ -12,16 +12,15 @@ export const user = {
         address: "H# A1408/191, Colony 5, Sukkur, Sindh, Pakistan"
     },
     social: {
-        twitter: "", // not provided in resume
         linkedin: "https://linkedin.com/in/umarsidiki",
         github: "https://github.com/UmarSidiki"
     },
     homepage: {
         headline: {
             main: "Crafting Modern",
-            highlight: "Web Interfaces"
+            highlight: "Interfaces"
         },
-        tagline: "Front-end developer focused on building responsive, dynamic, and user-friendly web applications using React, Tailwind, and modern JavaScript.",
+        tagline: "I'm a passionate Full Stack Developer specializing in Laravel, MERN, Flutter, and custom automation systems. With over 5 years of experience building impactful software solutions, I help businesses automate processes, create stunning web and mobile apps, and boost their digital presence.",
         callToAction: {
             primary: "View My Projects",
             secondary: "Download Resume"
@@ -32,15 +31,14 @@ export const user = {
         }
     },
     technologies: [
-        { name: "HTML", icon: "🟧" },
-        { name: "CSS", icon: "🟦" },
-        { name: "JavaScript", icon: "🟨" },
-        { name: "TypeScript", icon: "📘" },
-        { name: "React", icon: "⚛️" },
-        { name: "Next.js", icon: "▲" },
-        { name: "Tailwind CSS", icon: "💨" },
-        { name: "Flutter", icon: "📱" },
-        { name: "Git/GitHub", icon: "🔧" }
+        { name: "React", iconName: "react" },
+        { name: "Next.js", iconName: "nextjs" },
+        { name: "Node.js", iconName: "nodejs" },
+        { name: "Express.js", iconName: "expressjs" },
+        { name: "Laravel", iconName: "laravel" },
+        { name: "WordPress", iconName: "wordpress" },
+        { name: "TypeScript", iconName: "typescript" },
+        { name: "Flutter", iconName: "flutter" }
     ],
     contact: {
         formTitle: "Let's Connect",
@@ -71,13 +69,11 @@ export const user = {
         }
     },
     skills: [
-        { name: "HTML/CSS", proficiency: "95%" },
-        { name: "JavaScript", proficiency: "90%" },
+        { name: "MERN Stack", proficiency: "80%" },
+        { name: "Laravel", proficiency: "70%" },
         { name: "React/Next.js", proficiency: "85%" },
         { name: "Flutter", proficiency: "80%" },
-        { name: "Tailwind CSS", proficiency: "85%" },
-        { name: "TypeScript", proficiency: "75%" },
-        { name: "Git/GitHub", proficiency: "80%" }
+        { name: "WordPress", proficiency: "95%" },
     ],
     experience: [
         {
@@ -91,7 +87,7 @@ export const user = {
         {
             degree: "BS Software Engineering",
             institution: "The Islamia University of Bahawalpur",
-            year: "2021-Present",
+            year: "2021-2025",
             details: ""
         },
         {
@@ -113,3 +109,31 @@ export const user = {
     ],
     Resume: "https://pub-c84c7d98fbfc4fba9d6c5c4f9efeefb3.r2.dev/Umar%20Siddiqui%20Resume.pdf",
 };
+
+export const services = [
+    {
+        title: "Brand Identity",
+        description: "I develop a cohesive brand identity with personalized cards that encapsulate your brand's essence, ensuring consistent representation across all platforms.",
+        iconName: "brandIdentity"
+    },
+    {
+        title: "Business Websites",
+        description: "I create a professional online presence that showcases your brand and engages customers effectively.",
+        iconName: "businessWebsites"
+    },
+    {
+        title: "MVP Development",
+        description: "I build a minimum viable product to validate your idea quickly and efficiently, ensuring it meets market needs.",
+        iconName: "mvpDevelopment"
+    },
+    {
+        title: "Web System Development",
+        description: "I create custom, scalable web systems designed to streamline your business operations and boost efficiency.",
+        iconName: "webSystemDevelopment"
+    },
+    {
+        title: "Mobile App Development",
+        description: "I develop custom, high-performance mobile apps that enhance user experience and drive business growth.",
+        iconName: "mobileAppDevelopment"
+    }
+];

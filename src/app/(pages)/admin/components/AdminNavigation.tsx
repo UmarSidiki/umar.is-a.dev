@@ -1,4 +1,5 @@
 import React from "react";
+import { BarChart, FileText, Rocket, Image } from "lucide-react";
 import { AdminTab } from "../types";
 
 interface AdminNavigationProps {
@@ -13,10 +14,10 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
   onLogout,
 }) => {
   const tabs = [
-    { id: "dashboard" as AdminTab, label: "Dashboard", icon: "📊" },
-    { id: "posts" as AdminTab, label: "Posts", icon: "�" },
-    { id: "projects" as AdminTab, label: "Projects", icon: "🚀" },
-    { id: "images" as AdminTab, label: "Images", icon: "🖼️" },
+    { id: "dashboard" as AdminTab, label: "Dashboard", icon: <BarChart className="w-5 h-5" /> },
+    { id: "posts" as AdminTab, label: "Posts", icon: <FileText className="w-5 h-5" /> },
+    { id: "projects" as AdminTab, label: "Projects", icon: <Rocket className="w-5 h-5" /> },
+    { id: "images" as AdminTab, label: "Images", icon: <Image className="w-5 h-5" /> },
   ];
 
   return (

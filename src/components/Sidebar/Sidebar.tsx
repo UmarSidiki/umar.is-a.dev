@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-
+import { Mail, Phone, MapPin } from "lucide-react";
 import { user } from "@/providers/user";
 
 const config = {
@@ -11,9 +11,9 @@ const config = {
     title: user.title,
   },
   contact: [
-    { icon: "📧", value: user.email },
-    { icon: "📱", value: user.phone },
-    { icon: "📍", value: `${user.location.city}, ${user.location.country}` },
+    { icon: <Mail className="w-4 h-4 text-amber-500 dark:text-amber-400" />, value: user.email },
+    { icon: <Phone className="w-4 h-4 text-amber-500 dark:text-amber-400" />, value: user.phone },
+    { icon: <MapPin className="w-4 h-4 text-amber-500 dark:text-amber-400" />, value: `${user.location.city}, ${user.location.country}` },
   ],
   skills: user.skills,
   experience: user.experience,

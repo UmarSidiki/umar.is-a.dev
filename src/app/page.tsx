@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { BaseTemplate } from "@/templates/Home";
 import { generateStructuredData } from "@/lib/seo";
-import { ProjectModal, ProjectsSection } from "@/components/Home";
-import { user } from "@/providers/user";
+import { ProjectModal, ProjectsSection, WhatIDo, TechnologyIcons } from "@/components/Home";
+import { services, user } from "@/providers/user";
 
 interface Project {
   _id: string;
@@ -37,14 +37,14 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects?limit=4&featured=true');
+        const response = await fetch("/api/projects?limit=4&featured=true");
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched projects:', data.data); // Debug log
+          console.log("Fetched projects:", data.data); // Debug log
           setProjects(data.data || []);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error("Error fetching projects:", error);
       } finally {
         setLoading(false);
       }
@@ -54,9 +54,9 @@ export default function Home() {
   }, []);
 
   const openProjectModal = (project: Project) => {
-    console.log('Opening modal for project:', project);
+    console.log("Opening modal for project:", project);
     setSelectedProject(project);
-    console.log('Selected project set to:', project);
+    console.log("Selected project set to:", project);
   };
 
   const closeProjectModal = () => {
@@ -66,20 +66,20 @@ export default function Home() {
   // Close modal with Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedProject) {
+      if (e.key === "Escape" && selectedProject) {
         closeProjectModal();
       }
     };
 
     if (selectedProject) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
       // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [selectedProject]);
 
@@ -120,7 +120,7 @@ export default function Home() {
               <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
                 {user.homepage.callToAction.primary}
               </button>
-              <button 
+              <button
                 className="bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white px-8 py-3 rounded-xl font-semibold border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200"
                 onClick={() => window.open(user.Resume, "_blank")}
               >
@@ -129,39 +129,36 @@ export default function Home() {
             </div>
           </section>
 
+          {/* What I Do Section */}
+          <WhatIDo
+            services={services}
+            title="What I Do"
+            subtitle="I offer a range of services to help bring your digital vision to life"
+            onRequestMore={() => window.open('mailto:' + user.email + '?subject=Service Inquiry', '_blank')}
+          />
+
           {/* Skills Preview */}
           <section className="mb-16">
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-8 text-center">
               Technologies I Work With
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {user.technologies.map((tech, index) => (
-                <div
-                  key={index}
-                  className="bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm border border-neutral-200/50 dark:border-neutral-700/50 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-200 group hover:-translate-y-1"
-                >
-                  <div className="text-2xl mb-2 group-hover:scale-110 transition-transform duration-200">
-                    {tech.icon}
-                  </div>
-                  <div className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                    {tech.name}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <TechnologyIcons technologies={user.technologies} />
           </section>
 
           {/* Recent Projects Preview */}
-          <ProjectsSection 
-            projects={projects} 
-            loading={loading} 
-            onProjectClick={openProjectModal} 
+          <ProjectsSection
+            projects={projects}
+            loading={loading}
+            onProjectClick={openProjectModal}
           />
         </div>
       </BaseTemplate>
 
       {/* Project Detail Modal - Outside BaseTemplate for proper viewport centering */}
-      <ProjectModal selectedProject={selectedProject} closeProjectModal={closeProjectModal} />
+      <ProjectModal
+        selectedProject={selectedProject}
+        closeProjectModal={closeProjectModal}
+      />
     </>
   );
 }
