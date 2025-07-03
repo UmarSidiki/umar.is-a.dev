@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { user } from "@/providers/user";
 
 interface FormData {
   firstName: string;
@@ -19,8 +20,8 @@ interface FormErrors {
 }
 
 const Contact = () => {
-  const email: string = "siddiquiumar0007@gmail.com";
-  const address: string = "H# A1408/191, Old Sukkur, Sukkur, Sindh, Pakistan";
+  const email: string = user.email;
+  const address: string = user.location.address;
 
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -140,12 +141,10 @@ const Contact = () => {
               {/* Header Section */}
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
-                  Get In Touch
+                  {user.contact.formTitle}
                 </h1>
                 <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                  I&apos;m always open to new opportunities and interesting
-                  projects. Let&apos;s discuss how we can work together to bring
-                  your ideas to life.
+                  {user.contact.formSubtitle}
                 </p>
               </div>
 
@@ -231,7 +230,7 @@ const Contact = () => {
 
                   <div className="mt-8 p-4 bg-neutral-50/50 dark:bg-neutral-800/30 rounded-lg border border-neutral-200/30 dark:border-neutral-700/30">
                     <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                      Available for new projects and collaborations.
+                      {user.homepage.availability.showStatus && user.homepage.availability.status}
                       <span className="text-amber-600 dark:text-amber-400 font-medium">
                         {" "}
                         Let&apos;s build something great together.
@@ -242,56 +241,21 @@ const Contact = () => {
 
                 {/* Contact Form */}
                 <div className="order-1 lg:order-2">
-                  <div className="mb-6">
-                    <h2 className="text-xl font-medium text-neutral-900 dark:text-white mb-2">
-                      Send a message
-                    </h2>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                      I&apos;ll get back to you within 24-48 hours
-                    </p>
-                  </div>
-
-                  {/* Success/Error Messages */}
-                  {submitStatus === "success" && (
-                    <div className="mb-4 p-3 bg-green-50/50 dark:bg-green-900/20 border border-green-200/50 dark:border-green-800/50 rounded-lg">
-                      <div className="flex items-center text-sm">
-                        <div className="w-4 h-4 text-green-500 mr-2 flex-shrink-0">
-                          <svg viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-green-700 dark:text-green-300">
-                          {submitMessage}
-                        </p>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Status Messages */}
+                    {submitStatus === "success" && (
+                      <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-800 dark:text-green-300">
+                        {submitMessage}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {submitStatus === "error" && (
-                    <div className="mb-4 p-3 bg-red-50/50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50 rounded-lg">
-                      <div className="flex items-center text-sm">
-                        <div className="w-4 h-4 text-red-500 mr-2 flex-shrink-0">
-                          <svg viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-red-700 dark:text-red-300">
-                          {submitMessage}
-                        </p>
+                    {submitStatus === "error" && (
+                      <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-800 dark:text-red-300">
+                        {submitMessage}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <input
                           type="text"
@@ -303,7 +267,7 @@ const Contact = () => {
                               ? "border-red-300 dark:border-red-700"
                               : "border-neutral-200 dark:border-neutral-700"
                           }`}
-                          placeholder="First name *"
+                          placeholder={`${user.contact.formFields.name.label} ${user.contact.formFields.name.required ? '*' : ''}`}
                           disabled={isSubmitting}
                         />
                         {errors.firstName && (
@@ -345,7 +309,7 @@ const Contact = () => {
                             ? "border-red-300 dark:border-red-700"
                             : "border-neutral-200 dark:border-neutral-700"
                         }`}
-                        placeholder="Email address *"
+                        placeholder={`${user.contact.formFields.email.placeholder} ${user.contact.formFields.email.required ? '*' : ''}`}
                         disabled={isSubmitting}
                       />
                       {errors.email && (
@@ -427,7 +391,7 @@ const Contact = () => {
                           Sending...
                         </>
                       ) : (
-                        "Send Message"
+                        user.contact.submitButtonText
                       )}
                     </button>
 

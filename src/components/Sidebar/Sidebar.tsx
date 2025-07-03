@@ -2,52 +2,24 @@
 
 import React from "react";
 
-// Configuration object for easy editing
+import { user } from "@/providers/user";
+
 const config = {
   profile: {
-    initials: "U",
-    name: "Umar Siddiqui",
-    title: "Full-Stack Developer",
+    initials: user.initials,
+    name: user.name,
+    title: user.title,
   },
   contact: [
-    { icon: "📧", value: "john@example.com" },
-    { icon: "📱", value: "+1 (555) 123-4567" },
-    { icon: "📍", value: "San Francisco, CA" },
+    { icon: "📧", value: user.email },
+    { icon: "📱", value: user.phone },
+    { icon: "📍", value: `${user.location.city}, ${user.location.country}` },
   ],
-  skills: [
-    { name: "React/Next.js", proficiency: "95%" },
-    { name: "TypeScript", proficiency: "90%" },
-    { name: "Node.js", proficiency: "85%" },
-    { name: "Python", proficiency: "80%" },
-  ],
-  experience: [
-    {
-      title: "Senior Developer",
-      company: "Tech Corp",
-      period: "2022-Present",
-      description:
-        "Leading full-stack development projects using React, Node.js, and cloud technologies.",
-    },
-    {
-      title: "Full Stack Developer",
-      company: "StartupXYZ",
-      period: "2020-2022",
-      description:
-        "Built scalable web applications and APIs, implemented CI/CD pipelines.",
-    },
-  ],
-  education: [
-    {
-      degree: "B.S. Computer Science",
-      institution: "University of Technology",
-      year: "2020",
-      details: "Magna Cum Laude, GPA: 3.8/4.0",
-    },
-  ],
-  links: [
-    { name: "GitHub", url: "#" },
-    { name: "LinkedIn", url: "#" },
-  ],
+  skills: user.skills,
+  experience: user.experience,
+  education: user.education,
+  links: user.links,
+  resume: user.Resume,
 };
 
 export const Sidebar = () => {
@@ -184,7 +156,8 @@ export const Sidebar = () => {
                   ))}
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-xl px-6 py-4 text-white text-sm font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0">
+                <button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-xl px-6 py-4 text-white text-sm font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0"
+                onClick={() => window.open(config.resume, "_blank")}>
                   Download Resume
                 </button>
               </div>

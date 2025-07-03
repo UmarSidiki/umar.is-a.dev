@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import { generateStructuredData } from "@/lib/seo";
 import ContactClient from "./ContactClient";
+import { user } from "@/providers/user";
 
 export const metadata: Metadata = {
-  title: "Contact - Get In Touch",
+  title: `Contact - ${user.contact.formTitle}`,
   description:
-    "Ready to start your next project? Get in touch with Umar Siddiqui, an experienced full-stack developer. Available for freelance projects, consultations, and full-time opportunities.",
+    `Ready to start your next project? Get in touch with ${user.name}, an experienced ${user.title}. Available for freelance projects, consultations, and full-time opportunities.`,
   keywords: [
     "Contact Developer",
     "Hire Full-Stack Developer",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
     "Technical Consulting",
   ],
   openGraph: {
-    title: "Contact Umar Siddiqui - Full-Stack Developer",
+    title: `Contact ${user.name} - ${user.title}`,
     description:
       "Ready to start your next project? Get in touch for web development services and technical consultation.",
     type: "website",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
         url: "/api/og?title=Contact&subtitle=Ready to start your next project?&type=contact",
         width: 1200,
         height: 630,
-        alt: "Contact Umar Siddiqui",
+        alt: `Contact ${user.name}`,
       },
     ],
   },

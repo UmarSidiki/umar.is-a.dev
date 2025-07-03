@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { BaseTemplate } from "@/templates/Home";
 import { generateStructuredData } from "@/lib/seo";
 import { ProjectModal, ProjectsSection } from "@/components/Home";
+import { user } from "@/providers/user";
 
 interface Project {
   _id: string;
@@ -97,29 +98,33 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
           <section className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full text-amber-700 dark:text-amber-300 text-sm font-medium mb-6">
-              <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-              Available for new opportunities
-            </div>
+            {user.homepage.availability.showStatus && (
+              <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full text-amber-700 dark:text-amber-300 text-sm font-medium mb-6">
+                <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                {user.homepage.availability.status}
+              </div>
+            )}
 
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight">
-              Building Digital
+              {user.homepage.headline.main}
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-600">
-                Experiences
+                {user.homepage.headline.highlight}
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Full-stack developer passionate about creating innovative web
-              solutions that bridge the gap between design and functionality.
+              {user.homepage.tagline}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-                View My Work
+                {user.homepage.callToAction.primary}
               </button>
-              <button className="bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white px-8 py-3 rounded-xl font-semibold border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200">
-                Download Resume
+              <button 
+                className="bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white px-8 py-3 rounded-xl font-semibold border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200"
+                onClick={() => window.open(user.Resume, "_blank")}
+              >
+                {user.homepage.callToAction.secondary}
               </button>
             </div>
           </section>
@@ -130,16 +135,7 @@ export default function Home() {
               Technologies I Work With
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { name: "React", icon: "⚛️" },
-                { name: "Next.js", icon: "▲" },
-                { name: "TypeScript", icon: "📘" },
-                { name: "Node.js", icon: "🟢" },
-                { name: "Python", icon: "🐍" },
-                { name: "Docker", icon: "🐳" },
-                { name: "AWS", icon: "☁️" },
-                { name: "MongoDB", icon: "🍃" },
-              ].map((tech, index) => (
+              {user.technologies.map((tech, index) => (
                 <div
                   key={index}
                   className="bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm border border-neutral-200/50 dark:border-neutral-700/50 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-200 group hover:-translate-y-1"
