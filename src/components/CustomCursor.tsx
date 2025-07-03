@@ -4,13 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const CustomCursor = () => {
-  const cursorRef = useRef<HTMLDivElement>(null);
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
   const popRingRef = useRef<HTMLDivElement>(null);
   const magnetRef = useRef<HTMLDivElement>(null);
 
-  const [isMoving, setIsMoving] = useState(false);
   const [cursorText, setCursorText] = useState("");
 
   useEffect(() => {
@@ -21,16 +19,15 @@ const CustomCursor = () => {
     // Hide the default cursor
     document.body.style.cursor = "none";
 
-    const cursor = cursorRef.current;
     const cursorRing = cursorRingRef.current;
     const popElement = popRef.current;
     const popRing = popRingRef.current;
     const magnet = magnetRef.current;
 
-    if (!cursor || !cursorRing || !popElement || !popRing || !magnet) return;
+    if (!cursorRing || !popElement || !popRing || !magnet) return;
 
     // Set initial positions
-    gsap.set([cursor, cursorRing, popElement, popRing, magnet], {
+    gsap.set([cursorRing, popElement, popRing, magnet], {
       xPercent: -50,
       yPercent: -50,
       transformOrigin: "center",
@@ -38,27 +35,14 @@ const CustomCursor = () => {
 
     gsap.set([popElement, popRing, magnet], { scale: 0, opacity: 0 });
 
-    let moveTimeout: NodeJS.Timeout;
-
     // Mouse movement animation with improved performance
     const moveCallback = (e: MouseEvent) => {
-      // Set moving state
-      setIsMoving(true);
-      clearTimeout(moveTimeout);
-      moveTimeout = setTimeout(() => setIsMoving(false), 100);
-
-      // Animate main cursor with immediate response
-      gsap.set(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-      });
-
-      // Animate cursor ring with slight delay for smooth follow
+      // Animate cursor ring with smooth follow
       gsap.to(cursorRing, {
-        duration: 0.01,
+        duration: 0.08,
         x: e.clientX,
         y: e.clientY,
-        ease: "power2.out",
+        ease: "power1.out",
       });
     };
 
@@ -69,33 +53,6 @@ const CustomCursor = () => {
         x: e.clientX,
         y: e.clientY,
       });
-
-      // Enhanced cursor shrink and bounce with better timing
-      gsap
-        .timeline()
-        .to(cursor, {
-          scale: 0.5,
-          duration: 0.06,
-          ease: "power3.out",
-        })
-        .to(
-          cursor,
-          {
-            scale: 1.2,
-            duration: 0.12,
-            ease: "back.out(3)",
-          },
-          0.06
-        )
-        .to(
-          cursor,
-          {
-            scale: 1,
-            duration: 0.1,
-            ease: "power2.out",
-          },
-          0.18
-        );
 
       // Enhanced pulse animation for the ring with elastic effect
       gsap
@@ -183,13 +140,6 @@ const CustomCursor = () => {
         ease: "power2.out",
       });
 
-      // Slight cursor scale on hover
-      gsap.to(cursor, {
-        scale: 0.8,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-
       // Get cursor text from data attribute
       const text = target.getAttribute("data-cursor-text");
       if (text) {
@@ -205,12 +155,6 @@ const CustomCursor = () => {
         scale: 1,
         opacity: 0.9,
         duration: 0.3,
-        ease: "power2.out",
-      });
-
-      gsap.to(cursor, {
-        scale: 1,
-        duration: 0.2,
         ease: "power2.out",
       });
 
@@ -241,7 +185,6 @@ const CustomCursor = () => {
       document.body.style.cursor = "auto";
       window.removeEventListener("mousemove", moveCallback);
       window.removeEventListener("click", clickCallback);
-      clearTimeout(moveTimeout);
 
       interactiveElements.forEach((el) => {
         el.removeEventListener("mouseenter", handleHover);
@@ -252,24 +195,23 @@ const CustomCursor = () => {
 
   return (
     <>
-      {/* Main cursor dot with dynamic scaling and gradient */}
-      <div
-        ref={cursorRef}
-        className={`fixed pointer-events-none top-0 left-0 w-5 h-5 bg-gradient-to-br from-amber-500/95 to-amber-600/95 rounded-full mix-blend-difference transition-all duration-200 shadow-lg hidden ${
-          isMoving ? "scale-110 shadow-amber-500/60" : "scale-100"
-        }`}
-        style={{ zIndex: 999999 }}
-      />
-
-      {/* Enhanced cursor ring with animated gradient border */}
+      {/* Enhanced cursor ring with liquid glass effect */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border-2 border-amber-400/85 mix-blend-difference backdrop-blur-sm"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl"
         style={{
           zIndex: 999998,
           background:
-            "linear-gradient(45deg, transparent, rgba(251, 191, 36, 0.15), transparent)",
-          boxShadow: "0 0 20px rgba(251, 191, 36, 0.2)",
+            "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(251, 191, 36, 0.15) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(251, 191, 36, 0.2) 75%, rgba(255, 255, 255, 0.15) 100%)",
+          backdropFilter: "blur(20px) saturate(1.8)",
+          boxShadow: 
+            "0 0 25px rgba(251, 191, 36, 0.3), " +
+            "inset 0 1px 1px rgba(255, 255, 255, 0.3), " +
+            "inset 0 -1px 1px rgba(0, 0, 0, 0.1), " +
+            "0 4px 15px rgba(0, 0, 0, 0.1)",
+          filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.4))",
+          border: "1px solid transparent",
+          backgroundClip: "padding-box",
         }}
       />
 
