@@ -12,9 +12,17 @@ const CustomCursor = () => {
   const [cursorText, setCursorText] = useState("");
 
   useEffect(() => {
-    // Check if it's a mobile device
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
+    // Enhanced mobile detection
+    const isMobile = () => {
+      return (
+        window.innerWidth < 768 ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0
+      );
+    };
+
+    if (isMobile()) return;
 
     // Hide the default cursor
     document.body.style.cursor = "none";
@@ -194,11 +202,11 @@ const CustomCursor = () => {
   }, []);
 
   return (
-    <>
+    <div className="hidden md:block">
       {/* Enhanced cursor ring with liquid glass effect */}
       <div
         ref={cursorRingRef}
-        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl max-md:hidden"
+        className="fixed pointer-events-none top-0 left-0 w-8 h-8 rounded-full border border-white/20 backdrop-blur-xl"
         style={{
           zIndex: 999998,
           background:
@@ -265,7 +273,7 @@ const CustomCursor = () => {
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-neutral-800/98"></div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
