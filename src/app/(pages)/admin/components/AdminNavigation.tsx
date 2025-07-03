@@ -14,10 +14,26 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
   onLogout,
 }) => {
   const tabs = [
-    { id: "dashboard" as AdminTab, label: "Dashboard", icon: <BarChart className="w-5 h-5" /> },
-    { id: "posts" as AdminTab, label: "Posts", icon: <FileText className="w-5 h-5" /> },
-    { id: "projects" as AdminTab, label: "Projects", icon: <Rocket className="w-5 h-5" /> },
-    { id: "images" as AdminTab, label: "Images", icon: <Image className="w-5 h-5" /> },
+    {
+      id: "dashboard" as AdminTab,
+      label: "Dashboard",
+      icon: <BarChart className="w-5 h-5" />,
+    },
+    {
+      id: "posts" as AdminTab,
+      label: "Posts",
+      icon: <FileText className="w-5 h-5" />,
+    },
+    {
+      id: "projects" as AdminTab,
+      label: "Projects",
+      icon: <Rocket className="w-5 h-5" />,
+    },
+    {
+      id: "images" as AdminTab,
+      label: "Images",
+      icon: <Image className="w-5 h-5" />,
+    },
   ];
 
   return (
@@ -28,7 +44,9 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
         <div className="flex items-center justify-between mb-4 sm:hidden px-1">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-primary-foreground text-lg font-bold">A</span>
+              <span className="text-primary-foreground text-lg font-bold">
+                A
+              </span>
             </div>
             <div>
               <span className="text-base font-semibold text-foreground block">
@@ -82,9 +100,7 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({
               <div className="text-sm font-medium text-foreground">
                 Welcome back
               </div>
-              <div className="text-xs text-muted-foreground">
-                Admin User
-              </div>
+              <div className="text-xs text-muted-foreground">Admin User</div>
             </div>
 
             <button

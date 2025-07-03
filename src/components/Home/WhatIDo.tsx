@@ -72,22 +72,25 @@ const WhatIDo: React.FC<WhatIDoProps> = ({
             </p>
           </div>
         ))}
-      </div>
-
-      {onRequestMore && (
-        <div className="mt-10 text-center">
-          <button
+        
+        {/* Request for More Card */}
+        {onRequestMore && (
+          <div
             onClick={onRequestMore}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-3 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+            className="bg-gradient-to-br from-amber-500/50 to-amber-600/50 dark:from-amber-800/50 dark:to-amber-900/50 backdrop-blur-sm border border-amber-200/50 dark:amber-amber-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-200 group hover:-translate-y-1 cursor-pointer"
           >
-            <span>Request for More</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-            Give me feedback, I really enjoy learning new things
-          </p>
-        </div>
-      )}
+            <div className="text-amber-600 dark:text-amber-300 group-hover:scale-110 transition-transform duration-200 mb-4">
+              <ChevronRight className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-semibold text-amber-900 dark:text-amber-100 mb-2">
+              REQUEST FOR MORE
+            </h3>
+            <p className="text-amber-700 dark:text-amber-300">
+              Give me feedback, I really enjoy learning new things
+            </p>
+          </div>
+        )}
+      </div>
     </section>
   );
 };
