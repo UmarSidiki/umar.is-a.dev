@@ -30,3 +30,24 @@
     background: linear-gradient(to bottom, #d97706, #b45309);
   }
 }
+
+/* Custom Cursor Styles */
+html, body {
+  cursor: none !important;
+}
+
+a, button, input[type="button"], input[type="submit"], 
+.cursor-pointer, [role="button"] {
+  cursor: none !important;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    cursor: auto !important;
+  }
+  
+  a, button, input[type="button"], input[type="submit"], 
+  .cursor-pointer, [role="button"] {
+    cursor: pointer !important;
+  }
+}

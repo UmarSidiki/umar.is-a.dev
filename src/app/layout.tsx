@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header/Header";
+import CustomCursor from "@/components/CustomCursor";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -137,6 +138,7 @@ export default function RootLayout({
             
             <Header />
             {children}
+            <CustomCursor />
           </AuthProvider>
         </ThemeProvider>
       </body>
