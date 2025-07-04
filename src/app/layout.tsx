@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header/Header";
 import CustomCursor from "@/components/CustomCursor";
+import { seoConfig } from "@/lib/seo"; // Import SEO config
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,58 +18,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://umarsiddiqui.dev'), // Replace with your actual domain
+  metadataBase: new URL(seoConfig.siteUrl), // Use site URL from config
   title: {
-    default: "Umar Siddiqui - Full-Stack Developer | React, Next.js, Node.js Expert",
-    template: "%s | Umar Siddiqui - Full-Stack Developer"
+    default: seoConfig.defaultTitle,
+    template: `%s | ${seoConfig.siteName}`
   },
-  description:
-    "Professional portfolio of Umar Siddiqui, an experienced full-stack developer specializing in React, Next.js, TypeScript, and modern web technologies. Creating innovative digital solutions and scalable web applications.",
-  keywords: [
-    "Full-Stack Developer",
-    "React Developer", 
-    "Next.js Expert",
-    "TypeScript Developer",
-    "Node.js Developer",
-    "Web Development",
-    "Frontend Development",
-    "Backend Development",
-    "JavaScript Expert",
-    "Modern Web Technologies",
-    "Responsive Design",
-    "API Development",
-    "Database Design",
-    "Cloud Computing",
-    "Software Engineer",
-    "Umar Siddiqui"
-  ],
-  authors: [{ name: "Umar Siddiqui", url: "https://umarsiddiqui.dev" }],
-  creator: "Umar Siddiqui",
-  publisher: "Umar Siddiqui",
+  description: seoConfig.defaultDescription,
+  keywords: seoConfig.keywords,
+  authors: [{ name: seoConfig.author.name, url: seoConfig.siteUrl }],
+  creator: seoConfig.author.name,
+  publisher: seoConfig.author.name,
   category: "technology",
   classification: "Portfolio Website",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://umarsiddiqui.dev",
-    siteName: "Umar Siddiqui - Full-Stack Developer",
-    title: "Umar Siddiqui - Full-Stack Developer | React, Next.js, Node.js Expert",
-    description: "Professional portfolio showcasing innovative web solutions and modern development expertise. Specializing in React, Next.js, TypeScript, and scalable web applications.",
+    url: seoConfig.siteUrl,
+    siteName: seoConfig.siteName,
+    title: seoConfig.defaultTitle,
+    description: seoConfig.defaultDescription,
     images: [
       {
-        url: "/api/og", // We'll create this OG image endpoint
-        width: 1200,
-        height: 630,
-        alt: "Umar Siddiqui - Full-Stack Developer Portfolio",
+        url: seoConfig.ogImage.url,
+        width: seoConfig.ogImage.width,
+        height: seoConfig.ogImage.height,
+        alt: seoConfig.ogImage.alt,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    creator: "@umarsiddiqui", // Replace with your Twitter handle
-    title: "Umar Siddiqui - Full-Stack Developer | React, Next.js Expert",
-    description: "Professional portfolio showcasing innovative web solutions and modern development expertise.",
-    images: ["/api/og"],
+    creator: seoConfig.author.twitter,
+    title: seoConfig.defaultTitle,
+    description: seoConfig.defaultDescription,
+    images: [seoConfig.ogImage.url],
   },
   robots: {
     index: true,
@@ -87,9 +70,9 @@ export const metadata: Metadata = {
     // yahoo: "your-yahoo-verification-code",
   },
   alternates: {
-    canonical: "https://umarsiddiqui.dev",
+    canonical: seoConfig.siteUrl,
     languages: {
-      'en-US': 'https://umarsiddiqui.dev',
+      'en-US': seoConfig.siteUrl,
     },
   },
   manifest: '/manifest.json',

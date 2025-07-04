@@ -7,6 +7,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import CommentSection from "@/components/CommentSection";
+import { generateStructuredData, seoConfig } from "@/lib/seo";
+
+// This page is a client component, so metadata must be generated dynamically or passed from a server component.
+// For dynamic metadata based on fetched data, we'll use a client-side approach for now,
+// but in a real app, you'd typically fetch data in a server component and pass it down or use generateMetadata.
+// For simplicity in this client component, we'll keep the metadata generation within the component's logic.
 
 const BlogPostPage = () => {
   const params = useParams();
@@ -49,6 +55,23 @@ const BlogPostPage = () => {
     });
   };
 
+  // Note: In client components, metadata should be handled by a parent server component
+  // or through Next.js generateMetadata function for proper SEO
+
+  // Dynamic Structured Data for client component
+  const articleStructuredData = post ? generateStructuredData("article", {
+    title: post.title,
+    description: post.excerpt,
+    image: post.featuredImage || `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt)}&type=article`,
+    publishedTime: new Date(post.createdAt).toISOString(),
+    modifiedTime: new Date(post.updatedAt).toISOString(),
+    author: post.author,
+    url: `${seoConfig.siteUrl}/blog/${slug}`,
+    keywords: post.tags,
+    category: post.category,
+  }) : null;
+
+
   if (loading) {
     return (
       <BlogTemplate>
@@ -89,7 +112,7 @@ const BlogPostPage = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link 
               href="/blog"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/30 transform hover:-translate-y-0.5"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -122,45 +145,11 @@ const BlogPostPage = () => {
       </a>
 
       {/* JSON-LD Structured Data for the specific blog post */}
-      {post && (
+      {articleStructuredData && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              headline: post.title,
-              description: post.excerpt,
-              image: post.featuredImage || `https://umarsiddiqui.dev/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt)}&type=article`,
-              datePublished: new Date(post.createdAt).toISOString(),
-              dateModified: new Date(post.updatedAt).toISOString(),
-              author: {
-                "@type": "Person",
-                name: post.author,
-                url: "https://umarsiddiqui.dev"
-              },
-              publisher: {
-                "@type": "Person",
-                name: "Umar Siddiqui",
-                url: "https://umarsiddiqui.dev"
-              },
-              mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": `https://umarsiddiqui.dev/blog/${slug}`
-              },
-              keywords: post.tags?.join(", ") || "",
-              articleSection: post.category,
-              wordCount: post.content ? post.content.split(' ').length : 0,
-              timeRequired: post.readTime ? `PT${post.readTime}M` : undefined,
-              url: `https://umarsiddiqui.dev/blog/${slug}`,
-              isAccessibleForFree: true,
-              commentCount: post.commentCount || 0,
-              interactionStatistic: {
-                "@type": "InteractionCounter",
-                interactionType: "https://schema.org/CommentAction",
-                userInteractionCount: post.commentCount || 0
-              }
-            })
+            __html: JSON.stringify(articleStructuredData)
           }}
         />
       )}

@@ -2,23 +2,23 @@
 export const seoConfig = {
   // Basic site information
   siteName: "Umar Siddiqui - Full-Stack Developer",
-  siteUrl: "https://umarsiddiqui.dev", // Replace with your actual domain
+  siteUrl: "https://umar.is-a.dev", // Replace with your actual domain
   defaultTitle: "Umar Siddiqui - Full-Stack Developer | React, Next.js, Node.js Expert",
   defaultDescription: "Professional portfolio of Umar Siddiqui, an experienced full-stack developer specializing in React, Next.js, TypeScript, and modern web technologies. Creating innovative digital solutions and scalable web applications.",
-  
+
   // Author information
   author: {
     name: "Umar Siddiqui",
     email: "siddiquiumar0007@gmail.com",
-    twitter: "@umarsiddiqui", // Replace with your Twitter handle
-    linkedin: "https://linkedin.com/in/umarsiddiqui", // Replace with your LinkedIn
-    github: "https://github.com/umarsiddiqui", // Replace with your GitHub
+    twitter: "", // Replace with your Twitter handle
+    linkedin: "https://linkedin.com/in/umarsidiki", // Replace with your LinkedIn
+    github: "https://github.com/UmarSidiki", // Replace with your GitHub
   },
 
   // Default keywords for the site
   keywords: [
     "Full-Stack Developer",
-    "React Developer", 
+    "React Developer",
     "Next.js Expert",
     "TypeScript Developer",
     "Node.js Developer",
@@ -74,7 +74,7 @@ export const seoConfig = {
   // Location information
   location: {
     city: "Sukkur",
-    region: "Sindh", 
+    region: "Sindh",
     country: "Pakistan",
     address: "H# A1408/191, Old Sukkur, Sukkur, Sindh, Pakistan"
   },
@@ -99,7 +99,7 @@ export function generatePageMetadata({
   keywords = [],
   image,
   url,
-  type = "website",
+  type = "website" as "website" | "article",
   publishedTime,
   modifiedTime,
   authors,
@@ -116,10 +116,10 @@ export function generatePageMetadata({
   authors?: string[];
   tags?: string[];
 }) {
-  const pageTitle = title 
-    ? `${title} | ${seoConfig.siteName}` 
+  const pageTitle = title
+    ? `${title} | ${seoConfig.siteName}`
     : seoConfig.defaultTitle;
-  
+
   const pageDescription = description || seoConfig.defaultDescription;
   const pageKeywords = [...seoConfig.keywords, ...keywords];
   const pageUrl = url ? `${seoConfig.siteUrl}${url}` : seoConfig.siteUrl;

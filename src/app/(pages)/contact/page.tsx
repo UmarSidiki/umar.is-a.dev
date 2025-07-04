@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import { generateStructuredData } from "@/lib/seo";
+import { generatePageMetadata, generateStructuredData } from "@/lib/seo";
 import ContactClient from "./ContactClient";
 import { user } from "@/providers/user";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generatePageMetadata({
   title: `Contact - ${user.contact.formTitle}`,
   description:
     `Ready to start your next project? Get in touch with ${user.name}, an experienced ${user.title}. Available for freelance projects, consultations, and full-time opportunities.`,
@@ -19,29 +19,8 @@ export const metadata: Metadata = {
     "Software Development Services",
     "Technical Consulting",
   ],
-  openGraph: {
-    title: `Contact ${user.name} - ${user.title}`,
-    description:
-      "Ready to start your next project? Get in touch for web development services and technical consultation.",
-    type: "website",
-    images: [
-      {
-        url: "/api/og?title=Contact&subtitle=Ready to start your next project?&type=contact",
-        width: 1200,
-        height: 630,
-        alt: `Contact ${user.name}`,
-      },
-    ],
-  },
-  twitter: {
-    title: "Contact Umar Siddiqui - Full-Stack Developer",
-    description:
-      "Ready to start your next project? Get in touch for web development services.",
-  },
-  alternates: {
-    canonical: `${process.env.SITE_URL || "https://umarsiddiqui.dev"}/contact`,
-  },
-};
+  url: "/contact",
+});
 
 export default function ContactPage() {
   // Generate structured data for contact page
