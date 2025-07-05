@@ -2,12 +2,14 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { usePathname } from "next/navigation";
 
 const CustomCursor = () => {
   const cursorRingRef = useRef<HTMLDivElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
   const popRingRef = useRef<HTMLDivElement>(null);
   const magnetRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname(); // Track route changes
 
   const [cursorText, setCursorText] = useState("");
 
@@ -247,10 +249,31 @@ const CustomCursor = () => {
       });
     };
 
+    // Force reset cursor state when component mounts or route changes
+    const resetCursorState = () => {
+      setCursorText("");
+      
+      if (cursorRing && magnet) {
+        gsap.set(cursorRing, {
+          scale: 1,
+          opacity: 0.9,
+        });
+        
+        gsap.set(magnet, {
+          scale: 0,
+          opacity: 0,
+        });
+      }
+    };
+
+    // Reset cursor state immediately
+    resetCursorState();
+
     // Add hover effect to interactive elements
     const interactiveElements = document.querySelectorAll(
       'a, button, input, [role="button"], .cursor-pointer'
     );
+    
     interactiveElements.forEach((el) => {
       el.addEventListener("mouseenter", handleHover);
       el.addEventListener("mouseleave", handleHoverOut);
@@ -260,18 +283,29 @@ const CustomCursor = () => {
     window.addEventListener("mousemove", moveCallback);
     window.addEventListener("click", clickCallback);
 
+    // Add mouse leave event for the entire document to reset cursor
+    const handleDocumentMouseLeave = () => {
+      handleHoverOut();
+    };
+    
+    document.addEventListener("mouseleave", handleDocumentMouseLeave);
+
     // Cleanup function
     return () => {
       document.body.style.cursor = "auto";
       window.removeEventListener("mousemove", moveCallback);
       window.removeEventListener("click", clickCallback);
+      document.removeEventListener("mouseleave", handleDocumentMouseLeave);
 
       interactiveElements.forEach((el) => {
         el.removeEventListener("mouseenter", handleHover);
         el.removeEventListener("mouseleave", handleHoverOut);
       });
+
+      // Force reset on cleanup
+      resetCursorState();
     };
-  }, []);
+  }, [pathname]); // Add pathname as dependency to reset cursor on route change
 
   return (
     <>

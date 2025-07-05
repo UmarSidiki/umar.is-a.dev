@@ -74,6 +74,11 @@ export const seoConfig = {
         priority: 1.0,
       },
       {
+        path: '/projects',
+        changeFrequency: 'weekly' as const,
+        priority: 0.9,
+      },
+      {
         path: '/contact',
         changeFrequency: 'monthly' as const,
         priority: 0.8,
@@ -118,6 +123,12 @@ export const seoConfig = {
       title: "Contact Umar Siddiqui | Full-Stack Web & Mobile App Developer",
       description: "Ready to start your next project? Contact Umar Siddiqui for expert web development, mobile app solutions, technical consulting, or collaboration. Let's build innovative digital experiences together.",
       keywords: ["Contact Umar Siddiqui", "Hire Web Developer", "Mobile App Development Services", "Technical Consulting", "Custom Software Development", "Freelance Full-Stack Developer", "Web Development Projects", "Collaboration Opportunities"],
+      noindex: false,
+    },
+    projects: {
+      title: "Projects Portfolio | Umar Siddiqui - Full-Stack Development Showcase",
+      description: "Explore my comprehensive portfolio of web and mobile applications. View real-world projects built with React, Next.js, TypeScript, Laravel, and Flutter showcasing modern development practices and innovative solutions.",
+      keywords: ["Portfolio Projects", "Web Development Portfolio", "React Projects", "Next.js Applications", "Mobile App Development", "Full-Stack Projects", "TypeScript Projects", "Laravel Applications", "Flutter Apps", "Umar Siddiqui Work", "Development Showcase"],
       noindex: false,
     },
     blog: {

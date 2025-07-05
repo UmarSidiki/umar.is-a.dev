@@ -133,6 +133,27 @@ export async function GET(req: NextRequest) {
                 ))}
               </div>
             )}
+
+            {/* Projects Badge */}
+            {type === 'projects' && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  padding: '12px 30px',
+                  borderRadius: '30px',
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                🚀 Portfolio Showcase
+              </div>
+            )}
           </div>
 
           {/* Website URL */}

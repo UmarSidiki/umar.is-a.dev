@@ -5,6 +5,7 @@ import { BaseTemplate } from "@/templates/Home";
 import { generateStructuredData } from "@/lib/seo";
 import { ProjectModal, ProjectsSection, WhatIDo, TechnologyIcons, DynamicHeadline } from "@/components/Home";
 import { services, user } from "@/providers/user";
+import Link from "next/link";
 
 interface Project {
   _id: string;
@@ -112,9 +113,12 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+              <Link 
+                href="/projects"
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 text-center"
+              >
                 {user.homepage.callToAction.primary}
-              </button>
+              </Link>
               <button
                 className="bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white px-8 py-3 rounded-xl font-semibold border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200"
                 onClick={() => window.open(user.Resume, "_blank")}
