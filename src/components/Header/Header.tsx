@@ -1,14 +1,11 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { ModeToggle } from "../ThemeToggle";
 import { Button } from "../ui/button";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const isOnBlogPage = pathname === "/blog";
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -69,9 +66,7 @@ const Header = () => {
               size="sm"
               className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <Link href={isOnBlogPage ? "/admin" : "/contact"}>
-                {isOnBlogPage ? "Publish" : "Get in Touch"}
-              </Link>
+              <Link href="/contact">Get in Touch</Link>
             </Button>
           </div>{" "}
           {/* Mobile Menu Button */}
@@ -116,9 +111,7 @@ const Header = () => {
                   size="sm"
                   className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
                 >
-                  <Link href={isOnBlogPage ? "/admin" : "/contact"}>
-                    {isOnBlogPage ? "Publish" : "Get in Touch"}
-                  </Link>
+                  <Link href="/contact">Get in Touch</Link>
                 </Button>
               </div>
             </nav>
