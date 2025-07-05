@@ -37,6 +37,7 @@ const ProjectsClient = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Fetch projects from API
   useEffect(() => {
@@ -66,11 +67,17 @@ const ProjectsClient = () => {
   const categories = ["all", ...new Set(projects.map(p => p.category))];
   const statuses = ["all", "active", "completed", "archived"];
 
-  // Filter projects based on selected filters
+  // Filter projects based on selected filters and search query
   const filteredProjects = projects.filter(project => {
     const categoryMatch = selectedCategory === "all" || project.category === selectedCategory;
     const statusMatch = selectedStatus === "all" || project.status === selectedStatus;
-    return categoryMatch && statusMatch;
+    const searchMatch = searchQuery === "" || 
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      project.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return categoryMatch && statusMatch && searchMatch;
   });
 
   const openProjectModal = (project: Project) => {
@@ -156,8 +163,8 @@ const ProjectsClient = () => {
                   id="search-projects"
                   type="text"
                   placeholder="Search projects..."
-                  value={selectedCategory === 'all' ? '' : selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value || 'all')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="block w-full pl-10 pr-4 py-2.5 text-sm border border-neutral-200/50 dark:border-neutral-700/50 rounded-lg bg-white/70 dark:bg-neutral-800/70 backdrop-blur-lg text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-300"
                   aria-describedby="search-help"
                 />
@@ -245,11 +252,12 @@ const ProjectsClient = () => {
                 </div>
 
                 {/* Clear Filters */}
-                {(selectedCategory !== 'all' || selectedStatus !== 'all') && (
+                {(selectedCategory !== 'all' || selectedStatus !== 'all' || searchQuery !== '') && (
                   <button
                     onClick={() => {
                       setSelectedCategory('all');
                       setSelectedStatus('all');
+                      setSearchQuery('');
                     }}
                     className="px-3 py-2.5 text-xs md:text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-900/20 rounded-lg transition-all duration-200 border border-neutral-200/50 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/50 backdrop-blur-lg"
                   >
