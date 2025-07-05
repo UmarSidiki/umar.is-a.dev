@@ -60,6 +60,12 @@ const BlogPostPage = () => {
 
   // Dynamic Structured Data for client component
   const articleStructuredData = post ? generateStructuredData("article", {
+    article: {
+      ...post,
+      _id: post._id?.toString() || '',
+      createdAt: post.createdAt.toString(),
+      updatedAt: post.updatedAt.toString(),
+    },
     title: post.title,
     description: post.excerpt,
     image: post.featuredImage || `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt)}&type=article`,
@@ -67,8 +73,7 @@ const BlogPostPage = () => {
     modifiedTime: new Date(post.updatedAt).toISOString(),
     author: post.author,
     url: `${seoConfig.siteUrl}/blog/${slug}`,
-    keywords: post.tags,
-    category: post.category,
+    tags: post.tags,
   }) : null;
 
 

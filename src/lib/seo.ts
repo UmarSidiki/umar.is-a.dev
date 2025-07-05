@@ -3,8 +3,8 @@ export const seoConfig = {
   // Basic site information
   siteName: "Umar Siddiqui - Full-Stack Developer",
   siteUrl: "https://umar.is-a.dev", // Your actual domain
-  defaultTitle: "Umar Siddiqui - Full-Stack Developer | React, Next.js, Node.js Expert",
-  defaultDescription: "Professional portfolio of Umar Siddiqui, an experienced full-stack developer specializing in React, Next.js, TypeScript, and modern web technologies. Creating innovative digital solutions and scalable web applications.",
+  defaultTitle: "Umar Siddiqui - Full-Stack Developer",
+  defaultDescription: "Unlock your project's potential with Umar Siddiqui, a full-stack web and mobile app developer. Specializing in React, Next.js, and TypeScript, I deliver high-performance, innovative digital solutions.",
 
   // Domain and environment settings
   domain: "umar.is-a.dev",
@@ -15,7 +15,7 @@ export const seoConfig = {
   author: {
     name: "Umar Siddiqui",
     email: "siddiquiumar0007@gmail.com",
-    twitter: "@umarsidiki", // Your Twitter handle
+    twitter: "", // Your Twitter handle
     linkedin: "https://linkedin.com/in/umarsidiki",
     github: "https://github.com/UmarSidiki",
   },
@@ -110,48 +110,51 @@ export const seoConfig = {
   pages: {
     home: {
       title: "Umar Siddiqui - Full-Stack Developer | React, Next.js Expert",
-      description: "Professional portfolio of Umar Siddiqui, a passionate full-stack developer specializing in React, Next.js, TypeScript, Laravel, and modern web technologies.",
-      keywords: ["Full-Stack Developer", "React Developer", "Next.js Expert", "TypeScript", "Laravel", "Portfolio"],
+      description: "Unlock your project's potential with Umar Siddiqui, a full-stack web and mobile app developer. Specializing in React, Next.js, and TypeScript, I deliver high-performance, innovative digital solutions.",
+      keywords: ["Umar Siddiqui", "Full-Stack Web Developer", "Mobile App Developer", "React.js", "Next.js", "TypeScript", "Laravel", "Custom Web Development", "Mobile Solutions", "Digital Solutions", "Software Development Portfolio"],
       noindex: false,
     },
     contact: {
-      title: "Contact Umar Siddiqui - Let's Build Something Amazing",
-      description: "Get in touch with Umar Siddiqui for web development projects, technical consultation, or collaboration opportunities. Available for frontend roles and internships.",
-      keywords: ["Contact", "Web Development Services", "Technical Consultation", "Freelance Developer"],
+      title: "Contact Umar Siddiqui | Full-Stack Web & Mobile App Developer",
+      description: "Ready to start your next project? Contact Umar Siddiqui for expert web development, mobile app solutions, technical consulting, or collaboration. Let's build innovative digital experiences together.",
+      keywords: ["Contact Umar Siddiqui", "Hire Web Developer", "Mobile App Development Services", "Technical Consulting", "Custom Software Development", "Freelance Full-Stack Developer", "Web Development Projects", "Collaboration Opportunities"],
       noindex: false,
     },
     blog: {
-      title: "Blog - Web Development Insights by Umar Siddiqui",
-      description: "Read the latest articles about web development, React, Next.js, TypeScript, and modern programming technologies by Umar Siddiqui.",
-      keywords: ["Web Development Blog", "React Tutorials", "Next.js Articles", "Programming Insights"],
+      title: "Umar Siddiqui's Blog | Web & Mobile App Development Insights",
+      description: "Explore the latest articles and insights on modern web development, React, Next.js, TypeScript, and mobile app development from Umar Siddiqui. Stay updated with cutting-edge programming trends.",
+      keywords: ["Web Development Blog", "Mobile App Development Blog", "React Tutorials", "Next.js Best Practices", "TypeScript Guides", "Programming Insights", "Software Development Articles", "Umar Siddiqui Blog"],
       noindex: false,
     },
     admin: {
-      title: "Admin Dashboard",
-      description: "Administrative interface for content management",
-      keywords: ["Admin", "Dashboard", "Content Management"],
-      noindex: true, // Don't index admin pages
+      title: "Admin Dashboard | Umar Siddiqui Portfolio Management",
+      description: "Secure administrative interface for managing content, projects, and user data for Umar Siddiqui's professional portfolio.",
+      keywords: ["Admin Panel", "Dashboard Access", "Content Management System", "Portfolio Administration"],
+      noindex: true, // Crucial: Do not index admin pages for security and SEO best practices
     },
   },
 
   // Default keywords for the site
   keywords: [
+    "Umar Siddiqui",
+    "Web Developer",
+    "Mobile App Developer",
     "Full-Stack Developer",
     "React Developer",
-    "Next.js Expert",
+    "Next.js Developer",
     "TypeScript Developer",
     "Node.js Developer",
-    "Web Development",
-    "Frontend Development",
-    "Backend Development",
-    "JavaScript Expert",
+    "Custom Web Development",
+    "Mobile Application Development",
+    "Frontend Development Expert",
+    "Backend Development Solutions",
+    "JavaScript Specialist",
     "Modern Web Technologies",
-    "Responsive Design",
-    "API Development",
-    "Database Design",
-    "Cloud Computing",
-    "Software Engineer",
-    "Umar Siddiqui"
+    "Responsive Web Design",
+    "API Integration",
+    "Database Management",
+    "Software Engineer Portfolio",
+    "Hire Umar Siddiqui"
   ],
 
   // Social media profiles
@@ -177,22 +180,31 @@ export const seoConfig = {
 
   // Technical skills for structured data
   skills: [
-    "React",
+    // Core Technologies
+    "React.js",
     "Next.js",
     "TypeScript",
-    "JavaScript",
+    "JavaScript (ES6+)", // Specify version for modernity
     "Node.js",
     "Python",
-    "Web Development",
+
+    // Development Disciplines
+    "Full-Stack Web Development",
     "Frontend Development",
     "Backend Development",
-    "Full-Stack Development",
-    "API Development",
-    "Database Design",
-    "UI/UX Design",
-    "Responsive Design",
-    "Progressive Web Apps",
-    "Performance Optimization"
+    "Mobile App Development (React Native / Cross-platform)", // Crucial addition
+    "Progressive Web Apps (PWAs)",
+
+    // Key Capabilities & Practices
+    "API Design & Development (RESTful, GraphQL)", // Specify types
+    "Database Design & Management (SQL/NoSQL)", // Specify types if applicable, e.g., PostgreSQL, MongoDB
+    "UI/UX Principles & Implementation", // More professional than just "UI/UX Design" if you're not a dedicated designer
+    "Responsive & Adaptive Design",
+    "Web Performance Optimization",
+    "Scalable Architecture Design", // Important for enterprise clients
+    "Cloud Deployment & Management (AWS/Azure/GCP Basics)", // If you have experience
+    "Version Control (Git/GitHub/GitLab)", // Essential for collaboration
+    "Testing & Debugging" // Demonstrates quality focus
   ],
 
   // Location information
@@ -205,14 +217,17 @@ export const seoConfig = {
 
   // Services offered
   services: [
-    "Full-Stack Web Development",
-    "React/Next.js Development",
-    "API Development",
-    "Database Design",
-    "Performance Optimization",
-    "Technical Consulting",
-    "Code Review",
-    "Project Architecture"
+    "Full-Stack Web Development (React, Next.js, Node.js, Python)", // Specify core tech
+    "Custom Mobile App Development (iOS/Android with React Native)", // Crucial addition with platform mention
+    "Modern Frontend Development (React.js, Next.js, UI/UX Implementation)",
+    "Robust Backend & API Development (RESTful, GraphQL, Microservices)", // Add Microservices for scale
+    "Database Design & Optimization (SQL, NoSQL, Data Modeling)", // Mention types and purpose
+    "Web Application Performance Optimization & Scalability", // Broader, more benefit-oriented
+    "Technical Consulting & Strategy", // Elevates "Technical Consulting"
+    "Code Audits & Review for Quality Assurance", // More formal than "Code Review"
+    "Software Architecture & System Design", // More formal than "Project Architecture"
+    "Cloud Integration & Deployment (AWS, Azure, GCP)", // If applicable
+    "Progressive Web App (PWA) Development"
   ]
 };
 
@@ -318,7 +333,7 @@ export function generateCompletePageMetadata({
 }) {
   // Get page-specific config if pageKey is provided
   const pageConfig = pageKey ? seoConfig.pages[pageKey] : null;
-  
+
   // Merge provided data with page config and defaults
   const finalTitle = title || pageConfig?.title || seoConfig.defaultTitle;
   const finalDescription = description || pageConfig?.description || seoConfig.defaultDescription;
@@ -328,9 +343,9 @@ export function generateCompletePageMetadata({
     ...keywords
   ];
   const shouldNoIndex = noindex ?? pageConfig?.noindex ?? false;
-  
-  const pageTitle = finalTitle.includes(seoConfig.siteName) 
-    ? finalTitle 
+
+  const pageTitle = finalTitle.includes(seoConfig.siteName)
+    ? finalTitle
     : `${finalTitle} | ${seoConfig.siteName}`;
 
   const pageUrl = url ? `${seoConfig.siteUrl}${url}` : seoConfig.siteUrl;
@@ -633,7 +648,7 @@ export function generateStructuredData(
 
     case "article":
       if (!data?.article) return null;
-      
+
       const article = data.article;
       return {
         "@context": "https://schema.org",
@@ -673,7 +688,7 @@ export function generateStructuredData(
 
     case "breadcrumb":
       if (!data?.breadcrumbs) return null;
-      
+
       return {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
