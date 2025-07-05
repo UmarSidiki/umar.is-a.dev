@@ -108,7 +108,7 @@ export const ImageManagement = ({}) => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
             Image Management
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
@@ -122,7 +122,7 @@ export const ImageManagement = ({}) => {
             onClick={() => setShowUpload(!showUpload)}
             className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
               showUpload
-                ? 'bg-green-500 hover:bg-green-600 text-white'
+                ? 'bg-purple-500 hover:bg-purple-600 text-white'
                 : 'bg-blue-500 hover:bg-blue-600 text-white'
             }`}
           >
@@ -132,7 +132,7 @@ export const ImageManagement = ({}) => {
           {/* Refresh Button */}
           <button
             onClick={fetchImages}
-            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
           >
             Refresh
           </button>

@@ -54,7 +54,7 @@ export const ProjectsManagement: React.FC<ProjectsManagementProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
             Projects Management
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
@@ -68,9 +68,9 @@ export const ProjectsManagement: React.FC<ProjectsManagementProps> = ({
             <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
             <span className="text-amber-700 dark:text-amber-300">{projects.length} Projects</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            <span className="text-green-700 dark:text-green-300">
+          <div className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="text-red-700 dark:text-red-300">
               {projects.filter(p => p.status === 'active').length} Active
             </span>
           </div>
@@ -138,7 +138,7 @@ export const ProjectsManagement: React.FC<ProjectsManagementProps> = ({
         <div className="flex justify-center">
           <button
             onClick={() => setActiveSubTab("create")}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-red-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             <span className="text-lg">🚀</span>
             Create New Project

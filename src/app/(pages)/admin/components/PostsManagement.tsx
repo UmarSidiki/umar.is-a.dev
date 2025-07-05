@@ -71,7 +71,7 @@ export const PostsManagement: React.FC<PostsManagementProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
             Posts Management
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
@@ -81,13 +81,13 @@ export const PostsManagement: React.FC<PostsManagementProps> = ({
         
         {/* Quick Stats */}
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-            <span className="text-blue-700 dark:text-blue-300">{posts.length} Posts</span>
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+            <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
+            <span className="text-amber-700 dark:text-amber-300">{posts.length} Posts</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-            <span className="text-purple-700 dark:text-purple-300">{comments.length} Comments</span>
+          <div className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="text-red-700 dark:text-red-300">{comments.length} Comments</span>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export const PostsManagement: React.FC<PostsManagementProps> = ({
               onClick={() => setActiveSubTab(tab.id)}
               className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeSubTab === tab.id
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  ? 'border-amber-500 text-amber-600 dark:text-amber-400'
                   : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
               }`}
             >
@@ -110,7 +110,7 @@ export const PostsManagement: React.FC<PostsManagementProps> = ({
               {tab.count !== undefined && (
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                   activeSubTab === tab.id
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
                     : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
                 }`}>
                   {tab.count}

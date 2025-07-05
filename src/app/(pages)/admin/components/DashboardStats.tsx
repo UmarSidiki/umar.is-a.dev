@@ -66,9 +66,9 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
       title: "Total Posts",
       value: stats.totalPosts,
       icon: "📝",
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-900/20",
-      textColor: "text-blue-600 dark:text-blue-400",
+      color: "from-amber-500 to-amber-600",
+      bgColor: "bg-amber-50 dark:bg-amber-900/20",
+      textColor: "text-amber-600 dark:text-amber-400",
       change: "+12%",
       isIncrease: true,
     },
@@ -96,9 +96,9 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
       title: "Comments",
       value: stats.totalComments,
       icon: "💬",
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20",
-      textColor: "text-purple-600 dark:text-purple-400",
+      color: "from-red-500 to-red-600",
+      bgColor: "bg-red-50 dark:bg-red-900/20",
+      textColor: "text-red-600 dark:text-red-400",
       change: "+23%",
       isIncrease: true,
     },
@@ -109,10 +109,10 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
             Dashboard Overview
           </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
+          <p className="text-neutral-600 dark:text-neutral-400 mt-1">
             Welcome back! Here&apos;s what&apos;s happening with your content.
           </p>
         </div>
