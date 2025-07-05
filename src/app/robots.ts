@@ -1,43 +1,12 @@
 import { MetadataRoute } from 'next'
+import { getRobotsConfig } from '@/lib/seo'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://umarsiddiqui.dev' // Replace with your actual domain
-
+  const config = getRobotsConfig()
+  
   return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: [
-          '/admin*',
-          '/api/admin*',
-          '/api/auth*',
-          '/_next*',
-          '/private*',
-        ],
-      },
-      {
-        userAgent: 'GPTBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'ChatGPT-User',
-        disallow: '/',
-      },
-      {
-        userAgent: 'CCBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'anthropic-ai',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Claude-Web',
-        disallow: '/',
-      },
-    ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    rules: config.rules,
+    sitemap: config.sitemap,
+    host: config.host,
   }
 }

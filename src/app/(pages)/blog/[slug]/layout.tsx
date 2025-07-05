@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { getDatabase } from "@/lib/mongodb";
+import { generateCompletePageMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -18,56 +19,34 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     });
 
     if (!post) {
-      return {
-        title: 'Post Not Found',
-        description: 'The requested blog post was not found.',
-      };
+      return generateCompletePageMetadata({
+        title: "Post Not Found",
+        description: "The requested blog post could not be found.",
+        noindex: true,
+        url: `/blog/${slug}`,
+      });
     }
 
-    const baseUrl = 'https://umarsiddiqui.dev'; // Replace with your actual domain
-    const postUrl = `${baseUrl}/blog/${slug}`;
-    const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt)}&type=article`;
-
-    return {
+    return generateCompletePageMetadata({
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt || post.description || `Read ${post.title} on the blog`,
       keywords: post.tags || [],
-      authors: [{ name: post.author }],
-      category: post.category,
-      openGraph: {
-        title: post.title,
-        description: post.excerpt,
-        type: "article",
-        url: postUrl,
-        images: [
-          {
-            url: post.featuredImage || ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: post.title,
-          },
-        ],
-        publishedTime: new Date(post.createdAt).toISOString(),
-        modifiedTime: new Date(post.updatedAt).toISOString(),
-        authors: [post.author],
-        tags: post.tags,
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: post.title,
-        description: post.excerpt,
-        images: [post.featuredImage || ogImageUrl],
-      },
-      alternates: {
-        canonical: postUrl,
-      },
-    };
+      url: `/blog/${post.slug}`,
+      type: "article",
+      publishedTime: post.createdAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.author || "Umar Siddiqui"],
+      tags: post.tags,
+      image: post.featuredImage,
+    });
   } catch (error) {
     console.error('Error generating metadata:', error);
-    return {
+    return generateCompletePageMetadata({
       title: 'Blog Post',
       description: 'Read the latest blog post from Umar Siddiqui.',
-    };
+      noindex: true,
+      url: `/blog/${slug}`,
+    });
   }
 }
 

@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header/Header";
 import CustomCursor from "@/components/CustomCursor";
-import { seoConfig } from "@/lib/seo"; // Import SEO config
+import { generateCompletePageMetadata, generateStructuredData, seoConfig } from "@/lib/seo";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,63 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(seoConfig.siteUrl), // Use site URL from config
-  title: {
-    default: seoConfig.defaultTitle,
-    template: `%s | ${seoConfig.siteName}`
-  },
-  description: seoConfig.defaultDescription,
-  keywords: seoConfig.keywords,
-  authors: [{ name: seoConfig.author.name, url: seoConfig.siteUrl }],
-  creator: seoConfig.author.name,
-  publisher: seoConfig.author.name,
-  category: "technology",
-  classification: "Portfolio Website",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: seoConfig.siteUrl,
-    siteName: seoConfig.siteName,
-    title: seoConfig.defaultTitle,
-    description: seoConfig.defaultDescription,
-    images: [
-      {
-        url: seoConfig.ogImage.url,
-        width: seoConfig.ogImage.width,
-        height: seoConfig.ogImage.height,
-        alt: seoConfig.ogImage.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    creator: seoConfig.author.twitter,
-    title: seoConfig.defaultTitle,
-    description: seoConfig.defaultDescription,
-    images: [seoConfig.ogImage.url],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  verification: {
-    google: "your-google-site-verification-code", // Add your Google Search Console verification
-    // yandex: "your-yandex-verification-code",
-    // yahoo: "your-yahoo-verification-code",
-  },
-  alternates: {
-    canonical: seoConfig.siteUrl,
-    languages: {
-      'en-US': seoConfig.siteUrl,
-    },
-  },
+  metadataBase: new URL(seoConfig.siteUrl),
+  ...generateCompletePageMetadata({ pageKey: 'home' }),
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -102,8 +47,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Generate structured data for the website
+  const websiteStructuredData = generateStructuredData("website");
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Website Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(websiteStructuredData, null, 0) 
+          }}
+          suppressHydrationWarning={true}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

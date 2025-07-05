@@ -31,23 +31,39 @@
   }
 }
 
-/* Custom Cursor Styles */
-html, body {
-  cursor: none !important;
+/* Typewriter cursor animations */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }
 
-a, button, input[type="button"], input[type="submit"], 
-.cursor-pointer, [role="button"] {
-  cursor: none !important;
+.animate-blink {
+  animation: blink 1s infinite;
 }
 
-@media (max-width: 768px) {
-  html, body {
-    cursor: auto !important;
-  }
-  
-  a, button, input[type="button"], input[type="submit"], 
-  .cursor-pointer, [role="button"] {
-    cursor: pointer !important;
-  }
+/* Typing cursor animation */
+@keyframes typing-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+.animate-typing-cursor {
+  animation: typing-cursor 0.8s infinite;
+}
+
+/* Smooth typewriter effect */
+.typewriter-text {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Enhanced cursor styles for typewriter */
+.cursor-line {
+  display: inline-block;
+  background-color: currentColor;
+  animation: blink 1.2s infinite;
+}
+
+.cursor-line.typing {
+  animation: typing-cursor 0.6s infinite;
 }

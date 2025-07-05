@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { BaseTemplate } from "@/templates/Home";
 import { generateStructuredData } from "@/lib/seo";
-import { ProjectModal, ProjectsSection, WhatIDo, TechnologyIcons } from "@/components/Home";
+import { ProjectModal, ProjectsSection, WhatIDo, TechnologyIcons, DynamicHeadline } from "@/components/Home";
 import { services, user } from "@/providers/user";
 
 interface Project {
@@ -105,12 +105,7 @@ export default function Home() {
               </div>
             )}
 
-            <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight">
-              {user.homepage.headline.main}
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-600">
-                {user.homepage.headline.highlight}
-              </span>
-            </h1>
+            <DynamicHeadline />
 
             <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
               {user.homepage.tagline}

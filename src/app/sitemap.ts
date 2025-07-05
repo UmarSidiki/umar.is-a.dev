@@ -1,53 +1,45 @@
 import { MetadataRoute } from 'next'
 import { getDatabase } from '@/lib/mongodb'
+import { getSitemapConfig } from '@/lib/seo'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://umarsiddiqui.dev' // Replace with your actual domain
+  const config = getSitemapConfig()
 
-  // Static routes
-  const routes = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.9,
-    },
-  ]
+  // Start with static routes
+  let routes = config.staticRoutes
 
-  // Dynamic blog post routes
+  // Add dynamic routes
   try {
     const db = await getDatabase()
-    const collection = db.collection('blogposts')
     
-    const posts = await collection
-      .find({ status: 'published' })
-      .sort({ createdAt: -1 })
-      .project({ slug: 1, updatedAt: 1, createdAt: 1 })
-      .toArray()
+    // Process each dynamic route type
+    for (const [routeType, routeConfig] of Object.entries(config.dynamicRoutes)) {
+      try {
+        const collection = db.collection(routeConfig.collection)
+        
+        const items = await collection
+          .find(routeConfig.filter)
+          .sort(routeConfig.sort)
+          .project(routeConfig.fields)
+          .toArray()
 
-    const blogRoutes = posts.map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt || post.createdAt),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    }))
+        const dynamicRoutes = items.map((item) => ({
+          url: `${config.baseUrl}${routeConfig.pathPrefix}${item.slug}`,
+          lastModified: new Date(item.updatedAt || item.createdAt),
+          changeFrequency: routeConfig.changeFrequency,
+          priority: routeConfig.priority,
+        }))
 
-    return [...routes, ...blogRoutes]
+        routes = [...routes, ...dynamicRoutes]
+      } catch (routeError) {
+        console.error(`Error generating ${routeType} routes for sitemap:`, routeError)
+      }
+    }
+
+    return routes
   } catch (error) {
     console.error('Error generating sitemap:', error)
     // Return static routes if database is unavailable
-    return routes
+    return config.staticRoutes
   }
 }
