@@ -24,13 +24,13 @@ export async function GET(
       );
     }
 
-    // Enhanced caching for individual blog posts
+    // No caching for better SEO and fresh content
     return NextResponse.json({
       success: true,
       data: post
     }, { 
       headers: { 
-        'Cache-Control': 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'no-store, must-revalidate',
         'Vary': 'Accept-Encoding'
       } 
     });

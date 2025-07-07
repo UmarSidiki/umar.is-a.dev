@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import Link from "next/link";
@@ -77,7 +78,7 @@ const components: Components = {
   // Lists with proper styling
   ul: ({ children, ...props }) => (
     <ul
-      className="list-disc list-inside space-y-2 mb-6 pl-4 text-neutral-700 dark:text-neutral-300"
+      className="list-disc space-y-2 mb-6 pl-6 text-neutral-700 dark:text-neutral-300 [&>li]:pl-2"
       {...props}
     >
       {children}
@@ -85,7 +86,7 @@ const components: Components = {
   ),
   ol: ({ children, ...props }) => (
     <ol
-      className="list-decimal list-inside space-y-2 mb-6 pl-4 text-neutral-700 dark:text-neutral-300"
+      className="list-decimal space-y-2 mb-6 pl-6 text-neutral-700 dark:text-neutral-300 [&>li]:pl-2"
       {...props}
     >
       {children}
@@ -120,12 +121,21 @@ const components: Components = {
 
   // Code blocks with syntax highlighting
   pre: ({ children, ...props }) => (
-    <pre
-      className="bg-neutral-100 dark:bg-neutral-800 p-6 rounded-xl overflow-x-auto my-8 border border-neutral-200 dark:border-neutral-700"
-      {...props}
-    >
-      {children}
-    </pre>
+    <div className="relative my-8">
+      <pre
+        className="bg-neutral-900 dark:bg-neutral-950 text-neutral-100 p-6 rounded-xl overflow-x-auto border border-neutral-700 dark:border-neutral-800 shadow-lg"
+        {...props}
+      >
+        {children}
+      </pre>
+      <div className="absolute top-3 right-3">
+        <div className="flex space-x-1">
+          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+        </div>
+      </div>
+    </div>
   ),
 
   // Inline code
@@ -311,7 +321,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   return (
     <div className={`prose prose-lg max-w-none ${className}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
         components={components}
       >

@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       total: images.length,
     }, { 
       headers: { 
-        'Cache-Control': 'private, max-age=60, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'no-store, must-revalidate',
         'Vary': 'Authorization, Accept-Encoding'
       }
     });

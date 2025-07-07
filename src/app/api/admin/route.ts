@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(
       { message: 'Admin API endpoint', success: true },
-      { headers: { 'Cache-Control': 'private, max-age=60', 'Vary': 'Authorization' } }
+      { headers: { 'Cache-Control': 'no-store, must-revalidate', 'Vary': 'Authorization' } }
     );
   } catch (error) {
     console.error('Admin API error:', error);

@@ -15,10 +15,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const admin = searchParams.get('admin') === 'true';
     
-    // Set cache headers based on request type
-    const headers = admin ? 
-      { 'Cache-Control': 'no-store, must-revalidate' } : 
-      { 'Cache-Control': 'public, max-age=120, s-maxage=300, stale-while-revalidate=604800' };
+    // Set cache headers - no caching for better SEO
+    const headers = { 'Cache-Control': 'no-store, must-revalidate' };
 
     const db = await getDatabase();
     const collection = db.collection('projects');
