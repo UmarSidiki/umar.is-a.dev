@@ -14,13 +14,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const page = parseInt(searchParams.get('page') || '1');
     
-    // Determine if request is for admin (either explicitly or by status parameter)
-    const isAdminRequest = searchParams.has('admin') || status === 'draft' || status === 'pending';
-    
-    // Improved cache headers
-    const headers = isAdminRequest ?
-      { 'Cache-Control': 'no-store, must-revalidate' } :
-      { 'Cache-Control': 'public, max-age=180, s-maxage=600, stale-while-revalidate=86400' };
+    // No cache headers for blog listing page
+    const headers = { 'Cache-Control': 'no-store, must-revalidate' };
 
     const db = await getDatabase();
     const collection = db.collection<BlogPost>('blogposts');
