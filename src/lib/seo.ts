@@ -1,7 +1,7 @@
 // Centralized SEO Configuration - Manage everything from here
 export const seoConfig = {
   // Basic site information
-  siteName: "Umar Siddiqui - Full-Stack Developer",
+  siteName: "Umar Siddiqui",
   siteUrl: "https://umar.is-a.dev", // Your actual domain
   defaultTitle: "Umar Siddiqui - Full-Stack Developer",
   defaultDescription: "Unlock your project's potential with Umar Siddiqui, a full-stack web and mobile app developer. Specializing in React, Next.js, and TypeScript, I deliver high-performance, innovative digital solutions.",
@@ -120,25 +120,25 @@ export const seoConfig = {
       noindex: false,
     },
     contact: {
-      title: "Contact Umar Siddiqui | Full-Stack Web & Mobile App Developer",
+      title: "Contact",
       description: "Ready to start your next project? Contact Umar Siddiqui for expert web development, mobile app solutions, technical consulting, or collaboration. Let's build innovative digital experiences together.",
       keywords: ["Contact Umar Siddiqui", "Hire Web Developer", "Mobile App Development Services", "Technical Consulting", "Custom Software Development", "Freelance Full-Stack Developer", "Web Development Projects", "Collaboration Opportunities"],
       noindex: false,
     },
     projects: {
-      title: "Projects Portfolio | Umar Siddiqui - Full-Stack Development Showcase",
+      title: "Projects Portfolio",
       description: "Explore my comprehensive portfolio of web and mobile applications. View real-world projects built with React, Next.js, TypeScript, Laravel, and Flutter showcasing modern development practices and innovative solutions.",
       keywords: ["Portfolio Projects", "Web Development Portfolio", "React Projects", "Next.js Applications", "Mobile App Development", "Full-Stack Projects", "TypeScript Projects", "Laravel Applications", "Flutter Apps", "Umar Siddiqui Work", "Development Showcase"],
       noindex: false,
     },
     blog: {
-      title: "Umar Siddiqui's Blog | Web & Mobile App Development Insights",
+      title: "Umar Siddiqui's Blog",
       description: "Explore the latest articles and insights on modern web development, React, Next.js, TypeScript, and mobile app development from Umar Siddiqui. Stay updated with cutting-edge programming trends.",
       keywords: ["Web Development Blog", "Mobile App Development Blog", "React Tutorials", "Next.js Best Practices", "TypeScript Guides", "Programming Insights", "Software Development Articles", "Umar Siddiqui Blog"],
       noindex: false,
     },
     admin: {
-      title: "Admin Dashboard | Umar Siddiqui Portfolio Management",
+      title: "Admin Dashboard",
       description: "Secure administrative interface for managing content, projects, and user data for Umar Siddiqui's professional portfolio.",
       keywords: ["Admin Panel", "Dashboard Access", "Content Management System", "Portfolio Administration"],
       noindex: true, // Crucial: Do not index admin pages for security and SEO best practices
