@@ -6,6 +6,10 @@ import Image from "next/image";
 import { BlogPost } from "@/types/blog";
 import { BlogTemplate } from "@/templates/Blog";
 
+interface BlogClientProps {
+  initialPosts: BlogPost[];
+}
+
 interface FilterState {
   search: string;
   category: string;
@@ -60,9 +64,9 @@ const PostSkeleton = () => (
   </div>
 );
 
-const BlogClient = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+const BlogClient = ({ initialPosts }: BlogClientProps) => {
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts || []);
+  const [loading, setLoading] = useState(initialPosts.length === 0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchDebounce, setSearchDebounce] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -87,8 +91,11 @@ const BlogClient = () => {
   }, [filters.search]);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    // Only fetch posts if we don't have any initial posts
+    if (initialPosts.length === 0) {
+      fetchPosts();
+    }
+  }, [initialPosts]);
 
   const fetchPosts = async () => {
     try {
@@ -494,6 +501,8 @@ const BlogClient = () => {
                           alt={post.title}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          priority={index < 6} // Prioritize loading first 6 visible images
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-all duration-300"></div>
                         <div className="absolute top-3 md:top-4 left-3 md:left-4">
