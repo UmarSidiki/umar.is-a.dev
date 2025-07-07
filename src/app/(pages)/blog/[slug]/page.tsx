@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import CommentSection from "@/components/CommentSection";
 import { generateStructuredData, seoConfig } from "@/lib/seo";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 // This page is a client component, so metadata must be generated dynamically or passed from a server component.
 // For dynamic metadata based on fetched data, we'll use a client-side approach for now,
@@ -270,11 +271,8 @@ const BlogPostPage = () => {
         )}
 
         {/* Enhanced Post Content */}
-        <article className="prose prose-lg prose-neutral dark:prose-invert max-w-none" role="main" aria-label="Blog post content">
-          <div 
-            className="leading-relaxed text-neutral-700 dark:text-neutral-300 [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:text-neutral-900 [&>h1]:dark:text-white [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-5 [&>h2]:text-neutral-900 [&>h2]:dark:text-white [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-4 [&>h3]:text-neutral-900 [&>h3]:dark:text-white [&>p]:mb-6 [&>p]:leading-relaxed [&>blockquote]:border-l-4 [&>blockquote]:border-amber-500 [&>blockquote]:pl-6 [&>blockquote]:py-4 [&>blockquote]:bg-amber-50/50 [&>blockquote]:dark:bg-amber-900/10 [&>blockquote]:rounded-r-lg [&>blockquote]:my-8 [&>ul]:mb-6 [&>ol]:mb-6 [&>li]:mb-2 [&>pre]:bg-neutral-100 [&>pre]:dark:bg-neutral-800 [&>pre]:p-6 [&>pre]:rounded-xl [&>pre]:overflow-x-auto [&>pre]:my-8 [&>code]:bg-neutral-100 [&>code]:dark:bg-neutral-800 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>a]:text-amber-600 [&>a]:dark:text-amber-400 [&>a]:font-medium [&>a]:no-underline [&>a:hover]:underline [&>a]:transition-colors [&>a]:duration-200"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+        <article className="max-w-none" role="main" aria-label="Blog post content">
+          <MarkdownRenderer content={post.content} />
         </article>
 
         {/* Enhanced Post Footer */}

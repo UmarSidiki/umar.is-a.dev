@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { BlogPostFormData, BlogPost } from "@/types/blog";
 import { categories } from "../utils/helpers";
 import ImageUpload from "@/components/ImageUpload";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 interface CreatePostFormProps {
   formData: BlogPostFormData;
@@ -185,10 +186,10 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           </div>
           
           {showPreview ? (
-            <div className="border border-border border-t-0 rounded-b-md bg-card/50 p-3 min-h-[200px] text-sm text-foreground prose prose-sm max-w-none">
+            <div className="border border-border border-t-0 rounded-b-md bg-card/50 p-3 min-h-[200px] text-sm text-foreground">
               <div className="text-xs text-muted-foreground mb-2 border-b border-border/30 pb-1">Preview:</div>
               {formData.content ? (
-                <div className="whitespace-pre-wrap">{formData.content}</div>
+                <MarkdownRenderer content={formData.content} className="text-sm" />
               ) : (
                 <div className="text-muted-foreground italic">Start typing to see preview...</div>
               )}

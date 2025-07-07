@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import 'highlight.js/styles/github-dark.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -231,4 +232,367 @@ select:focus-visible {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: theme('colors.amber.500');
+}
+
+/* Syntax highlighting styles for code blocks */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Light theme code highlighting */
+.hljs-comment,
+.hljs-quote {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #dc2626;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #16a34a;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #ca8a04;
+  font-weight: 600;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #059669;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #0891b2;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #7c3aed;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #db2777;
+}
+
+.hljs-meta {
+  color: #6b7280;
+}
+
+/* Dark theme code highlighting */
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-subst {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.dark .hljs-number,
+.dark .hljs-literal,
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-tag .hljs-attr {
+  color: #f87171;
+}
+
+.dark .hljs-string,
+.dark .hljs-doctag {
+  color: #34d399;
+}
+
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-selector-id {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.dark .hljs-subst {
+  font-weight: normal;
+}
+
+.dark .hljs-type,
+.dark .hljs-class .hljs-title {
+  color: #facc15;
+  font-weight: 600;
+}
+
+.dark .hljs-tag,
+.dark .hljs-name,
+.dark .hljs-attribute {
+  color: #10b981;
+  font-weight: normal;
+}
+
+.dark .hljs-regexp,
+.dark .hljs-link {
+  color: #06b6d4;
+}
+
+.dark .hljs-symbol,
+.dark .hljs-bullet {
+  color: #a78bfa;
+}
+
+.dark .hljs-built_in,
+.dark .hljs-builtin-name {
+  color: #f472b6;
+}
+
+.dark .hljs-meta {
+  color: #9ca3af;
+}
+
+/* Enhanced Markdown Styling */
+.prose {
+  color: rgb(55 65 81);
+  max-width: none;
+}
+
+.dark .prose {
+  color: rgb(209 213 219);
+}
+
+/* Improved code block styling */
+.prose pre {
+  background-color: rgb(30 41 59) !important;
+  border: 1px solid rgb(51 65 85);
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  position: relative;
+}
+
+.prose code {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+/* Table enhancements */
+.prose table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.prose th {
+  background-color: rgb(249 250 251);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+.dark .prose th {
+  background-color: rgb(55 65 81);
+  color: rgb(243 244 246);
+  border-bottom-color: rgb(75 85 99);
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+.dark .prose td {
+  border-bottom-color: rgb(75 85 99);
+}
+
+/* Blockquote improvements */
+.prose blockquote {
+  border-left-width: 4px;
+  border-left-color: rgb(245 158 11);
+  background-color: rgb(254 252 232);
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+  position: relative;
+}
+
+.dark .prose blockquote {
+  background-color: rgb(69 26 3);
+  color: rgb(254 215 170);
+}
+
+.prose blockquote::before {
+  content: '"';
+  font-size: 4rem;
+  color: rgb(245 158 11);
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  line-height: 1;
+  opacity: 0.3;
+}
+
+/* Link styling */
+.prose a {
+  color: rgb(245 158 11);
+  text-decoration: underline;
+  text-decoration-color: rgba(245, 158, 11, 0.3);
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+}
+
+.prose a:hover {
+  color: rgb(217 119 6);
+  text-decoration-color: rgb(217 119 6);
+}
+
+.dark .prose a {
+  color: rgb(251 191 36);
+  text-decoration-color: rgba(251, 191, 36, 0.3);
+}
+
+.dark .prose a:hover {
+  color: rgb(245 158 11);
+  text-decoration-color: rgb(245 158 11);
+}
+
+/* List styling */
+.prose ul li::marker {
+  color: rgb(245 158 11);
+}
+
+.prose ol li::marker {
+  color: rgb(245 158 11);
+  font-weight: 600;
+}
+
+/* Heading anchors */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  scroll-margin-top: 2rem;
+  position: relative;
+}
+
+.prose h1:hover::after,
+.prose h2:hover::after,
+.prose h3:hover::after {
+  content: '#';
+  position: absolute;
+  left: -1.5rem;
+  color: rgb(245 158 11);
+  opacity: 0.5;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+/* Image captions */
+.prose img + em {
+  display: block;
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgb(107 114 128);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.dark .prose img + em {
+  color: rgb(156 163 175);
+}
+
+/* HR styling */
+.prose hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgb(245 158 11), transparent);
+  margin: 3rem 0;
+}
+
+/* Inline code improvements */
+.prose :not(pre) > code {
+  background-color: rgb(243 244 246);
+  color: rgb(220 38 127);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-weight: 600;
+  border: 1px solid rgb(229 231 235);
+}
+
+.dark .prose :not(pre) > code {
+  background-color: rgb(55 65 81);
+  color: rgb(251 113 133);
+  border-color: rgb(75 85 99);
+}
+
+/* Task list styling */
+.prose ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.prose ul[data-type="taskList"] li input[type="checkbox"] {
+  margin-top: 0.25rem;
+  accent-color: rgb(245 158 11);
+}
+
+/* Print styles */
+@media print {
+  .prose {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  
+  .prose h1, .prose h2, .prose h3 {
+    page-break-after: avoid;
+  }
+  
+  .prose pre {
+    background-color: rgb(249 250 251) !important;
+    border: 1px solid rgb(209 213 219);
+    color: rgb(17 24 39);
+  }
 }
