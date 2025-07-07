@@ -170,7 +170,7 @@ export const seoConfig = {
 
   // Social media profiles
   social: {
-    twitter: "https://twitter.com/umarsidiki",
+    twitter: "",
     linkedin: "https://linkedin.com/in/umarsidiki",
     github: "https://github.com/UmarSidiki",
     // Add other social profiles as needed
@@ -242,7 +242,19 @@ export const seoConfig = {
   ]
 };
 
-// Helper function to generate page metadata
+// Helper function to normalize URL paths
+function normalizeUrl(baseUrl: string, path?: string): string {
+  if (!path) return baseUrl;
+  
+  // Ensure baseUrl doesn't end with slash and path starts with slash
+  const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  
+  return `${cleanBaseUrl}${cleanPath}`;
+}
+
+// DEPRECATED: Use generateCompletePageMetadata instead
+// This function is kept for backward compatibility but should not be used
 export function generatePageMetadata({
   title,
   description,
@@ -266,52 +278,19 @@ export function generatePageMetadata({
   authors?: string[];
   tags?: string[];
 }) {
-  const pageTitle = title
-    ? `${title} | ${seoConfig.siteName}`
-    : seoConfig.defaultTitle;
-
-  const pageDescription = description || seoConfig.defaultDescription;
-  const pageKeywords = [...seoConfig.keywords, ...keywords];
-  const pageUrl = url ? `${seoConfig.siteUrl}${url}` : seoConfig.siteUrl;
-  const pageImage = image || seoConfig.ogImage.url;
-
-  return {
-    title: pageTitle,
-    description: pageDescription,
-    keywords: pageKeywords,
-    authors: authors ? authors.map(name => ({ name })) : [{ name: seoConfig.author.name }],
-    openGraph: {
-      title: pageTitle,
-      description: pageDescription,
-      type,
-      url: pageUrl,
-      siteName: seoConfig.siteName,
-      images: [
-        {
-          url: pageImage,
-          width: seoConfig.ogImage.width,
-          height: seoConfig.ogImage.height,
-          alt: title || seoConfig.ogImage.alt,
-        },
-      ],
-      ...(type === "article" && {
-        publishedTime,
-        modifiedTime,
-        authors: authors || [seoConfig.author.name],
-        tags,
-      }),
-    },
-    twitter: {
-      card: "summary_large_image",
-      creator: seoConfig.author.twitter,
-      title: pageTitle,
-      description: pageDescription,
-      images: [pageImage],
-    },
-    alternates: {
-      canonical: pageUrl,
-    },
-  };
+  console.warn('generatePageMetadata is deprecated. Use generateCompletePageMetadata instead.');
+  return generateCompletePageMetadata({
+    title,
+    description,
+    keywords,
+    image,
+    url,
+    type,
+    publishedTime,
+    modifiedTime,
+    authors,
+    tags,
+  });
 }
 
 // Enhanced page metadata generator with full SEO support
@@ -359,7 +338,7 @@ export function generateCompletePageMetadata({
     ? finalTitle
     : `${finalTitle} | ${seoConfig.siteName}`;
 
-  const pageUrl = url ? `${seoConfig.siteUrl}${url}` : seoConfig.siteUrl;
+  const pageUrl = normalizeUrl(seoConfig.siteUrl, url);
   const pageImage = image || seoConfig.ogImage.url;
 
   const metadata = {
