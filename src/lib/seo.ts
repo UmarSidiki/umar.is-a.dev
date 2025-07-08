@@ -327,11 +327,24 @@ export function generateCompletePageMetadata({
   // Merge provided data with page config and defaults
   const finalTitle = title || pageConfig?.title || seoConfig.defaultTitle;
   const finalDescription = description || pageConfig?.description || seoConfig.defaultDescription;
-  const finalKeywords = [
-    ...seoConfig.keywords,
-    ...(pageConfig?.keywords || []),
-    ...keywords
-  ];
+  
+  // For articles with specific keywords (like blog posts with tags), prioritize those over defaults
+  let finalKeywords: string[];
+  if (keywords && keywords.length > 0) {
+    // If specific keywords are provided (like blog post tags), use them as primary keywords
+    finalKeywords = [
+      ...keywords, // Post-specific keywords (tags) come first
+      ...(pageConfig?.keywords || []), // Page-specific keywords second
+      // Only include a few most relevant default keywords to avoid keyword stuffing
+      ...seoConfig.keywords.slice(0, 3)
+    ];
+  } else {
+    // If no specific keywords, use the full default set
+    finalKeywords = [
+      ...seoConfig.keywords,
+      ...(pageConfig?.keywords || [])
+    ];
+  }
   const shouldNoIndex = noindex ?? pageConfig?.noindex ?? false;
 
   const pageTitle = finalTitle.includes(seoConfig.siteName)

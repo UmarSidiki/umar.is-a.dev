@@ -97,23 +97,6 @@ const BlogPostClient = ({ post, slug }: BlogPostClientProps) => {
               </div>
             )}
           </div>
-
-          {/* Enhanced Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 sm:gap-3 mb-8 sm:mb-10">
-              {post.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center bg-neutral-100/80 dark:bg-neutral-700/50 text-neutral-600 dark:text-neutral-300 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-amber-100 dark:hover:bg-amber-900/30 hover:text-amber-700 dark:hover:text-amber-300 transition-all duration-200 border border-neutral-200/50 dark:border-neutral-600/50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span className="text-amber-500 mr-1" aria-hidden="true">#</span>
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
         </header>
 
         {/* Enhanced Featured Image */}
