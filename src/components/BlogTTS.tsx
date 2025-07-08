@@ -67,15 +67,31 @@ const BlogTTS: React.FC<BlogTTSProps> = ({ content, title, excerpt, className = 
     return minutes === 1 ? '1 minute' : `${minutes} minutes`;
   }, [readingSpeed]);
 
-  // Find best voice (prioritize Sonia and other high-quality voices)
+  // Filter out online voices and improve mobile voice selection
+  const isOnlineVoice = (voice: SpeechSynthesisVoice) => {
+    // Online voices often have 'Google', 'Cloud', 'Online', 'Network', 'Microsoft Server', 'Remote', or 'Wavenet' in their name
+    const name = voice.name.toLowerCase();
+    return (
+      name.includes('google') ||
+      name.includes('cloud') ||
+      name.includes('online') ||
+      name.includes('network') ||
+      name.includes('server') ||
+      name.includes('remote') ||
+      name.includes('wavenet')
+    );
+  };
+
+  // Find best voice (prioritize local, high-quality voices, and improve mobile fallback)
   const findBestVoice = useCallback(() => {
     if (!voices.length) return null;
-    
-    // Look for high-quality English voices
-    const englishVoices = voices.filter(voice => 
-      voice.lang.startsWith('en') && 
-      !voice.name.toLowerCase().includes('google') &&
-      !voice.name.toLowerCase().includes('android')
+
+    // Only local English voices
+    const englishVoices = voices.filter(
+      (voice) =>
+        voice.lang.startsWith('en') &&
+        !isOnlineVoice(voice) &&
+        !voice.name.toLowerCase().includes('android')
     );
 
     // Priority order for better voices (Sonia first!)
@@ -85,14 +101,25 @@ const BlogTTS: React.FC<BlogTTSProps> = ({ content, title, excerpt, className = 
     ];
 
     for (const preferred of preferredVoices) {
-      const voice = englishVoices.find(v => 
+      const voice = englishVoices.find((v) =>
         v.name.toLowerCase().includes(preferred.toLowerCase())
       );
       if (voice) return voice;
     }
 
-    // Fallback to first high-quality voice
-    return englishVoices[0] || voices[0];
+    // On mobile, fallback to the first available local English voice
+    if (englishVoices.length > 0) {
+      return englishVoices[0];
+    }
+
+    // If no local English voice, fallback to any local voice
+    const localVoices = voices.filter((v) => !isOnlineVoice(v));
+    if (localVoices.length > 0) {
+      return localVoices[0];
+    }
+
+    // As a last resort, return any voice
+    return voices[0];
   }, [voices]);
 
   useEffect(() => {
@@ -281,17 +308,25 @@ const BlogTTS: React.FC<BlogTTSProps> = ({ content, title, excerpt, className = 
                   }}
                   className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-xs"
                 >
-                  {voices.filter(v => v.lang.startsWith('en')).map((voice, index) => {
-                    // Extract country code from language (e.g., 'en-US' -> 'US', 'en-GB' -> 'GB')
-                    const langParts = voice.lang.split('-');
-                    const countryCode = langParts.length > 1 ? langParts[1].toUpperCase() : 'EN';
-                    
-                    return (
-                      <option key={index} value={voice.name}>
-                        {voice.name} ({countryCode})
-                      </option>
-                    );
-                  })}
+                  {/* Only show local English voices, fallback to local voices if none */}
+                  {(() => {
+                    let filtered = voices.filter(v => v.lang.startsWith('en') && !isOnlineVoice(v));
+                    if (filtered.length === 0) {
+                      filtered = voices.filter(v => !isOnlineVoice(v));
+                    }
+                    if (filtered.length === 0) {
+                      filtered = voices;
+                    }
+                    return filtered.map((voice, index) => {
+                      const langParts = voice.lang.split('-');
+                      const countryCode = langParts.length > 1 ? langParts[1].toUpperCase() : 'EN';
+                      return (
+                        <option key={index} value={voice.name}>
+                          {voice.name} ({countryCode})
+                        </option>
+                      );
+                    });
+                  })()}
                 </select>
               </div>
 
