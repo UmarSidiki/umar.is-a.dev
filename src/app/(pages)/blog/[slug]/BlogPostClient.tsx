@@ -129,11 +129,6 @@ const BlogPostClient = ({ post, slug }: BlogPostClientProps) => {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-xl p-4 border border-white/20 dark:border-neutral-700/20">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">Featured Image</p>
-                </div>
-              </div>
             </div>
           </div>
         )}

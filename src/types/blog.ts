@@ -30,6 +30,7 @@ export interface BlogPostFormData {
   status: 'draft' | 'published';
   featuredImage?: string;
   commentsEnabled?: boolean;
+  slug?: string; // Optional custom URL/slug
 }
 
 export interface Comment {

@@ -105,10 +105,10 @@ export async function POST(request: NextRequest) {
     const collection = db.collection<BlogPost>('blogposts');
     console.log('Database connection successful');
 
-    // Generate slug and check for duplicates
-    let slug = generateSlug(body.title);
+    // Support custom slug (url) from admin
+    let slug = body.slug && body.slug.trim() ? body.slug.trim() : generateSlug(body.title);
     console.log('Generated slug:', slug);
-    
+    // Check for duplicates
     const existingPost = await collection.findOne({ slug });
     if (existingPost) {
       slug = `${slug}-${Date.now()}`;
@@ -204,10 +204,11 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Generate new slug if title changed
+    // Keep slug unchanged unless explicitly set by admin
     let slug = existingPost.slug;
-    if (updateData.title !== existingPost.title) {
-      slug = generateSlug(updateData.title);
+    if (typeof updateData.slug === 'string' && updateData.slug.trim() && updateData.slug !== existingPost.slug) {
+      slug = updateData.slug.trim();
+      // Check for duplicate slug
       const duplicatePost = await collection.findOne({ 
         slug, 
         _id: { $ne: new ObjectId(id) } 

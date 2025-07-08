@@ -150,6 +150,22 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           />
         </div>
 
+        {/* Custom URL/Slug */}
+        <div>
+          <label className="block text-xs font-medium text-foreground mb-1.5">
+            Custom URL (optional)
+          </label>
+          <input
+            type="text"
+            name="slug"
+            value={formData.slug || ''}
+            onChange={onInputChange}
+            className="w-full px-3 py-2 bg-card/50 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200 text-sm text-foreground placeholder-muted-foreground"
+            placeholder="e.g. my-custom-url (leave blank to auto-generate)"
+            pattern="^[a-z0-9-]+$"
+            title="Only lowercase letters, numbers, and hyphens allowed"
+          />
+        </div>
         {/* Content with Rich Text Editor */}
         <div>
           <label className="block text-xs font-medium text-foreground mb-1.5">

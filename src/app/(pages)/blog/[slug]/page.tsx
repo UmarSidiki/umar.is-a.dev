@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return generateCompletePageMetadata({
       title: post.title,
       description: post.excerpt,
-      keywords: post.tags || [],
+      keywords: post.tags && post.tags.length > 0 ? post.tags : [], // Use tags as keywords for SEO
       image: post.featuredImage || `/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.excerpt)}&type=article`,
       url: `/blog/${slug}`,
       type: "article",
