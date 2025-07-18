@@ -11,6 +11,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 import "@/styles/app.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -79,6 +80,7 @@ export default function RootLayout({
             
             <Header />
               {children}
+              <Analytics />
             <CustomCursor />
           </AuthProvider>
         </ThemeProvider>
