@@ -1,11 +1,14 @@
 import { Metadata } from "next";
-import { generateCompletePageMetadata, generateStructuredData } from "@/lib/seo";
+import {
+  generateCompletePageMetadata,
+  generateStructuredData,
+} from "@/lib/seo";
 import ContactClient from "./ContactClient";
 import { unstable_ViewTransition as VT } from "react";
 
-export const metadata: Metadata = generateCompletePageMetadata({ 
-  pageKey: 'contact',
-  url: '/contact'
+export const metadata: Metadata = generateCompletePageMetadata({
+  pageKey: "contact",
+  url: "/contact",
 });
 
 export default function ContactPage() {
@@ -17,15 +20,15 @@ export default function ContactPage() {
       {/* JSON-LD Structured Data for Contact */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ 
-          __html: JSON.stringify(structuredData, null, 0) 
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData, null, 0),
         }}
         suppressHydrationWarning={true}
       />
-      <VT enter={"slide-in"} exit={"slide-out"}>
 
-      <ContactClient />
-      </ VT>
+      <VT enter={"fade-in"} exit={"fade-out"}>
+        <ContactClient />
+      </VT>
     </>
   );
 }
