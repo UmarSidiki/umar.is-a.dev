@@ -660,7 +660,7 @@ select:focus-visible {
   margin-right: 0.25rem;
 }
 
-@keframes slide-in {
+@keyframes slide-in {
   from {
     transform: translateX(100%);
     opacity: 0;
