@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateCompletePageMetadata, generateStructuredData } from "@/lib/seo";
 import ContactClient from "./ContactClient";
+import { unstable_ViewTransition as VT } from "react";
 
 export const metadata: Metadata = generateCompletePageMetadata({ 
   pageKey: 'contact',
@@ -21,7 +22,10 @@ export default function ContactPage() {
         }}
         suppressHydrationWarning={true}
       />
+      <VT enter={"slide-in"} exit={"slide-out"}>
+
       <ContactClient />
+      </ VT>
     </>
   );
 }

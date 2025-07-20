@@ -682,9 +682,9 @@ select:focus-visible {
   }
 }
 
-::view-transition-old(.slide-in) {
+::view-transition-new(.slide-in) {
   animation: slide-out 0.5s ease-in-out;
 }
-::view-transition-new(.slide-in) {
+::view-transition-old(.slide-out) {
   animation: slide-in 0.5s ease-in-out;
 }
