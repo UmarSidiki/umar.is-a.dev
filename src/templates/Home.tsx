@@ -1,8 +1,9 @@
 import { Sidebar } from "@/components/Sidebar/Sidebar";
+import { unstable_ViewTransition as VT } from "react";
 
 export const BaseTemplate = (props: { children: React.ReactNode }) => {
   return (
-    <>
+    <VT enter={"slide-in"} exit={"slide-out"}>
       <main className="relative min-h-screen z-10 pt-24">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -18,6 +19,6 @@ export const BaseTemplate = (props: { children: React.ReactNode }) => {
           </div>
         </div>
       </main>
-    </>
+    </VT>
   );
 };
