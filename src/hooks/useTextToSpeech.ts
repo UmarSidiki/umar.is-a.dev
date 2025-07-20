@@ -20,12 +20,14 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
   const voicesLoadedRef = useRef(false);
   const isMobileRef = useRef(false);
   const isIOSRef = useRef(false);
+  const isAndroidRef = useRef(false);
   const userInteractedRef = useRef(false);
   const voiceLoadAttemptsRef = useRef(0);
+  const speechSynthRef = useRef<SpeechSynthesis | null>(null);
 
   const { rate = 1, pitch = 1, volume = 1, voice = null } = options;
 
-  // Detect mobile devices and iOS
+  // Detect mobile devices and platforms
   useEffect(() => {
     const userAgent = navigator.userAgent;
     isMobileRef.current =
@@ -33,6 +35,12 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
         userAgent
       );
     isIOSRef.current = /iPad|iPhone|iPod/.test(userAgent);
+    isAndroidRef.current = /Android/i.test(userAgent);
+
+    // Store speechSynthesis reference
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      speechSynthRef.current = window.speechSynthesis;
+    }
   }, []);
 
   // Track user interaction for mobile
@@ -57,26 +65,39 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
 
   // Load voices with mobile-specific handling
   const loadVoices = useCallback(() => {
-    if (voicesLoadedRef.current && voices.length > 0) return;
+    if (!speechSynthRef.current) return;
 
-    const availableVoices = window.speechSynthesis.getVoices();
+    const availableVoices = speechSynthRef.current.getVoices();
 
-    // iOS Safari often returns empty array initially, keep trying
-    if (availableVoices.length === 0 && voiceLoadAttemptsRef.current < 10) {
+    // Mobile browsers often return empty array initially, keep trying
+    if (availableVoices.length === 0 && voiceLoadAttemptsRef.current < 15) {
       voiceLoadAttemptsRef.current++;
-      setTimeout(loadVoices, isIOSRef.current ? 200 : 100);
+      const delay = isAndroidRef.current ? 300 : isIOSRef.current ? 200 : 100;
+      setTimeout(loadVoices, delay);
       return;
     }
 
     if (availableVoices.length > 0) {
+      console.log(
+        "Available voices:",
+        availableVoices.map((v) => ({
+          name: v.name,
+          lang: v.lang,
+          local: v.localService,
+        }))
+      );
+
       let workingVoices = availableVoices;
 
-      // iOS-specific voice filtering
-      if (isIOSRef.current) {
-        // iOS Safari works better with all voices, don't filter by localService
+      // Platform-specific voice filtering
+      if (isAndroidRef.current) {
+        // Android Chrome: Use all voices, don't filter by localService as it's unreliable
+        workingVoices = availableVoices;
+      } else if (isIOSRef.current) {
+        // iOS Safari: Use all voices
         workingVoices = availableVoices;
       } else if (isMobileRef.current) {
-        // Android: prefer local voices but fallback to all if none found
+        // Other mobile: prefer local voices but fallback to all
         const localVoices = availableVoices.filter(
           (voice) => voice.localService
         );
@@ -90,7 +111,18 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
       if (!selectedVoice && !voice && workingVoices.length > 0) {
         let defaultVoice;
 
-        if (isIOSRef.current) {
+        if (isAndroidRef.current) {
+          // Android: Find Google US English or any English voice
+          defaultVoice =
+            workingVoices.find(
+              (v) =>
+                v.name.toLowerCase().includes("google") &&
+                v.lang.startsWith("en-US")
+            ) ||
+            workingVoices.find((v) => v.lang.startsWith("en-US")) ||
+            workingVoices.find((v) => v.lang.startsWith("en")) ||
+            workingVoices[0];
+        } else if (isIOSRef.current) {
           // iOS: Find Samantha or any English voice
           defaultVoice =
             workingVoices.find((v) => v.name.includes("Samantha")) ||
@@ -98,7 +130,7 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
             workingVoices.find((v) => v.lang.startsWith("en")) ||
             workingVoices[0];
         } else {
-          // Other platforms: prefer local English voices
+          // Desktop/Other: prefer local English voices
           defaultVoice =
             workingVoices.find(
               (v) => v.lang.startsWith("en") && v.localService
@@ -107,10 +139,17 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
             workingVoices[0];
         }
 
-        if (defaultVoice) setSelectedVoice(defaultVoice);
+        if (defaultVoice) {
+          console.log(
+            "Selected default voice:",
+            defaultVoice.name,
+            defaultVoice.lang
+          );
+          setSelectedVoice(defaultVoice);
+        }
       }
     }
-  }, [selectedVoice, voice, voices.length]);
+  }, [selectedVoice, voice]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -195,7 +234,10 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
       customVoice?: SpeechSynthesisVoice | null,
       customRate?: number
     ) => {
-      if (!isSupported || !text.trim()) return;
+      if (!isSupported || !text.trim() || !speechSynthRef.current) {
+        console.log("TTS not supported or no text provided");
+        return;
+      }
 
       // Mobile requires user interaction
       if (isMobileRef.current && !userInteractedRef.current) {
@@ -203,52 +245,98 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
         return;
       }
 
-      // Cancel any ongoing speech
-      window.speechSynthesis.cancel();
+      console.log("Starting TTS with text:", text.substring(0, 50) + "...");
 
-      // Small delay to ensure cancel is processed
+      // Cancel any ongoing speech - critical for mobile
+      speechSynthRef.current.cancel();
+
+      // Android Chrome needs a longer delay after cancel
+      const cancelDelay = isAndroidRef.current ? 100 : 50;
+
       setTimeout(() => {
+        if (!speechSynthRef.current) return;
+
         const utterance = new SpeechSynthesisUtterance(text);
 
-        // Mobile-optimized settings
-        if (isMobileRef.current) {
-          utterance.rate = Math.min(customRate ?? rate, 1.2); // Limit rate on mobile
+        // Platform-specific settings
+        if (isAndroidRef.current) {
+          // Android Chrome specific settings
+          utterance.rate = Math.min(customRate ?? rate, 1.0); // Android works better with slower rates
+          utterance.pitch = Math.min(pitch, 1.2); // Limit pitch on Android
+          utterance.volume = volume;
+        } else if (isIOSRef.current) {
+          // iOS Safari specific settings
+          utterance.rate = Math.min(customRate ?? rate, 1.2);
           utterance.pitch = pitch;
           utterance.volume = volume;
         } else {
+          // Desktop settings
           utterance.rate = customRate ?? rate;
           utterance.pitch = pitch;
           utterance.volume = volume;
         }
 
-        // Use custom voice, provided voice, or selected voice
+        // Voice selection with fallback
         const voiceToUse = customVoice ?? voice ?? selectedVoice;
         if (voiceToUse) {
           utterance.voice = voiceToUse;
+          console.log("Using voice:", voiceToUse.name, voiceToUse.lang);
+        } else {
+          console.log("No voice selected, using default");
         }
 
+        // Event handlers
         utterance.onstart = () => {
+          console.log("TTS started");
           setIsPlaying(true);
           setIsPaused(false);
         };
 
         utterance.onend = () => {
+          console.log("TTS ended");
           setIsPlaying(false);
           setIsPaused(false);
         };
 
         utterance.onerror = (event) => {
-          console.error("SpeechSynthesis error:", event);
+          console.error("SpeechSynthesis error:", event.error, event);
           setIsPlaying(false);
           setIsPaused(false);
 
-          // Mobile-specific error handling
-          if (isMobileRef.current && event.error === "network") {
-            console.warn("Network error on mobile - try using a local voice");
+          // Mobile-specific error handling and retry
+          if (isMobileRef.current) {
+            if (event.error === "network") {
+              console.warn(
+                "Network error on mobile - trying without voice selection"
+              );
+              // Retry without voice selection
+              setTimeout(() => {
+                const retryUtterance = new SpeechSynthesisUtterance(text);
+                retryUtterance.rate = isAndroidRef.current ? 0.8 : 1.0;
+                retryUtterance.pitch = 1.0;
+                retryUtterance.volume = volume;
+                // Don't set voice for retry
+                speechSynthRef.current?.speak(retryUtterance);
+              }, 500);
+            } else if (
+              event.error === "synthesis-failed" &&
+              isAndroidRef.current
+            ) {
+              console.warn(
+                "Synthesis failed on Android - trying with different settings"
+              );
+              // Retry with minimal settings for Android
+              setTimeout(() => {
+                const retryUtterance = new SpeechSynthesisUtterance(text);
+                retryUtterance.rate = 0.8;
+                retryUtterance.pitch = 1.0;
+                retryUtterance.volume = 1.0;
+                speechSynthRef.current?.speak(retryUtterance);
+              }, 500);
+            }
           }
         };
 
-        // Mobile-specific: Add onpause and onresume handlers
         utterance.onpause = () => {
           setIsPaused(true);
         };
@@ -259,16 +347,31 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
 
         utteranceRef.current = utterance;
 
-        // Mobile workaround: Ensure speechSynthesis is ready
-        if (isMobileRef.current) {
-          // Sometimes mobile needs a small delay
+        // Platform-specific speech initiation
+        if (isAndroidRef.current) {
+          // Android Chrome needs special handling
+          console.log("Starting speech on Android");
+
+          // Ensure speechSynthesis is ready
+          if (speechSynthRef.current.speaking) {
+            speechSynthRef.current.cancel();
+            setTimeout(() => {
+              speechSynthRef.current?.speak(utterance);
+            }, 100);
+          } else {
+            speechSynthRef.current.speak(utterance);
+          }
+        } else if (isIOSRef.current) {
+          // iOS Safari
+          console.log("Starting speech on iOS");
           setTimeout(() => {
-            window.speechSynthesis.speak(utterance);
+            speechSynthRef.current?.speak(utterance);
           }, 50);
         } else {
-          window.speechSynthesis.speak(utterance);
+          // Desktop
+          speechSynthRef.current.speak(utterance);
         }
-      }, 50);
+      }, cancelDelay);
     },
     [isSupported, rate, pitch, volume, voice, selectedVoice]
   );
