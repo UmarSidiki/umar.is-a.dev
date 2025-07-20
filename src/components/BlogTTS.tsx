@@ -81,7 +81,7 @@ const BlogTTS: React.FC<BlogTTSProps> = ({
   );
 
   // Filter out online voices and improve mobile voice selection
-  const isOnlineVoice = (voice: SpeechSynthesisVoice) => {
+  const isOnlineVoice = useCallback((voice: SpeechSynthesisVoice) => {
     // On mobile, be less restrictive with voice filtering
     if (isMobile) {
       const name = voice.name.toLowerCase();
@@ -106,7 +106,7 @@ const BlogTTS: React.FC<BlogTTSProps> = ({
       name.includes("remote") ||
       name.includes("wavenet")
     );
-  };
+  }, [isMobile]);
 
   // Find best voice (prioritize local, high-quality voices, and improve mobile fallback)
   const findBestVoice = useCallback(() => {
@@ -252,11 +252,12 @@ const BlogTTS: React.FC<BlogTTSProps> = ({
   const handlePlay = () => {
     // Initialize TTS on mobile if not already done
     if (isMobile && !userInteracted) {
+      console.log("BlogTTS: Initializing TTS on mobile");
       initializeTTS();
       // Give a moment for initialization, then try again
       setTimeout(() => {
         handlePlay();
-      }, 100);
+      }, 200); // Increased delay for mobile
       return;
     }
 
@@ -265,11 +266,19 @@ const BlogTTS: React.FC<BlogTTSProps> = ({
     } else if (!isPlaying) {
       const fullContent = `${title}. ${excerpt}. ${cleanContent(content)}`;
       console.log("BlogTTS: Starting speech with voice:", selectedVoice?.name);
+      console.log("BlogTTS: Content length:", fullContent.length, "characters");
       speak(fullContent, selectedVoice, readingSpeed);
       setProgress(0);
     } else {
       pause();
     }
+  };
+
+  // Test function for mobile debugging
+  const handleTestTTS = () => {
+    console.log("BlogTTS: Testing TTS with simple text");
+    const testText = "Hello, this is a test of text to speech.";
+    speak(testText, selectedVoice, readingSpeed);
   };
 
   const handleStop = () => {

@@ -406,7 +406,38 @@ export const useTextToSpeech = (options: UseTextToSpeechOptions = {}) => {
   const initializeTTS = useCallback(() => {
     if (isMobileRef.current && !userInteractedRef.current) {
       userInteractedRef.current = true;
-      loadVoices();
+
+      // Force initialization with a dummy utterance on mobile
+      if (speechSynthRef.current) {
+        console.log("Initializing TTS on mobile with dummy utterance");
+
+        // Create a very short, silent utterance to initialize the engine
+        const dummyUtterance = new SpeechSynthesisUtterance(" ");
+        dummyUtterance.volume = 0.01; // Almost silent
+        dummyUtterance.rate = 10; // Very fast
+
+        dummyUtterance.onend = () => {
+          console.log("Mobile TTS initialization complete");
+          // Now load voices after initialization
+          setTimeout(() => {
+            loadVoices();
+          }, 100);
+        };
+
+        dummyUtterance.onerror = (event) => {
+          console.log("Dummy utterance error (expected):", event.error);
+          // Even if dummy fails, try to load voices
+          setTimeout(() => {
+            loadVoices();
+          }, 100);
+        };
+
+        // Speak the dummy utterance to initialize
+        speechSynthRef.current.speak(dummyUtterance);
+      } else {
+        // Fallback to just loading voices
+        loadVoices();
+      }
     }
   }, [loadVoices]);
 
