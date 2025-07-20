@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, unstable_ViewTransition as VT } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BlogPost } from "@/types/blog";
@@ -569,9 +569,12 @@ const BlogClient = ({ initialPosts }: BlogClientProps) => {
                       </div>
 
                       {/* Title with enhanced typography */}
+                      <VT name="Heading">
+
                       <h2 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-white mb-2 md:mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-tight line-clamp-2">
                         {post.title}
                       </h2>
+                      </VT>
 
                       {/* Excerpt with improved readability */}
                       <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4 md:mb-6 flex-grow line-clamp-3">

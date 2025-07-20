@@ -8,6 +8,7 @@ import Link from "next/link";
 import CommentSection from "@/components/CommentSection";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import BlogTTS from "@/components/BlogTTS";
+import { unstable_ViewTransition as VT } from "react";
 
 interface BlogPostClientProps {
   post: BlogPost;
@@ -75,9 +76,12 @@ const BlogPostClient = ({ post, slug }: BlogPostClientProps) => {
           )}
 
           {/* Enhanced Title */}
+          <VT name="Heading">
+
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 dark:from-white dark:via-neutral-100 dark:to-white bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
             {post.title}
           </h1>
+          </VT>
 
           {/* Enhanced Excerpt */}
           <p className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed mb-6 sm:mb-8 font-medium">
