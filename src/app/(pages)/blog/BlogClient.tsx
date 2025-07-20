@@ -577,9 +577,11 @@ const BlogClient = ({ initialPosts }: BlogClientProps) => {
                       </VT>
 
                       {/* Excerpt with improved readability */}
+                      <VT name="excerpt">
                       <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4 md:mb-6 flex-grow line-clamp-3">
                         {post.excerpt}
                       </p>
+                      </VT>
 
                       {/* Enhanced Tags */}
                       {post.tags && post.tags.length > 0 && (

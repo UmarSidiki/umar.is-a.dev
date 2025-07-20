@@ -83,10 +83,12 @@ const BlogPostClient = ({ post, slug }: BlogPostClientProps) => {
           </h1>
           </VT>
 
+          <VT name="excerpt">
           {/* Enhanced Excerpt */}
           <p className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed mb-6 sm:mb-8 font-medium">
             {post.excerpt}
           </p>
+          </VT>
 
           {/* Enhanced Meta Information */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-neutral-500 dark:text-neutral-400 mb-6 sm:mb-8 p-4 sm:p-6 bg-neutral-50/50 dark:bg-neutral-800/30 backdrop-blur-sm border border-neutral-200/50 dark:border-neutral-700/50 rounded-xl sm:rounded-2xl">
