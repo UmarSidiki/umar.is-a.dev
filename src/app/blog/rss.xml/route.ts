@@ -1,7 +1,7 @@
 import { getDatabase } from '@/lib/mongodb'
 
 export async function GET() {
-  const baseUrl = 'https://umarsiddiqui.dev' // Replace with your actual domain
+  const baseUrl = 'https://umarsiddiqui.dev'
 
   try {
     const db = await getDatabase()

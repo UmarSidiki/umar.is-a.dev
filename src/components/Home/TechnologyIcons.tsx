@@ -1,14 +1,17 @@
 "use client";
 
 import React from "react";
-import { 
-  Code, 
-  Server, 
-  BoxSelect, 
-  Database, 
-  FileCode, 
-  Bookmark, 
-  Target
+import {
+  Code,
+  Globe,
+  Cpu,
+  Server,
+  Network,
+  Database,
+  Boxes,
+  Zap,
+  Braces,
+  Smartphone,
 } from "lucide-react";
 
 interface TechnologyProps {
@@ -18,23 +21,26 @@ interface TechnologyProps {
   }[];
 }
 
-// Map icon names to their components
+// Map icon names to Lucide components
 const iconMap = {
-  react: Code,
-  nextjs: Server,
-  nodejs: BoxSelect,
-  expressjs: Database,
-  laravel: FileCode,
-  wordpress: Bookmark,
+  react: Globe,
+  nextjs: Network,
+  reactnative: Smartphone,
+  nodejs: Cpu,
+  expressjs: Server,
+  hono: Boxes,
+  prisma: Braces,
+  mongodb: Database,
   typescript: Code,
-  flutter: Target
+  automation: Zap,
 };
 
 const TechnologyIcons: React.FC<TechnologyProps> = ({ technologies }) => {
-  // Function to get the correct icon based on iconName
   const getIcon = (iconName: string) => {
     const IconComponent = iconMap[iconName as keyof typeof iconMap];
-    return IconComponent ? <IconComponent className="w-6 h-6 text-amber-500 dark:text-amber-400" /> : null;
+    return IconComponent ? (
+      <IconComponent className="w-6 h-6 text-amber-500 dark:text-amber-400" />
+    ) : null;
   };
 
   return (
