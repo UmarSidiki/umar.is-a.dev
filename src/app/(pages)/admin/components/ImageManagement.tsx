@@ -23,7 +23,7 @@ export const ImageManagement = ({}) => {
   const fetchImages = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("admin_token");
+      const token = localStorage.getItem("adminToken");
       const folderParam = selectedFolder === "all" ? "" : selectedFolder;
 
       const response = await fetch(`/api/images?folder=${folderParam}`, {
@@ -51,7 +51,7 @@ export const ImageManagement = ({}) => {
     if (!confirm("Are you sure you want to delete this image?")) return;
 
     try {
-      const token = localStorage.getItem("admin_token");
+      const token = localStorage.getItem("adminToken");
       const response = await fetch(
         `/api/images?key=${encodeURIComponent(key)}`,
         {
