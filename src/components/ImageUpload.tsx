@@ -66,6 +66,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         body: formData,
       });
 
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          throw new Error(data.error || `Upload failed: ${response.status}`);
+        } else {
+          const text = await response.text();
+          console.error('Non-JSON response:', text.substring(0, 200));
+          throw new Error(`Upload failed: ${response.status} - Server returned HTML instead of JSON`);
+        }
+      }
+
       const data = await response.json();
 
       if (data.success) {

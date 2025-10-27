@@ -2,25 +2,40 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 
-// Configure Cloudflare R2 client
-const s3Client = new S3Client({
-  region: 'auto',
-  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || '',
-  },
-});
-
 const BUCKET_NAME = process.env.CLOUDFLARE_R2_BUCKET_NAME || '';
 const PUBLIC_URL = process.env.CLOUDFLARE_R2_PUBLIC_URL || '';
 
+// Function to create S3 client
+function createS3Client() {
+  if (!process.env.CLOUDFLARE_R2_ENDPOINT || !process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || !process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
+    throw new Error('Cloudflare R2 configuration is missing');
+  }
+
+  console.log('Creating S3 client with endpoint:', process.env.CLOUDFLARE_R2_ENDPOINT);
+  return new S3Client({
+    region: 'auto',
+    endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
+    console.log('Upload API called');
     // Check if user is authenticated (you can add your auth logic here)
     const authHeader = request.headers.get('authorization');
+    console.log('Auth header present:', !!authHeader);
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if R2 is configured
+    if (!BUCKET_NAME || !PUBLIC_URL) {
+      console.error('R2 configuration missing');
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
     const formData = await request.formData();
@@ -55,6 +70,8 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     // Upload to Cloudflare R2
+    console.log('Creating S3 client and upload command');
+    const s3Client = createS3Client();
     const uploadCommand = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: fileName,
@@ -66,7 +83,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Sending upload command to R2');
     await s3Client.send(uploadCommand);
+    console.log('Upload successful');
 
     // Return the public URL
     const publicUrl = `${PUBLIC_URL}/${fileName}`;
@@ -82,8 +101,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Upload error:', error);
+    console.error('Error details:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: 'Failed to upload file', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
     );
   }
@@ -105,6 +125,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete from Cloudflare R2
+    const s3Client = createS3Client();
     const deleteCommand = new DeleteObjectCommand({
       Bucket: BUCKET_NAME,
       Key: fileName,
