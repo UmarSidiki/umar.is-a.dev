@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, unstable_ViewTransition as VT } from "react";
+import React, { useState, useEffect, useMemo, ViewTransition as VT } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BlogPost } from "@/types/blog";

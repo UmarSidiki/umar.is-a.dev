@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 interface Project {
   _id: string;
@@ -207,9 +208,9 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
                       {selectedProject.description}
                     </p>
                     {selectedProject.longDescription && (
-                      <p className={`text-neutral-600 dark:text-neutral-400 leading-relaxed break-words mt-3 ${!isDescriptionExpanded ? 'line-clamp-2' : ''}`}>
-                        {selectedProject.longDescription}
-                      </p>
+                      <div className={`text-neutral-600 dark:text-neutral-400 leading-relaxed break-words mt-3 ${!isDescriptionExpanded ? 'line-clamp-2' : ''}`}>
+                        <MarkdownRenderer content={selectedProject.longDescription || ''} />
+                      </div>
                     )}
                   </div>
                   {(selectedProject.description.length > 150 || (selectedProject.longDescription && selectedProject.longDescription.length > 100)) && (

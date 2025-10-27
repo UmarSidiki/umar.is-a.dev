@@ -1,4 +1,4 @@
-import { unstable_ViewTransition as VT } from "react";
+import { ViewTransition as VT } from "react";
 
 export const ProjectsTemplate = (props: { children: React.ReactNode }) => {
   return (

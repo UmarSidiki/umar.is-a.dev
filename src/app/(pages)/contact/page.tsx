@@ -4,7 +4,7 @@ import {
   generateStructuredData,
 } from "@/lib/seo";
 import ContactClient from "./ContactClient";
-import { unstable_ViewTransition as VT } from "react";
+import { ViewTransition as VT } from "react";
 
 export const metadata: Metadata = generateCompletePageMetadata({
   pageKey: "contact",

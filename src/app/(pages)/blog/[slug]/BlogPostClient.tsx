@@ -8,7 +8,7 @@ import Link from "next/link";
 import CommentSection from "@/components/CommentSection";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import BlogTTS from "@/components/BlogTTS";
-import { unstable_ViewTransition as VT } from "react";
+import { ViewTransition as VT } from "react";
 
 interface BlogPostClientProps {
   post: BlogPost;
