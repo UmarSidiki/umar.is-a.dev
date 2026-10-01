@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginFormProps {
@@ -35,8 +36,13 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <div className="flex min-h-screen items-center justify-center px-5 py-24">
       <div className="w-full max-w-sm">
-        <span className="label-mono text-ink-soft">Admin</span>
-        <h1 className="display-lg mt-3 text-foreground">Sign in</h1>
+        <div>
+          <span className="label-mono block text-signal">Admin</span>
+          <span className="block font-display text-lg font-extrabold leading-tight tracking-tight text-foreground">
+            Umar Siddiqui
+          </span>
+        </div>
+        <h1 className="display-lg mt-6 text-foreground">Sign in</h1>
         <p className="mt-4 text-sm text-ink-soft">Access the dashboard to manage content.</p>
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-6" noValidate>
@@ -89,6 +95,13 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
+
+        <Link
+          href="/"
+          className="label-mono mt-10 inline-flex min-h-11 items-center text-ink-soft transition-colors hover:text-foreground"
+        >
+          ← Back to site
+        </Link>
       </div>
     </div>
   );
