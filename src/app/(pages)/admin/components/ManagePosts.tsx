@@ -58,8 +58,8 @@ export function ManagePosts({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 border border-hairline p-4 sm:grid-cols-3">
-        <div>
+      <div className="grid min-w-0 gap-4 border border-hairline p-4 sm:grid-cols-3">
+        <div className="min-w-0">
           <label htmlFor="filter-search" className="label-mono mb-2 block text-ink-soft">
             Search
           </label>
@@ -72,7 +72,7 @@ export function ManagePosts({
             className={controlClass}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label htmlFor="filter-category" className="label-mono mb-2 block text-ink-soft">
             Category
           </label>
@@ -90,7 +90,7 @@ export function ManagePosts({
             ))}
           </select>
         </div>
-        <div>
+        <div className="min-w-0">
           <label htmlFor="filter-status" className="label-mono mb-2 block text-ink-soft">
             Status
           </label>
@@ -178,31 +178,33 @@ export function ManagePosts({
           {/* Mobile cards */}
           <ul className="space-y-4 md:hidden">
             {filteredPosts.map((post) => (
-              <li key={post._id} className="border border-hairline p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-medium">{post.title}</p>
-                    <p className="label-mono mt-1 text-ink-soft">
+              <li key={post._id} className="min-w-0 border border-hairline p-4">
+                <div className="flex min-w-0 items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="min-w-0 break-words font-medium">{post.title}</p>
+                    <p className="label-mono mt-1 break-words text-ink-soft">
                       {post.category} · {post.createdAt}
                     </p>
                   </div>
-                  <StatusBadge status={post.status} />
+                  <span className="shrink-0">
+                    <StatusBadge status={post.status} />
+                  </span>
                 </div>
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex min-w-0 gap-2">
                   <button
                     type="button"
                     onClick={() => onEdit(post._id)}
-                    className="label-mono flex h-11 flex-1 items-center justify-center gap-2 border border-hairline transition-colors hover:border-signal hover:text-signal"
+                    className="label-mono flex h-11 min-w-0 flex-1 items-center justify-center gap-2 border border-hairline transition-colors hover:border-signal hover:text-signal"
                   >
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
+                    <Pencil className="h-4 w-4 shrink-0" aria-hidden="true" />
                     Edit
                   </button>
                   <button
                     type="button"
                     onClick={() => onDelete(post._id)}
-                    className="label-mono flex h-11 flex-1 items-center justify-center gap-2 border border-hairline transition-colors hover:border-destructive hover:text-destructive"
+                    className="label-mono flex h-11 min-w-0 flex-1 items-center justify-center gap-2 border border-hairline transition-colors hover:border-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                    <Trash2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                     Delete
                   </button>
                 </div>

@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { services } from "@/providers/user";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { onPageEnter } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -56,15 +57,23 @@ export default function ServicesTrack() {
           },
         });
 
-        gsap.from(ruleRef.current, {
-          scaleX: 0,
-          transformOrigin: "left center",
-          duration: 0.9,
-          ease: "power2.out",
-          scrollTrigger: { trigger: section, start: "top 75%", once: true },
+        // The rule is already collapsed when it is first painted; it draws in
+        // only once the page is on screen.
+        const rule = ruleRef.current;
+        gsap.set(rule, { scaleX: 0, transformOrigin: "left center" });
+        const offRule = onPageEnter(() => {
+          gsap.to(rule, {
+            scaleX: 1,
+            duration: 0.9,
+            ease: "power2.out",
+            scrollTrigger: { trigger: section, start: "top 75%", once: true },
+          });
         });
 
-        return () => tween.kill();
+        return () => {
+          tween.kill();
+          offRule();
+        };
       });
 
       return () => mm.revert();
@@ -106,6 +115,7 @@ export default function ServicesTrack() {
         <span
           ref={ruleRef}
           aria-hidden="true"
+          data-reveal-rule=""
           className="mt-6 block h-px w-full origin-left bg-signal"
         />
       </div>

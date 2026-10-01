@@ -95,8 +95,10 @@ export default function SiteHeader() {
 
       <header
         className={cn(
+          // Solid once scrolled: a translucent or blurred bar lets the section
+          // heading and the signal button underneath ghost through the chrome.
           "fixed inset-x-0 top-0 z-[100] transition-colors duration-300",
-          scrolled ? "border-b border-hairline bg-background/90 backdrop-blur-sm" : "border-b border-transparent"
+          scrolled ? "border-b border-hairline bg-background" : "border-b border-transparent"
         )}
       >
         <div className="mx-auto flex h-16 max-w-[110rem] items-center justify-between px-5 sm:px-8 lg:h-20 lg:px-12">

@@ -59,7 +59,7 @@ export default function Hero() {
 
         {/* In flow on mobile, between the name and the intro, so it never sits
             behind body copy. From lg it is pulled behind the headline. */}
-        <div className="pointer-events-none relative z-0 mx-auto my-8 aspect-square w-[72%] max-w-[21rem] self-end lg:absolute lg:right-[-6vw] lg:top-[7vh] lg:z-0 lg:my-0 lg:h-[52vh] lg:max-h-[40rem] lg:w-[46vw] lg:max-w-[44rem]">
+        <div className="pointer-events-none relative z-0 mx-auto my-8 aspect-square w-[86%] max-w-[26rem] self-end lg:absolute lg:right-[-7vw] lg:top-[5vh] lg:z-0 lg:my-0 lg:h-[64vh] lg:max-h-[46rem] lg:w-[50vw] lg:max-w-[48rem]">
           <HeroVisual />
         </div>
 

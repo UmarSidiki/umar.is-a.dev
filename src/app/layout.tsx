@@ -67,6 +67,15 @@ export default function RootLayout({
       className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
+        {/* Hides GSAP's own reveal targets before the first paint, so nothing is
+            ever painted and then hidden. React drops the class on its first
+            commit; the timeout is the failsafe if hydration never lands. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('reveal-guard');setTimeout(function(){document.documentElement.classList.remove('reveal-guard')},4000);",
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

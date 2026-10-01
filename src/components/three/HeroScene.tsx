@@ -14,12 +14,25 @@ import * as THREE from "three";
    finite-difference tangent basis; that is what keeps the shading crisp
    instead of the cracked, self-shadowed mud a naive displaced normal gives.
 
-   Shading: ink base on a stepped toon ramp, one tight specular streak for
-   the liquid-metal read, a vermilion fresnel rim carrying a low-weight
-   thin-film iridescence, and a pixel dither so the bands never posterise.
-------------------------------------------------------------------- */
+   Framing: the object is sized from the canvas frustum, not from a guess.
+   RADIUS + MAX_DISPLACE is the largest radius the vertex shader can ever
+   produce, and FIT is the share of the canvas' shortest side it is allowed to
+   fill, so the silhouette stays inside the frame with room for the breathe,
+   the pointer parallax and the scroll drift — at any viewport size.
+
+   Shading: ink black on a four-step ramp with a crease/dome contrast term, one
+   tight specular streak, and a vermilion fresnel rim that warms to a single
+   thin-film edge highlight at the outermost edge. No cool hue anywhere, so the
+   body never drifts purple.
+ ------------------------------------------------------------------- */
 
 const RADIUS = 1.12;
+/** (1 + 0.35) * uAmp + uBulgeAmt — the vertex shader's ceiling. */
+const MAX_DISPLACE = 0.2;
+/** Highest the object drifts on scroll, in world units. */
+const MAX_RISE = 0.12;
+/** Share of the canvas' shortest side the silhouette may fill. */
+const FIT = 0.78;
 
 const vertexShader = /* glsl */ `
   uniform float uTime;
@@ -137,23 +150,33 @@ const fragmentShader = /* glsl */ `
 
     float dither = hash21(gl_FragCoord.xy + uTime) - 0.5;
 
-    // Key light, stepped into three bands so the form reads graphically.
-    vec3 L = normalize(vec3(-0.5, 0.72, 0.62));
+    // Key light, stepped into four ink bands so the form reads graphically:
+    // near-black in the shadow, warm grey where the light lands.
+    vec3 L = normalize(vec3(-0.42, 0.78, 0.52));
     float ndl = dot(N, L) * 0.5 + 0.5;
-    float band = floor(clamp(ndl, 0.0, 0.999) * 3.0) / 3.0 + dither * 0.05;
+    float band = floor(clamp(ndl, 0.0, 0.999) * 4.0) / 4.0 + dither * 0.03;
 
-    vec3 col = mix(uInk * 0.62, uInk * 2.6, band);
+    vec3 col = mix(uInk * 0.30, uInk * 5.2, pow(band, 1.45));
+
+    // Bump-versus-crease contrast, so the silhouette has hard interior edges.
+    float crease = smoothstep(-0.05, 0.06, vDisp);
+    col *= mix(0.80, 1.10, crease);
+
+    // A warm bounce off the paper below: keeps the shadow side warm ink
+    // instead of the cool purple a neutral fill tends to drift to.
+    col += vec3(0.055, 0.021, 0.010) * pow(1.0 - ndl, 2.0);
 
     // One tight specular streak: the "liquid" in liquid metal.
-    float spec = pow(max(dot(reflect(-L, N), V), 0.0), 44.0);
-    col += uSignal * spec * 0.6;
+    vec3 H = normalize(L + V);
+    float spec = pow(max(dot(N, H), 0.0), 140.0);
+    col += vec3(1.0, 0.94, 0.88) * spec * 1.9;
 
-    // Rim: vermilion fresnel with a low-weight thin-film hue shift.
-    float fres = pow(1.0 - clamp(dot(N, V), 0.0, 1.0), 2.7);
-    vec3 film = 0.5 + 0.5 * cos(6.28318 * (vec3(0.92, 0.62, 0.42) * fres * 1.15
-                + vec3(0.0, 0.34, 0.62) + uTime * 0.04));
-    vec3 rim = mix(uSignal, film, 0.3);
-    col += rim * fres * 0.95;
+    // Rim: a tight vermilion fresnel, then a single warm thin-film flash at the
+    // outermost edge of the silhouette.
+    float fres = pow(1.0 - clamp(dot(N, V), 0.0, 1.0), 3.4);
+    col += uSignal * fres * 1.35;
+    float edge = smoothstep(0.68, 1.0, fres);
+    col += vec3(1.0, 0.55, 0.22) * edge * (0.55 + 0.12 * sin(uTime * 0.5));
 
     col += dither * (2.0 / 255.0);
 
@@ -221,19 +244,22 @@ function Core({
       0.05;
     group.rotation.z += (scroll * 0.55 - group.rotation.z) * 0.05;
 
+    // Size from the frustum: the full silhouette — radius plus the displacement
+    // ceiling — takes FIT of the canvas' shortest side, leaving margin for the
+    // breathe and the scroll drift.
+    const fit =
+      (Math.min(viewport.width, viewport.height) * FIT) /
+      (2 * (RADIUS + MAX_DISPLACE));
+
     const breathe = 1 + Math.sin(timeRef.current * 0.62) * 0.018;
-    const target =
-      Math.min(viewport.width, viewport.height) *
-      0.42 *
-      breathe *
-      (1 - scroll * 0.28);
+    const target = fit * breathe * (1 - scroll * 0.22);
 
     scaleRef.current =
       scaleRef.current === 0
         ? target
         : scaleRef.current + (target - scaleRef.current) * 0.09;
     group.scale.setScalar(scaleRef.current);
-    group.position.y += (scroll * 0.6 - group.position.y) * 0.06;
+    group.position.y += (scroll * MAX_RISE - group.position.y) * 0.06;
   });
 
   return (
@@ -283,7 +309,7 @@ export default function HeroScene({
         powerPreference: "high-performance",
         stencil: false,
       }}
-      camera={{ position: [0, 0, 4.1], fov: 34 }}
+      camera={{ position: [0, 0, 4.4], fov: 32 }}
       style={{ pointerEvents: "none" }}
     >
       <Core quality={quality} pointerRef={pointerRef} scrollRef={scrollRef} />

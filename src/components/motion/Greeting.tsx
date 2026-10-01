@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { usePageReady } from "@/hooks/usePageReady";
+import { onPageEnter } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP);
 
@@ -31,27 +31,37 @@ const HOLD_MS = 2200;
 export default function Greeting() {
   const ref = useRef<HTMLSpanElement>(null);
   const [index, setIndex] = useState(0);
-  const ready = usePageReady();
   const reduced = prefersReducedMotion();
 
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || reduced || !ready) return;
+      if (!el || reduced) return;
 
-      gsap.fromTo(
-        el,
-        { yPercent: -55, autoAlpha: 0 },
-        { yPercent: 0, autoAlpha: 1, duration: 0.42, ease: "power3.out" }
-      );
+      // Hidden in the layout pass, before the first paint; the rise (and the
+      // rotation timer) only start once the page is actually on screen.
+      gsap.set(el, { yPercent: -55, autoAlpha: 0 });
 
-      const id = window.setTimeout(
-        () => setIndex((i) => (i + 1) % GREETINGS.length),
-        HOLD_MS
-      );
-      return () => window.clearTimeout(id);
+      let rotateId = 0;
+      const off = onPageEnter(() => {
+        gsap.to(el, {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 0.42,
+          ease: "power3.out",
+        });
+        rotateId = window.setTimeout(
+          () => setIndex((i) => (i + 1) % GREETINGS.length),
+          HOLD_MS
+        );
+      });
+
+      return () => {
+        off();
+        window.clearTimeout(rotateId);
+      };
     },
-    { scope: ref, dependencies: [index, ready, reduced] }
+    { scope: ref, dependencies: [index, reduced] }
   );
 
   // Match the visitor's language once the browser is available.
@@ -70,7 +80,11 @@ export default function Greeting() {
         aria-hidden="true"
       >
         <span className="invisible">{GREETINGS[0]}</span>
-        <span ref={ref} className="absolute inset-0 whitespace-nowrap">
+        <span
+          ref={ref}
+          data-reveal=""
+          className="absolute inset-0 whitespace-nowrap"
+        >
           {GREETINGS[index]}
         </span>
       </span>

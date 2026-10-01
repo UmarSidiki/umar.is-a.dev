@@ -7,7 +7,7 @@ import { useGSAP } from "@gsap/react";
 import Marquee from "@/components/motion/Marquee";
 import { user } from "@/providers/user";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { usePageReady } from "@/hooks/usePageReady";
+import { onPageEnter } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -20,27 +20,32 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  */
 export default function TechStack() {
   const listRef = useRef<HTMLOListElement>(null);
-  const ready = usePageReady();
   const names = user.technologies.map((t) => t.name);
 
   useGSAP(
     () => {
       const list = listRef.current;
-      if (!list || !ready || prefersReducedMotion()) return;
+      if (!list || prefersReducedMotion()) return;
 
       const targets = Array.from(
         list.querySelectorAll<HTMLElement>("[data-name]")
       );
+      if (targets.length === 0) return;
 
-      gsap.from(targets, {
-        yPercent: 105,
-        duration: 0.85,
-        ease: "power3.out",
-        stagger: 0.05,
-        scrollTrigger: { trigger: list, start: "top 85%", once: true },
+      gsap.set(targets, { yPercent: 105, autoAlpha: 0 });
+
+      return onPageEnter(() => {
+        gsap.to(targets, {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 0.85,
+          ease: "power3.out",
+          stagger: 0.05,
+          scrollTrigger: { trigger: list, start: "top 85%", once: true },
+        });
       });
     },
-    { scope: listRef, dependencies: [ready] }
+    { scope: listRef }
   );
 
   return (
@@ -69,6 +74,7 @@ export default function TechStack() {
                 <span className="block overflow-hidden">
                   <span
                     data-name
+                    data-reveal=""
                     className="block font-display text-2xl font-bold tracking-tight transition-all duration-300 group-hover:translate-x-1 group-hover:text-signal sm:text-4xl"
                   >
                     {tech.name}

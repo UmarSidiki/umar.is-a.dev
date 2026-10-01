@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { usePageReady } from "@/hooks/usePageReady";
+import { onPageEnter } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -21,8 +21,12 @@ interface RevealProps {
 
 /**
  * Scroll-triggered reveal. Staggers direct children by default so groups of
- * elements cascade instead of fading in as one block. Waits for the page to be
- * visible, and always ends with the content shown.
+ * elements cascade instead of fading in as one block.
+ *
+ * The hidden state is applied in the layout pass, before this component is ever
+ * painted, and the tween is only created once the page is actually on screen —
+ * so a reveal can never run visible → hidden → visible. `data-reveal` lets the
+ * CSS guard hide the same nodes before hydration.
  */
 export default function Reveal({
   children,
@@ -33,31 +37,35 @@ export default function Reveal({
   self = false,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const ready = usePageReady();
 
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || !ready || prefersReducedMotion()) return;
+      if (!el || prefersReducedMotion()) return;
 
       const targets =
         self || el.children.length === 0 ? [el] : Array.from(el.children);
 
-      gsap.from(targets, {
-        y,
-        autoAlpha: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        delay,
-        stagger,
-        scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      if (targets[0] !== el) gsap.set(el, { opacity: 1 });
+      gsap.set(targets, { y, autoAlpha: 0 });
+
+      return onPageEnter(() => {
+        gsap.to(targets, {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          delay,
+          stagger,
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        });
       });
     },
-    { scope: ref, dependencies: [ready] }
+    { scope: ref }
   );
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} data-reveal="" className={className}>
       {children}
     </div>
   );

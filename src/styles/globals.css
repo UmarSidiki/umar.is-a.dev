@@ -281,34 +281,36 @@
   }
   .section-ink .label-mono { color: inherit; }
 
-  /* CSS stand-in for the WebGL object — same silhouette and lighting reads. */
+  /* CSS stand-in for the WebGL object — same silhouette and lighting reads:
+     ink black body, one sharp highlight, a hard vermilion rim. */
   .object-halo {
     position: absolute;
     inset: -14%;
     border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      color-mix(in oklab, var(--signal) 42%, transparent),
+      color-mix(in oklab, var(--signal) 38%, transparent),
       transparent 62%
     );
-    filter: blur(42px);
-    opacity: 0.55;
+    filter: blur(38px);
+    opacity: 0.45;
   }
   .object-poster {
     position: absolute;
     inset: 0;
     border-radius: 47% 53% 55% 45% / 51% 46% 54% 49%;
     background:
-      radial-gradient(circle at 31% 23%, rgba(255, 255, 255, 0.17), transparent 44%),
+      radial-gradient(circle at 34% 21%, rgba(255, 248, 242, 0.62), transparent 15%),
+      radial-gradient(circle at 31% 25%, rgba(255, 255, 255, 0.1), transparent 46%),
       radial-gradient(
-        circle at 74% 80%,
-        color-mix(in oklab, var(--signal) 62%, transparent),
-        transparent 48%
+        circle at 66% 76%,
+        color-mix(in oklab, var(--signal) 58%, transparent),
+        transparent 50%
       ),
-      radial-gradient(circle at 50% 46%, #241d1a 0%, #151210 58%, #0b0908 100%);
+      radial-gradient(circle at 50% 46%, #241d1a 0%, #100d0c 58%, #070606 100%);
     box-shadow:
-      inset -18px -22px 64px color-mix(in oklab, var(--signal) 26%, transparent),
-      inset 0 0 0 1px color-mix(in oklab, var(--signal) 38%, transparent);
+      inset 0 0 0 1.5px color-mix(in oklab, var(--signal) 88%, transparent),
+      inset -10px -14px 44px color-mix(in oklab, var(--signal) 20%, transparent);
   }
 
   /* Minimum touch target for links and buttons on small screens. */
@@ -455,6 +457,41 @@
 .prose-preview .prose pre { margin: 0.75rem 0; padding: 0.75rem; }
 .prose-preview .prose pre code { font-size: 0.75rem; line-height: 1.5; }
 .prose-preview .prose ul, .prose-preview .prose ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+
+/* ------------------------------------------------------------------
+   Pre-paint reveal guard
+   An inline script in <head> puts .reveal-guard on <html>, so nodes that a GSAP
+   entrance animation is about to take over are already hidden on the very first
+   paint — nothing can be painted visible and then hidden (the visible → hidden →
+   visible flicker). React removes the class after its first commit, from which
+   point GSAP's own inline styles own the state, and the script's own timeout
+   removes it as well in case hydration never happens. Without JS, or under
+   reduced motion, none of it applies: content is simply visible.
+------------------------------------------------------------------- */
+html.reveal-guard [data-reveal] {
+  opacity: 0;
+}
+
+html.reveal-guard [data-reveal-dim] > * {
+  opacity: 0.18;
+}
+
+@media (min-width: 1024px) {
+  html.reveal-guard [data-reveal-rule] {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.reveal-guard [data-reveal],
+  html.reveal-guard [data-reveal-dim] > * {
+    opacity: 1;
+  }
+  html.reveal-guard [data-reveal-rule] {
+    transform: none;
+  }
+}
 
 /* ------------------------------------------------------------------
    Motion — respect reduced motion globally

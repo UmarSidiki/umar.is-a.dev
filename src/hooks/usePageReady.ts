@@ -34,6 +34,37 @@ export function isPageReady() {
   return ready;
 }
 
+/**
+ * Run `fn` the moment the current page is on screen — synchronously if the gate
+ * is already open, otherwise on the next opening. Returns an unsubscribe.
+ *
+ * Entrance animations use this instead of a state flag so they can hide their
+ * targets during the mount (layout) pass — before the first paint, while the
+ * curtain or the preloader is still up — and only then wait to be shown. That
+ * ordering makes a visible → hidden → visible flash impossible.
+ */
+export function onPageEnter(fn: () => void): () => void {
+  if (ready) {
+    fn();
+    return () => {};
+  }
+
+  let done = false;
+  const handler = () => {
+    if (done) return;
+    done = true;
+    window.removeEventListener("page:enter", handler);
+    fn();
+  };
+
+  window.addEventListener("page:enter", handler);
+
+  return () => {
+    done = true;
+    window.removeEventListener("page:enter", handler);
+  };
+}
+
 /** True once the current page is on screen and entrance animations may run. */
 export function usePageReady() {
   const [value, setValue] = useState(ready);

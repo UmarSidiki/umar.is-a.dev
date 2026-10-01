@@ -81,14 +81,14 @@ export function ImageManagement() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <span className="label-mono text-ink-soft">Media</span>
-          <h2 className="display-lg mt-2 text-foreground">Images</h2>
+          <h2 className="display-lg mt-2 break-words text-foreground">Images</h2>
           <p className="mt-2 text-sm text-ink-soft">{filteredImages.length} images</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={() => setShowUpload((v) => !v)}
@@ -133,7 +133,7 @@ export function ImageManagement() {
               type="button"
               onClick={() => setSelectedFolder(folder)}
               aria-pressed={selectedFolder === folder}
-              className={`label-mono inline-flex h-9 items-center border px-3 transition-colors ${
+              className={`label-mono inline-flex h-11 items-center border px-3 transition-colors ${
                 selectedFolder === folder
                   ? "border-signal text-signal"
                   : "border-hairline text-ink-soft hover:border-foreground hover:text-foreground"
@@ -153,9 +153,9 @@ export function ImageManagement() {
           <p className="mt-2 text-sm text-ink-soft">Upload some images to get started.</p>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+        <ul className="grid min-w-0 grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {filteredImages.map((image) => (
-            <li key={image.key} className="bg-background">
+            <li key={image.key} className="min-w-0 bg-background">
               <div className="relative aspect-square bg-muted">
                 <Image
                   src={image.url}
@@ -169,21 +169,21 @@ export function ImageManagement() {
                   }}
                 />
               </div>
-              <div className="p-3">
+              <div className="min-w-0 p-3">
                 <p className="truncate text-xs font-medium" title={image.filename}>
                   {image.filename}
                 </p>
-                <p className="label-mono text-ink-soft">{formatFileSize(image.size)}</p>
-                <div className="mt-3 flex gap-2">
+                <p className="label-mono break-words text-ink-soft">{formatFileSize(image.size)}</p>
+                <div className="mt-3 flex min-w-0 gap-2">
                   <button
                     type="button"
                     onClick={() => copyToClipboard(image.url)}
-                    className="label-mono inline-flex h-9 flex-1 items-center justify-center gap-1.5 border border-hairline transition-colors hover:border-signal hover:text-signal"
+                    className="label-mono inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 border border-hairline transition-colors hover:border-signal hover:text-signal"
                   >
                     {copiedUrl === image.url ? (
-                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     ) : (
-                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                      <Copy className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     )}
                     {copiedUrl === image.url ? "Copied" : "Copy"}
                   </button>
@@ -191,9 +191,9 @@ export function ImageManagement() {
                     type="button"
                     onClick={() => deleteImage(image.key)}
                     aria-label={`Delete ${image.filename}`}
-                    className="inline-flex h-9 w-9 items-center justify-center border border-hairline transition-colors hover:border-destructive hover:text-destructive"
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-hairline transition-colors hover:border-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>

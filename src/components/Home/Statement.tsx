@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { user } from "@/providers/user";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { usePageReady } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -22,16 +21,17 @@ const DIM = 0.18;
 export default function Statement() {
   const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
-  const ready = usePageReady();
 
   const words = user.experience[0].description.split(" ");
 
   useGSAP(
     () => {
-      if (!ready || prefersReducedMotion()) return;
+      if (prefersReducedMotion()) return;
       const nodes = textRef.current?.querySelectorAll<HTMLElement>(".word");
       if (!nodes || nodes.length === 0) return;
 
+      // Applied in the layout pass, so the dimmed starting state is what gets
+      // painted first — the words only ever get brighter from here.
       gsap.set(nodes, { opacity: DIM });
       gsap.to(nodes, {
         opacity: 1,
@@ -45,7 +45,7 @@ export default function Statement() {
         },
       });
     },
-    { scope: sectionRef, dependencies: [ready] }
+    { scope: sectionRef }
   );
 
   return (
@@ -64,6 +64,7 @@ export default function Statement() {
 
         <p
           ref={textRef}
+          data-reveal-dim=""
           className="statement mt-10 max-w-[46ch] font-display text-[clamp(1.5rem,4.4vw,3.4rem)] font-bold leading-[1.14] tracking-tight"
         >
           {words.map((word, i) => (

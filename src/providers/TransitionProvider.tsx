@@ -100,6 +100,9 @@ export function TransitionProvider({
   // other case so a page can never stay un-animated.
   useEffect(() => {
     park();
+    // Every mounted reveal has applied its own inline hidden state by now (they
+    // run in the layout pass), so the pre-paint CSS guard can step aside.
+    document.documentElement.classList.remove("reveal-guard");
     const fallback = window.setTimeout(markPageReady, GATE_FALLBACK_MS);
     return () => window.clearTimeout(fallback);
   }, [park]);
