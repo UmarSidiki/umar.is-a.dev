@@ -60,7 +60,6 @@ export function AdminShell({
   const select = (tab: AdminTab) => {
     onTabChange(tab);
     setOpen(false);
-    triggerRef.current?.focus();
   };
 
   const signOut = () => {

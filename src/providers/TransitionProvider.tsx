@@ -27,7 +27,10 @@ const SAFETY_MS = 2600;
 /** Last-resort guard so entrance animations can never be locked out. */
 const GATE_FALLBACK_MS = 3500;
 
-function isInternalLink(anchor: HTMLAnchorElement, href: string | null) {
+function isInternalLink(
+  anchor: HTMLAnchorElement,
+  href: string | null
+): href is string {
   if (!href) return false;
   if (anchor.target && anchor.target !== "_self") return false;
   if (anchor.hasAttribute("download")) return false;
@@ -201,9 +204,10 @@ export function TransitionProvider({
       const anchor = target?.closest?.("a") as HTMLAnchorElement | null;
       if (!anchor) return;
       const href = anchor.getAttribute("href");
-      if (!isInternalLink(anchor, href) || prefetched.has(href!)) return;
-      prefetched.add(href!);
-      router.prefetch(href!);
+      if (!isInternalLink(anchor, href)) return;
+      if (prefetched.has(href)) return;
+      prefetched.add(href);
+      router.prefetch(href);
     };
 
     const onPopState = () => {

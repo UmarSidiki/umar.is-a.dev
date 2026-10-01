@@ -274,6 +274,11 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
     () => filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE),
     [filtered, page]
   );
+  /* The first item of the page leads as the featured row, everything after it
+     becomes a full-width list row — so 1 post is just the lead, 2 is lead + 1
+     row, and there is never a half-empty grid cell. */
+  const featured = paginated[0];
+  const rest = paginated.slice(1);
 
   useEffect(() => setPage(1), [filters]);
 
@@ -419,7 +424,7 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
         </div>
       ) : (
         <>
-          <FeaturedPost post={paginated[0]} formatDate={formatDate} />
+          <FeaturedPost post={featured} formatDate={formatDate} />
 
           {rest.length > 0 && (
             <ul className="mt-14 border-t border-hairline">
