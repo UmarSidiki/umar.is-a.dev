@@ -146,9 +146,9 @@ export default function ProjectsClient({
             </p>
           </div>
         ) : (
-          <Reveal className="mt-10 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal className="mt-10 grid border-l border-t border-hairline sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((project) => (
-              <article key={project._id} className="group bg-background">
+              <article key={project._id} className="group border-b border-r border-hairline bg-background">
                 <button
                   type="button"
                   onClick={() => setSelected(project)}

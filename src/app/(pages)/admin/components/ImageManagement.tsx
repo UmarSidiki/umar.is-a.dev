@@ -153,9 +153,9 @@ export function ImageManagement() {
           <p className="mt-2 text-sm text-ink-soft">Upload some images to get started.</p>
         </div>
       ) : (
-        <ul className="grid min-w-0 grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+        <ul className="grid min-w-0 grid-cols-2 border-l border-t border-hairline sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {filteredImages.map((image) => (
-            <li key={image.key} className="min-w-0 bg-background">
+            <li key={image.key} className="min-w-0 border-b border-r border-hairline bg-background">
               <div className="relative aspect-square bg-muted">
                 <Image
                   src={image.url}
