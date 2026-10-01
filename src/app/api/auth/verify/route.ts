@@ -1,46 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+import { getSession } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const noStore = { 'Cache-Control': 'no-store, must-revalidate' };
+
   try {
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const user = await getSession(request);
+
+    if (!user) {
       return NextResponse.json(
-        { success: false, error: 'No token provided' },
-        { status: 401 }
+        { success: false, error: 'Not authenticated' },
+        { status: 401, headers: noStore }
       );
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload & {
-        username: string;
-        role: string;
-      };
-      
-      return NextResponse.json({
-        success: true,
-        user: {
-          username: decoded.username,
-          role: decoded.role
-        }
-      }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
-    } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid token' },
-        { status: 401 }
-      );
-    }
-
+    return NextResponse.json(
+      { success: true, user: { username: user.username, role: user.role } },
+      { headers: noStore }
+    );
   } catch (error) {
-    console.error('Token verification error:', error);
+    console.error('Token verification error:', error instanceof Error ? error.name : 'unknown');
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
+      { status: 500, headers: noStore }
     );
   }
 }

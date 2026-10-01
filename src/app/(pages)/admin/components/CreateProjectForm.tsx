@@ -31,12 +31,8 @@ export const CreateProjectForm: React.FC<CreateProjectFormProps> = ({
       formData.append('file', file);
       formData.append('folder', 'projects/inline');
 
-      const token = localStorage.getItem('adminToken');
       const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
         body: formData,
       });
 

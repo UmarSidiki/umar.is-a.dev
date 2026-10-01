@@ -1,68 +1,119 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import {
+  SESSION_COOKIE,
+  SESSION_MAX_AGE_SECONDS,
+  getAdminConfig,
+  getClientIp,
+  isRateLimited,
+  isSameOriginRequest,
+  isSessionConfigured,
+  rateLimitExceededResponse,
+  recordRateLimitAttempt,
+  resetRateLimit,
+  signSessionToken,
+  verifyAdminCredentials,
+} from '@/lib/auth';
 
-// In a real application, you would store this in a database
-// For demo purposes, we'll use environment variables
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
-
-// If no hash is provided in env, create a default hash for 'admin123'
-const DEFAULT_PASSWORD_HASH = '$2b$10$v5vRD10RfYPsHtmgIfy7Ken66EtEteoc5G9sh.1Jgf74sYvuxYG8i'; // hash for 'admin123'
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_FAILURES = 5;
 
 export async function POST(request: NextRequest) {
-  try {
-    const { username, password } = await request.json();
+  const noStore = { 'Cache-Control': 'no-store, must-revalidate' };
 
-    if (!username || !password) {
-      return NextResponse.json(
-        { success: false, error: 'Username and password are required' },
-        { status: 400 }
-      );
-    }
-
-    // Check username
-    if (username !== ADMIN_USERNAME) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      );
-    }
-
-    // Check password
-    const passwordHash = ADMIN_PASSWORD_HASH || DEFAULT_PASSWORD_HASH;
-    const isValidPassword = await bcrypt.compare(password, passwordHash);
-
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      );
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { 
-        username,
-        role: 'admin',
-        iat: Math.floor(Date.now() / 1000)
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
+  // Login CSRF defense: if the browser sends an Origin header it must match
+  // this deployment's own host, so a third-party page cannot silently log a
+  // victim into an attacker-controlled account.
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json(
+      { success: false, error: 'Forbidden' },
+      { status: 403, headers: noStore }
     );
+  }
 
-    return NextResponse.json({
-      success: true,
-      token,
-      message: 'Login successful'
-    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
+  try {
+    if (!isSessionConfigured() || !getAdminConfig()) {
+      // Log the names of the missing settings only, never their values.
+      console.error(
+        'Login refused: authentication is not configured. Required env vars: ADMIN_USERNAME, ADMIN_PASSWORD_HASH (or ADMIN_PASSWORD_HASH_B64), JWT_SECRET (>=32 chars).'
+      );
+      return NextResponse.json(
+        { success: false, error: 'Authentication is not configured on this server.' },
+        { status: 500, headers: noStore }
+      );
+    }
 
+    const ip = getClientIp(request);
+    const rateKey = `login:${ip}`;
+    if (isRateLimited(rateKey, LOGIN_MAX_FAILURES)) {
+      return rateLimitExceededResponse();
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body' },
+        { status: 400, headers: noStore }
+      );
+    }
+
+    const { username, password } = (body ?? {}) as Record<string, unknown>;
+
+    if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401, headers: noStore }
+      );
+    }
+
+    if (username.length > 256 || password.length > 1024) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401, headers: noStore }
+      );
+    }
+
+    const valid = await verifyAdminCredentials(username, password);
+
+    if (!valid) {
+      recordRateLimitAttempt(rateKey, LOGIN_WINDOW_MS);
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401, headers: noStore }
+      );
+    }
+
+    const config = getAdminConfig();
+    const token = config ? await signSessionToken({ username: config.username, role: 'admin' }) : null;
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication is not configured on this server.' },
+        { status: 500, headers: noStore }
+      );
+    }
+
+    resetRateLimit(rateKey);
+
+    const response = NextResponse.json(
+      { success: true, message: 'Login successful' },
+      { headers: noStore }
+    );
+    response.cookies.set({
+      name: SESSION_COOKIE,
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: SESSION_MAX_AGE_SECONDS,
+    });
+    return response;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error:', error instanceof Error ? error.name : 'unknown');
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
+      { status: 500, headers: noStore }
     );
   }
 }

@@ -38,12 +38,8 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       formData.append('file', file);
       formData.append('folder', 'posts/inline');
 
-      const token = localStorage.getItem('adminToken');
       const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
         body: formData,
       });
 

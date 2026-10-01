@@ -11,6 +11,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Old token keys from the previous localStorage-based scheme. They are removed
+// on load so any stale token is discarded.
+const LEGACY_TOKEN_KEYS = ['adminToken', 'admin_token'];
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -27,28 +31,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already authenticated on mount
+  // Check if the session cookie is valid on mount.
   useEffect(() => {
+    LEGACY_TOKEN_KEYS.forEach((key) => {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // Ignore storage access errors (e.g. disabled storage).
+      }
+    });
+
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('adminToken');
-        if (token) {
-          // Verify token with backend
-          const response = await fetch('/api/auth/verify', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          
-          if (response.ok) {
-            setIsAuthenticated(true);
-          } else {
-            localStorage.removeItem('adminToken');
-          }
-        }
+        const response = await fetch('/api/auth/verify', {
+          credentials: 'same-origin',
+        });
+        setIsAuthenticated(response.ok);
       } catch (error) {
         console.error('Auth check failed:', error);
-        localStorage.removeItem('adminToken');
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }
@@ -64,18 +65,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'same-origin',
         body: JSON.stringify({ username, password }),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       if (response.ok && result.success) {
-        localStorage.setItem('adminToken', result.token);
         setIsAuthenticated(true);
         return true;
-      } else {
-        return false;
       }
+      return false;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -83,8 +83,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('adminToken');
     setIsAuthenticated(false);
+    fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+    }).catch(() => {
+      // Logout is best-effort; the UI has already been cleared.
+    });
   };
 
   const value = {

@@ -57,6 +57,9 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Error generating RSS feed:', error)
-    return new Response('Error generating RSS feed', { status: 500 })
+    return new Response('Error generating RSS feed', {
+      status: 500,
+      headers: { 'Cache-Control': 'private, no-store, must-revalidate' },
+    })
   }
 }

@@ -15,6 +15,20 @@ export interface EmailOptions {
   replyTo?: string;
 }
 
+// Escape untrusted text before embedding it in HTML email bodies.
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+// Strip CR/LF (and other control characters) to prevent email header injection
+// in fields such as Subject and Reply-To.
+const sanitizeHeaderValue = (value: string): string =>
+  value.replace(/[\r\n\u0000-\u001f\u007f]+/g, ' ').trim();
+
 // Create a transporter for sending emails
 const createTransporter = () => {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
@@ -37,7 +51,15 @@ const createTransporter = () => {
 };
 
 // Generate HTML template for the email
-const generateEmailTemplate = (data: EmailData, isReply = false) => {
+const generateEmailTemplate = (rawData: EmailData, isReply = false) => {
+  // All user-supplied values are escaped before being embedded in the HTML.
+  const data = {
+    firstName: escapeHtml(rawData.firstName),
+    lastName: escapeHtml(rawData.lastName),
+    email: escapeHtml(rawData.email),
+    subject: escapeHtml(rawData.subject),
+    message: escapeHtml(rawData.message).replace(/\n/g, '<br>'),
+  };
   if (isReply) {
     return `
       <!DOCTYPE html>
@@ -378,10 +400,10 @@ export const sendEmail = async (options: EmailOptions) => {
     
     const result = await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.SMTP_USER}>`,
-      to: options.to,
-      subject: options.subject,
+      to: sanitizeHeaderValue(options.to),
+      subject: sanitizeHeaderValue(options.subject),
       html: options.html,
-      replyTo: options.replyTo,
+      replyTo: options.replyTo ? sanitizeHeaderValue(options.replyTo) : undefined,
     });
 
     return { success: true, messageId: result.messageId };
@@ -444,6 +466,26 @@ export const validateEmailData = (data: unknown): data is EmailData => {
   if (!emailRegex.test(emailData.email as string)) {
     return false;
   }
-  
+
+  // Length limits to bound resource usage and email header sizes
+  const maxLengths: Record<string, number> = {
+    firstName: 100,
+    lastName: 100,
+    email: 254,
+    subject: 200,
+    message: 5000,
+  };
+  for (const [field, max] of Object.entries(maxLengths)) {
+    if ((emailData[field] as string).length > max) {
+      return false;
+    }
+  }
+
+  // Reject control characters (including CR/LF) in the subject to prevent
+  // header injection.
+  if (/[\r\n\u0000-\u001f\u007f]/.test(emailData.subject as string)) {
+    return false;
+  }
+
   return true;
 };
