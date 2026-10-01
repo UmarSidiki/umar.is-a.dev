@@ -3,6 +3,7 @@ import { BaseTemplate } from "@/templates/Home";
 import { generateStructuredData } from "@/lib/seo";
 import {
   Hero,
+  Statement,
   ServicesTrack,
   FeaturedProjects,
   TechStack,

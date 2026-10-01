@@ -2,15 +2,33 @@
 
 import React, { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
+
+/* ------------------------------------------------------------------
+   One object, one silhouette, fully opaque.
+
+   Displacement is radial and low frequency — two octaves of simplex at a
+   small amplitude — so it reads as a breathing pebble rather than noise.
+   Normals are recomputed analytically from the displaced surface using a
+   finite-difference tangent basis; that is what keeps the shading crisp
+   instead of the cracked, self-shadowed mud a naive displaced normal gives.
+
+   Shading: ink base on a stepped toon ramp, one tight specular streak for
+   the liquid-metal read, a vermilion fresnel rim carrying a low-weight
+   thin-film iridescence, and a pixel dither so the bands never posterise.
+------------------------------------------------------------------- */
+
+const RADIUS = 1.12;
 
 const vertexShader = /* glsl */ `
   uniform float uTime;
-  uniform vec2  uPointer;
-  uniform float uScroll;
+  uniform vec3  uBulge;
+  uniform float uBulgeAmt;
   uniform float uAmp;
+
   varying vec3  vNormal;
-  varying vec3  vPos;
+  varying vec3  vViewPos;
   varying float vDisp;
 
   // Ashima simplex noise (3D)
@@ -62,107 +80,169 @@ const vertexShader = /* glsl */ `
     return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
   }
 
+  // Local swelling of the surface toward the cursor.
+  float bulgeAt(vec3 dir){
+    float facing = max(dot(dir, normalize(uBulge + vec3(0.0001))), 0.0);
+    return pow(facing, 5.0) * uBulgeAmt;
+  }
+
+  float dispAt(vec3 dir){
+    float slow = snoise(dir * 1.1 + vec3(0.0, 0.0, uTime * 0.16));
+    float form = snoise(dir * 2.2 + vec3(uTime * 0.11, 0.0, 0.0));
+    return (slow + form * 0.35) * uAmp + bulgeAt(dir);
+  }
+
+  vec3 surfAt(vec3 dir){ return dir * (${RADIUS.toFixed(3)} + dispAt(dir)); }
+
   void main() {
-    vNormal = normalize(normalMatrix * normal);
+    vec3 dir = normalize(position);
 
-    float n1 = snoise(position * 1.35 + vec3(0.0, 0.0, uTime * 0.22));
-    float n2 = snoise(position * 2.9 + vec3(uTime * 0.16, uPointer.x * 0.8, uPointer.y * 0.8));
-    float n3 = snoise(position * 5.5 + vec3(uTime * 0.1));
+    float e = 0.05;
+    vec3 helper = abs(dir.y) < 0.985 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+    vec3 t1 = normalize(cross(helper, dir));
+    vec3 t2 = cross(dir, t1);
 
-    float disp = n1 * uAmp + n2 * uAmp * 0.42 + n3 * uAmp * 0.14;
-    disp += (uPointer.x * 0.14) + (uPointer.y * 0.12);
-    disp += uScroll * 0.5;
+    vec3 p0 = surfAt(dir);
+    vec3 p1 = surfAt(normalize(dir + t1 * e));
+    vec3 p2 = surfAt(normalize(dir + t2 * e));
 
-    vDisp = disp;
+    vec3 N = normalize(cross(p1 - p0, p2 - p0));
 
-    vec3 displaced = position + normal * disp;
-    vPos = displaced;
-
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+    vDisp = dispAt(dir);
+    vNormal = normalize(normalMatrix * N);
+    vec4 mv = modelViewMatrix * vec4(p0, 1.0);
+    vViewPos = mv.xyz;
+    gl_Position = projectionMatrix * mv;
   }
 `;
 
 const fragmentShader = /* glsl */ `
-  uniform vec3 uColorA;
-  uniform vec3 uColorB;
-  uniform vec3 uRim;
-  varying vec3 vNormal;
-  varying vec3 vPos;
+  uniform vec3  uInk;
+  uniform vec3  uSignal;
+  uniform float uTime;
+
+  varying vec3  vNormal;
+  varying vec3  vViewPos;
   varying float vDisp;
 
+  float hash21(vec2 p){
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+
   void main() {
-    vec3 base = mix(uColorA, uColorB, smoothstep(-0.55, 0.65, vDisp));
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vViewPos);
 
-    vec3 viewDir = normalize(-vPos);
-    float fres = pow(1.0 - clamp(dot(normalize(vNormal), viewDir), 0.0, 1.0), 2.4);
-    vec3 col = mix(base, uRim, fres * 0.9);
+    float dither = hash21(gl_FragCoord.xy + uTime) - 0.5;
 
-    // subtle signal contour where displacement crosses zero
-    float contour = smoothstep(0.03, 0.0, abs(vDisp));
-    col = mix(col, uRim, contour * 0.25);
+    // Key light, stepped into three bands so the form reads graphically.
+    vec3 L = normalize(vec3(-0.5, 0.72, 0.62));
+    float ndl = dot(N, L) * 0.5 + 0.5;
+    float band = floor(clamp(ndl, 0.0, 0.999) * 3.0) / 3.0 + dither * 0.05;
+
+    vec3 col = mix(uInk * 0.62, uInk * 2.6, band);
+
+    // One tight specular streak: the "liquid" in liquid metal.
+    float spec = pow(max(dot(reflect(-L, N), V), 0.0), 44.0);
+    col += uSignal * spec * 0.6;
+
+    // Rim: vermilion fresnel with a low-weight thin-film hue shift.
+    float fres = pow(1.0 - clamp(dot(N, V), 0.0, 1.0), 2.7);
+    vec3 film = 0.5 + 0.5 * cos(6.28318 * (vec3(0.92, 0.62, 0.42) * fres * 1.15
+                + vec3(0.0, 0.34, 0.62) + uTime * 0.04));
+    vec3 rim = mix(uSignal, film, 0.3);
+    col += rim * fres * 0.95;
+
+    col += dither * (2.0 / 255.0);
 
     gl_FragColor = vec4(col, 1.0);
     #include <colorspace_fragment>
   }
 `;
 
-function Blob({
+const InkCoreMaterial = /* @__PURE__ */ shaderMaterial(
+  {
+    uTime: 0,
+    uBulge: new THREE.Vector3(0, 0, 1),
+    uBulgeAmt: 0,
+    uAmp: 0.085,
+    uInk: new THREE.Color("#151210"),
+    uSignal: new THREE.Color("#ee4520"),
+  },
+  vertexShader,
+  fragmentShader
+);
+
+function Core({
   quality,
   pointerRef,
   scrollRef,
 }: {
   quality: "high" | "low";
-  pointerRef: React.MutableRefObject<{ x: number; y: number }>;
-  scrollRef: React.MutableRefObject<number>;
+  pointerRef: React.RefObject<{ x: number; y: number }>;
+  scrollRef: React.RefObject<number>;
 }) {
-  const matRef = useRef<THREE.ShaderMaterial>(null);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const timeRef = useRef(0);
+  const scaleRef = useRef(0);
   const { viewport } = useThree();
 
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uPointer: { value: new THREE.Vector2(0, 0) },
-      uScroll: { value: 0 },
-      uAmp: { value: quality === "low" ? 0.32 : 0.4 },
-      uColorA: { value: new THREE.Color("#17140f") },
-      uColorB: { value: new THREE.Color("#e8391b") },
-      uRim: { value: new THREE.Color("#f6e7c8") },
-    }),
-    [quality]
-  );
+  const material = useMemo(() => new InkCoreMaterial(), []);
 
-  useFrame((state, delta) => {
-    const mat = matRef.current;
-    if (!mat) return;
+  React.useEffect(() => () => material.dispose(), [material]);
+
+  useFrame((_state, delta) => {
     const d = Math.min(delta, 0.05);
-    mat.uniforms.uTime.value += d;
-    mat.uniforms.uPointer.value.x +=
-      (pointerRef.current.x - mat.uniforms.uPointer.value.x) * 0.06;
-    mat.uniforms.uPointer.value.y +=
-      (pointerRef.current.y - mat.uniforms.uPointer.value.y) * 0.06;
-    mat.uniforms.uScroll.value +=
-      (scrollRef.current - mat.uniforms.uScroll.value) * 0.06;
+    timeRef.current += d;
 
-    if (meshRef.current) {
-      meshRef.current.rotation.y += d * 0.12;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.18) * 0.12;
-    }
+    const pointer = pointerRef.current ?? { x: 0, y: 0 };
+    const scroll = scrollRef.current ?? 0;
+    const u = material.uniforms;
+
+    u.uTime.value = timeRef.current;
+
+    const bulge = u.uBulge.value as THREE.Vector3;
+    bulge.x += (pointer.x - bulge.x) * 0.06;
+    bulge.y += (pointer.y - bulge.y) * 0.06;
+    bulge.z += (0.85 - bulge.z) * 0.06;
+    u.uBulgeAmt.value += (0.08 - u.uBulgeAmt.value) * 0.06;
+
+    const group = groupRef.current;
+    if (!group) return;
+
+    // Pointer parallax over a slow idle turn; scroll adds twist and drift.
+    group.rotation.y +=
+      (pointer.x * 0.5 + timeRef.current * 0.09 - group.rotation.y) * 0.045;
+    group.rotation.x +=
+      (-pointer.y * 0.32 + Math.sin(timeRef.current * 0.24) * 0.06 -
+        group.rotation.x) *
+      0.05;
+    group.rotation.z += (scroll * 0.55 - group.rotation.z) * 0.05;
+
+    const breathe = 1 + Math.sin(timeRef.current * 0.62) * 0.018;
+    const target =
+      Math.min(viewport.width, viewport.height) *
+      0.42 *
+      breathe *
+      (1 - scroll * 0.28);
+
+    scaleRef.current =
+      scaleRef.current === 0
+        ? target
+        : scaleRef.current + (target - scaleRef.current) * 0.09;
+    group.scale.setScalar(scaleRef.current);
+    group.position.y += (scroll * 0.6 - group.position.y) * 0.06;
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      scale={Math.min(viewport.width, viewport.height) * 0.34}
-    >
-      <icosahedronGeometry args={[1.15, quality === "low" ? 14 : 32]} />
-      <shaderMaterial
-        ref={matRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-      />
-    </mesh>
+    <group ref={groupRef}>
+      <mesh>
+        <icosahedronGeometry args={[RADIUS, quality === "low" ? 11 : 22]} />
+        <primitive object={material} attach="material" />
+      </mesh>
+    </group>
   );
 }
 
@@ -196,12 +276,17 @@ export default function HeroScene({
   return (
     <Canvas
       frameloop={frameloop}
-      dpr={quality === "low" ? [1, 1] : [1, 1.5]}
-      gl={{ antialias: quality === "high", alpha: true, powerPreference: "high-performance" }}
-      camera={{ position: [0, 0, 3.4], fov: 42 }}
+      dpr={quality === "low" ? [1, 1] : [1, 1.75]}
+      gl={{
+        antialias: quality === "high",
+        alpha: true,
+        powerPreference: "high-performance",
+        stencil: false,
+      }}
+      camera={{ position: [0, 0, 4.1], fov: 34 }}
       style={{ pointerEvents: "none" }}
     >
-      <Blob quality={quality} pointerRef={pointerRef} scrollRef={scrollRef} />
+      <Core quality={quality} pointerRef={pointerRef} scrollRef={scrollRef} />
     </Canvas>
   );
 }

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { usePageReady } from "@/hooks/usePageReady";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -20,7 +21,8 @@ interface RevealProps {
 
 /**
  * Scroll-triggered reveal. Staggers direct children by default so groups of
- * elements cascade instead of fading in as one block.
+ * elements cascade instead of fading in as one block. Waits for the page to be
+ * visible, and always ends with the content shown.
  */
 export default function Reveal({
   children,
@@ -31,13 +33,15 @@ export default function Reveal({
   self = false,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const ready = usePageReady();
 
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || prefersReducedMotion()) return;
+      if (!el || !ready || prefersReducedMotion()) return;
 
-      const targets = self || el.children.length === 0 ? [el] : Array.from(el.children);
+      const targets =
+        self || el.children.length === 0 ? [el] : Array.from(el.children);
 
       gsap.from(targets, {
         y,
@@ -49,7 +53,7 @@ export default function Reveal({
         scrollTrigger: { trigger: el, start: "top 88%", once: true },
       });
     },
-    { scope: ref }
+    { scope: ref, dependencies: [ready] }
   );
 
   return (

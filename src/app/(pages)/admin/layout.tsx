@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { generateCompletePageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = generateCompletePageMetadata({

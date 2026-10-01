@@ -102,7 +102,7 @@ export default function SiteHeader() {
         <div className="mx-auto flex h-16 max-w-[110rem] items-center justify-between px-5 sm:px-8 lg:h-20 lg:px-12">
           <Link
             href="/"
-            className="group flex items-baseline gap-2"
+            className="tap group items-baseline gap-2"
             aria-label="Umar Siddiqui — home"
           >
             <span className="font-display text-lg font-extrabold tracking-tight lg:text-xl">
@@ -229,8 +229,11 @@ export default function SiteHeader() {
           </ul>
         </nav>
 
-        <div className="flex items-center justify-between px-5 pb-8 sm:px-8">
-          <Link href="/contact" className="text-sm underline underline-offset-4">
+        <div className="flex items-center justify-between gap-4 px-5 pb-8 sm:px-8">
+          <Link
+            href="/contact"
+            className="tap text-sm underline underline-offset-4"
+          >
             siddiquiumar0007@gmail.com
           </Link>
           <span className="label-mono text-background/50">Sukkur, PK</span>

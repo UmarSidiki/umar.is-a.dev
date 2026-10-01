@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { SmoothScrollProvider } from "@/providers/SmoothScrollProvider";
 import { TransitionProvider } from "@/providers/TransitionProvider";
 import SiteHeader from "@/components/layout/SiteHeader";
@@ -85,16 +84,14 @@ export default function RootLayout({
         >
           <SmoothScrollProvider>
             <TransitionProvider>
-              <AuthProvider>
-                <SiteHeader />
-                <div id="main" className="relative z-10">
-                  {children}
-                </div>
-                <SiteFooter />
-                <Cursor />
-                <Preloader />
-                <Analytics />
-              </AuthProvider>
+              <SiteHeader />
+              <div id="main" className="relative z-10">
+                {children}
+              </div>
+              <SiteFooter />
+              <Cursor />
+              <Preloader />
+              <Analytics />
             </TransitionProvider>
           </SmoothScrollProvider>
         </ThemeProvider>

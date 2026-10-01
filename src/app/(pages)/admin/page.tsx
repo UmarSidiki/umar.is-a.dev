@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginForm from "@/components/LoginForm";
 import {
-  AdminNavigation,
+  AdminShell,
   DashboardStats,
   PostsManagement,
   ProjectsManagement,
@@ -175,78 +175,74 @@ export default function AdminDashboard() {
       {!authLoading && !isAuthenticated && <LoginForm />}
 
       {!authLoading && isAuthenticated && (
-        <div className="min-h-screen pt-20 lg:pt-24">
-          <div className="mx-auto max-w-[110rem] px-5 pb-24 sm:px-8 lg:px-12">
-            <AdminNavigation
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              onLogout={logout}
-            />
-
-            {message && (
-              <div
-                role="status"
-                className={`mt-6 flex items-center justify-between gap-4 border px-4 py-3 text-sm ${
-                  message.type === "success"
-                    ? "border-signal/40 bg-signal/5 text-foreground"
-                    : "border-destructive/40 bg-destructive/5 text-destructive"
-                }`}
+        <AdminShell
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onLogout={logout}
+        >
+          {message && (
+            <div
+              role="status"
+              className={`mb-6 flex items-center justify-between gap-4 border px-4 py-3 text-sm ${
+                message.type === "success"
+                  ? "border-signal/40 bg-signal/5 text-foreground"
+                  : "border-destructive/40 bg-destructive/5 text-destructive"
+              }`}
+            >
+              <span>{message.text}</span>
+              <button
+                type="button"
+                onClick={() => setMessage(null)}
+                aria-label="Dismiss message"
+                className="label-mono shrink-0 opacity-70 transition-opacity hover:opacity-100"
               >
-                <span>{message.text}</span>
-                <button
-                  type="button"
-                  onClick={() => setMessage(null)}
-                  aria-label="Dismiss message"
-                  className="label-mono shrink-0 opacity-70 transition-opacity hover:opacity-100"
-                >
-                  Dismiss
-                </button>
-              </div>
+                Dismiss
+              </button>
+            </div>
+          )}
+
+          <div>
+            {activeTab === "dashboard" && <DashboardStats stats={stats} loading={loading} />}
+
+            {activeTab === "posts" && (
+              <PostsManagement
+                formData={formData}
+                editingPost={editingPost}
+                formLoading={formLoading}
+                onInputChange={handleInputChange}
+                onSubmit={handleFormSubmit}
+                onReset={resetForm}
+                posts={posts}
+                postsLoading={loading}
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                onEdit={handlePostEdit}
+                onDelete={handlePostDelete}
+                comments={comments}
+                commentsLoading={loading}
+                onCommentAction={handleCommentActionWrapper}
+                onDeleteComment={handleDeleteCommentWrapper}
+              />
             )}
 
-            <div className="mt-8">
-              {activeTab === "dashboard" && <DashboardStats stats={stats} loading={loading} />}
+            {activeTab === "projects" && (
+              <ProjectsManagement
+                formData={projectFormData}
+                editingProject={editingProject}
+                formLoading={projectFormLoading}
+                onInputChange={handleProjectInputChange}
+                onSubmit={handleProjectFormSubmit}
+                onReset={resetProjectForm}
+                projects={projects}
+                projectsLoading={loading}
+                onEdit={handleProjectEditWrapper}
+                onDelete={handleProjectDeleteWrapper}
+              />
+            )}
 
-              {activeTab === "posts" && (
-                <PostsManagement
-                  formData={formData}
-                  editingPost={editingPost}
-                  formLoading={formLoading}
-                  onInputChange={handleInputChange}
-                  onSubmit={handleFormSubmit}
-                  onReset={resetForm}
-                  posts={posts}
-                  postsLoading={loading}
-                  filters={filters}
-                  onFiltersChange={handleFiltersChange}
-                  onEdit={handlePostEdit}
-                  onDelete={handlePostDelete}
-                  comments={comments}
-                  commentsLoading={loading}
-                  onCommentAction={handleCommentActionWrapper}
-                  onDeleteComment={handleDeleteCommentWrapper}
-                />
-              )}
-
-              {activeTab === "projects" && (
-                <ProjectsManagement
-                  formData={projectFormData}
-                  editingProject={editingProject}
-                  formLoading={projectFormLoading}
-                  onInputChange={handleProjectInputChange}
-                  onSubmit={handleProjectFormSubmit}
-                  onReset={resetProjectForm}
-                  projects={projects}
-                  projectsLoading={loading}
-                  onEdit={handleProjectEditWrapper}
-                  onDelete={handleProjectDeleteWrapper}
-                />
-              )}
-
-              {activeTab === "images" && <ImageManagement />}
-            </div>
+            {activeTab === "images" && <ImageManagement />}
           </div>
-        </div>
+        </AdminShell>
       )}
     </>
   );

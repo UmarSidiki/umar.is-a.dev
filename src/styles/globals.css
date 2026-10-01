@@ -244,6 +244,90 @@
     font-size: clamp(1.6rem, 5vw, 3rem);
   }
 
+  /* The name at full-bleed scale: the actual hero of the page. */
+  .display-name {
+    font-family: var(--font-display), sans-serif;
+    font-weight: 800;
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    font-size: clamp(3.4rem, 19vw, 15.5rem);
+    text-transform: none;
+  }
+
+  /* Difference-blended headline. The colour is chosen so the type reads as warm
+     ink on paper in the light theme and as paper on ink in the dark theme, while
+     inverting to a legible light wherever it crosses the dark 3D object. */
+  .name-difference {
+    color: #c8c7be;
+    mix-blend-mode: difference;
+  }
+
+  /* Giant outlined numerals — used where a filled numeral would shout. */
+  .index-hollow {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+  .index-hollow-signal {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--signal);
+  }
+
+  /* A section that flips to ink: everything inside inherits paper text. */
+  .section-ink {
+    background: var(--ink);
+    color: var(--paper);
+    --hairline: color-mix(in oklab, var(--paper) 22%, transparent);
+    --ink-soft: color-mix(in oklab, var(--paper) 68%, transparent);
+  }
+  .section-ink .label-mono { color: inherit; }
+
+  /* CSS stand-in for the WebGL object — same silhouette and lighting reads. */
+  .object-halo {
+    position: absolute;
+    inset: -14%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in oklab, var(--signal) 42%, transparent),
+      transparent 62%
+    );
+    filter: blur(42px);
+    opacity: 0.55;
+  }
+  .object-poster {
+    position: absolute;
+    inset: 0;
+    border-radius: 47% 53% 55% 45% / 51% 46% 54% 49%;
+    background:
+      radial-gradient(circle at 31% 23%, rgba(255, 255, 255, 0.17), transparent 44%),
+      radial-gradient(
+        circle at 74% 80%,
+        color-mix(in oklab, var(--signal) 62%, transparent),
+        transparent 48%
+      ),
+      radial-gradient(circle at 50% 46%, #241d1a 0%, #151210 58%, #0b0908 100%);
+    box-shadow:
+      inset -18px -22px 64px color-mix(in oklab, var(--signal) 26%, transparent),
+      inset 0 0 0 1px color-mix(in oklab, var(--signal) 38%, transparent);
+  }
+
+  /* Minimum touch target for links and buttons on small screens. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+  }
+  @media (min-width: 1024px) {
+    .tap { min-height: 0; }
+  }
+
+  /* Statement: words are fully visible by default and only ever dimmed by JS,
+     so the section can never end in an unreadable state. */
+  .statement {
+    text-wrap: pretty;
+  }
+
   /* Grain overlay — cheap SVG turbulence */
   .grain::after {
     content: "";

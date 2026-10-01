@@ -21,18 +21,172 @@ interface FilterState {
 const POSTS_PER_PAGE = 9;
 
 const selectClass =
-  "border border-hairline bg-transparent py-3 pl-3 pr-8 text-base text-foreground focus:border-signal focus:outline-none";
+  "min-h-11 border border-hairline bg-transparent px-3 pr-8 text-base text-foreground focus:border-signal focus:outline-none";
 
-function Skeleton() {
+function PostFallback({ label }: { label: string }) {
   return (
-    <div className="animate-pulse border border-hairline">
-      <div className="aspect-[16/10] bg-muted" />
-      <div className="space-y-3 p-6">
-        <div className="h-3 w-20 bg-muted" />
-        <div className="h-5 w-3/4 bg-muted" />
+    <span
+      aria-hidden="true"
+      className="flex h-full w-full items-center justify-center bg-background"
+    >
+      <span className="index-numeral index-hollow text-5xl sm:text-7xl">
+        {label.slice(0, 1).toUpperCase() || "✳"}
+      </span>
+    </span>
+  );
+}
+
+function FeaturedPost({
+  post,
+  formatDate,
+}: {
+  post: BlogPost;
+  formatDate: (value: string) => string;
+}) {
+  return (
+    <article className="border-t border-hairline pt-8">
+      <span className="label-mono text-signal">Latest</span>
+      <Link
+        href={`/blog/${post.slug}`}
+        className="group mt-4 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-12"
+      >
+        <span className="relative block aspect-[16/10] overflow-hidden border border-hairline">
+          {post.featuredImage ? (
+            <Image
+              src={post.featuredImage}
+              alt={post.title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 55vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <PostFallback label={post.category || post.title} />
+          )}
+        </span>
+
+        <span className="flex flex-col justify-between gap-8">
+          <span className="block">
+            <span className="flex flex-wrap items-center justify-between gap-3">
+              <span className="label-mono text-ink-soft">{post.category}</span>
+              <span className="label-mono text-ink-soft">
+                {formatDate(post.createdAt.toString())}
+              </span>
+            </span>
+            <span className="mt-4 block font-display text-2xl font-bold leading-[1.08] tracking-tight transition-colors group-hover:text-signal sm:text-4xl">
+              {post.title}
+            </span>
+            <span className="mt-4 line-clamp-3 block text-base leading-relaxed text-ink-soft">
+              {post.excerpt}
+            </span>
+            {post.tags && post.tags.length > 0 && (
+              <span className="mt-5 flex flex-wrap gap-2">
+                {post.tags.slice(0, 4).map((tag) => (
+                  <span
+                    key={tag}
+                    className="label-mono border border-hairline px-2 py-1 text-ink-soft"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </span>
+            )}
+          </span>
+
+          <span className="flex items-center justify-between gap-4 border-t border-hairline pt-4">
+            <span className="label-mono text-ink-soft">
+              {post.readTime ? `${post.readTime} min read` : post.author}
+            </span>
+            <span className="tap label-mono text-signal">
+              Read
+              <ArrowUpRight
+                className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </span>
+          </span>
+        </span>
+      </Link>
+    </article>
+  );
+}
+
+function PostRow({
+  post,
+  formatDate,
+}: {
+  post: BlogPost;
+  formatDate: (value: string) => string;
+}) {
+  return (
+    <li>
+      <Link
+        href={`/blog/${post.slug}`}
+        className="group grid min-h-11 grid-cols-[5rem_1fr] items-center gap-4 border-b border-hairline py-4 transition-colors hover:bg-signal/5 sm:grid-cols-[8rem_1fr_auto] sm:gap-6"
+      >
+        <span className="relative block aspect-[16/10] w-full overflow-hidden border border-hairline">
+          {post.featuredImage ? (
+            <Image
+              src={post.featuredImage}
+              alt=""
+              fill
+              sizes="(max-width: 640px) 80px, 128px"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ) : (
+            <PostFallback label={post.category || post.title} />
+          )}
+        </span>
+
+        <span className="min-w-0">
+          <span className="label-mono flex flex-wrap items-center gap-x-3 text-ink-soft">
+            {post.category}
+            <span aria-hidden="true">·</span>
+            {formatDate(post.createdAt.toString())}
+          </span>
+          <span className="mt-1 block font-display text-lg font-bold leading-snug tracking-tight transition-colors group-hover:text-signal sm:text-2xl">
+            {post.title}
+          </span>
+        </span>
+
+        <ArrowUpRight
+          className="hidden h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-signal sm:block"
+          aria-hidden="true"
+        />
+      </Link>
+    </li>
+  );
+}
+
+function SkeletonFeatured() {
+  return (
+    <div
+      className="animate-pulse space-y-6 border-t border-hairline pt-8 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-12"
+      aria-hidden="true"
+    >
+      <div className="aspect-[16/10] border border-hairline bg-muted" />
+      <div className="space-y-4">
+        <div className="h-3 w-24 bg-muted" />
+        <div className="h-8 w-4/5 bg-muted" />
         <div className="h-3 w-full bg-muted" />
+        <div className="h-3 w-2/3 bg-muted" />
       </div>
     </div>
+  );
+}
+
+function SkeletonRows() {
+  return (
+    <ul className="space-y-6 border-t border-hairline pt-6" aria-hidden="true">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <li key={i} className="flex animate-pulse items-center gap-4">
+          <div className="aspect-[16/10] w-20 border border-hairline bg-muted sm:w-32" />
+          <div className="flex-1 space-y-3">
+            <div className="h-3 w-24 bg-muted" />
+            <div className="h-4 w-3/4 bg-muted" />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -239,12 +393,9 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
       </div>
 
       {loading ? (
-        <div className="mt-10 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-background">
-              <Skeleton />
-            </div>
-          ))}
+        <div className="mt-10 space-y-12">
+          <SkeletonFeatured />
+          <SkeletonRows />
         </div>
       ) : paginated.length === 0 ? (
         <div className="mt-16 border border-dashed border-hairline px-6 py-24 text-center">
@@ -268,70 +419,15 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
         </div>
       ) : (
         <>
-          <div className="mt-10 grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-            {paginated.map((post) => (
-              <Link
-                key={post._id?.toString()}
-                href={`/blog/${post.slug}`}
-                className="group flex flex-col bg-background"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden border-b border-hairline bg-muted">
-                  {post.featuredImage ? (
-                    <Image
-                      src={post.featuredImage}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <span className="absolute left-5 top-5 label-mono text-ink-soft">
-                      {post.category}
-                    </span>
-                  )}
-                </div>
+          <FeaturedPost post={paginated[0]} formatDate={formatDate} />
 
-                <div className="flex flex-1 flex-col p-6">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="label-mono text-ink-soft">{post.category}</span>
-                    <span className="label-mono text-ink-soft">
-                      {formatDate(post.createdAt.toString())}
-                    </span>
-                  </div>
-
-                  <h2 className="mt-4 font-display text-lg font-bold leading-snug tracking-tight transition-colors group-hover:text-signal">
-                    {post.title}
-                  </h2>
-                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-soft">
-                    {post.excerpt}
-                  </p>
-
-                  {post.tags && post.tags.length > 0 && (
-                    <ul className="mt-5 flex flex-wrap gap-2">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <li
-                          key={tag}
-                          className="border border-hairline px-2 py-1 text-xs text-ink-soft"
-                        >
-                          #{tag}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <div className="mt-6 flex items-center justify-between border-t border-hairline pt-4">
-                    <span className="text-xs text-ink-soft">
-                      {post.readTime ? `${post.readTime} min read` : post.author}
-                    </span>
-                    <ArrowUpRight
-                      className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-signal"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {rest.length > 0 && (
+            <ul className="mt-14 border-t border-hairline">
+              {rest.map((post) => (
+                <PostRow key={post._id?.toString()} post={post} formatDate={formatDate} />
+              ))}
+            </ul>
+          )}
 
           {totalPages > 1 && (
             <nav

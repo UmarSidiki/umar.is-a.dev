@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { markPageReady } from "@/hooks/usePageReady";
 
 const SESSION_KEY = "umar:intro-seen";
 
@@ -36,19 +37,31 @@ export default function Preloader() {
       yPercent: -100,
       duration: 0.7,
       ease: "power4.inOut",
-      onComplete: () => setActive(false),
+      onComplete: () => {
+        setActive(false);
+        markPageReady();
+      },
     });
   }, []);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced) {
+      // The media query resolves after mount, possibly after this effect already
+      // started the intro. Drop it outright rather than leaving it on screen.
+      setActive(false);
+      markPageReady();
+      return;
+    }
     let seen = false;
     try {
       seen = sessionStorage.getItem(SESSION_KEY) === "1";
     } catch {
       seen = true;
     }
-    if (seen) return;
+    if (seen) {
+      markPageReady();
+      return;
+    }
 
     setActive(true);
     document.documentElement.style.overflow = "hidden";
@@ -94,7 +107,9 @@ export default function Preloader() {
       role="presentation"
     >
       <div ref={panelRef} className="absolute inset-0 -z-10 bg-background" />
-      <div className="label-mono text-ink-soft">Portfolio / 2025</div>
+      <div className="label-mono text-ink-soft">
+        Portfolio / {new Date().getFullYear()}
+      </div>
       <div className="flex items-end justify-between gap-6">
         <h1 className="display-hero max-w-[12ch] text-foreground">
           Umar Siddiqui
