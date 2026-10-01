@@ -1,423 +1,325 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { ArrowLeft, ArrowRight, ExternalLink, Github, X } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  longDescription?: string;
-  technologies: string[];
-  category: string;
-  status: "active" | "completed" | "archived";
-  featured: boolean;
-  githubUrl?: string;
-  liveUrl?: string;
-  imageUrl?: string;
-  images?: string[];
-  createdAt: string;
-  updatedAt: string;
-  startDate?: string;
-  endDate?: string;
-  client?: string;
-  teamSize?: number;
-  role?: string;
-}
+import { useLenis } from "@/providers/SmoothScrollProvider";
+import type { Project } from "@/types/project";
 
 interface ProjectModalProps {
   selectedProject: Project | null;
   closeProjectModal: () => void;
 }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({
+export default function ProjectModal({
   selectedProject,
   closeProjectModal,
-}) => {
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showLightbox, setShowLightbox] = useState(false);
-  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
-  
+}: ProjectModalProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const { lenis } = useLenis();
+
+  const images = selectedProject
+    ? [
+        ...(selectedProject.imageUrl ? [selectedProject.imageUrl] : []),
+        ...(selectedProject.images || []),
+      ].filter(Boolean)
+    : [];
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    setExpanded(false);
+    setIndex(0);
+    setLightbox(false);
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    lenis?.stop();
+    closeRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (lightbox) setLightbox(false);
+        else closeProjectModal();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.documentElement.style.overflow = prev;
+      lenis?.start();
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [selectedProject, lightbox, lenis, closeProjectModal]);
+
   if (!selectedProject) return null;
 
-  // Combine main image with additional images
-  const allImages = [
-    ...(selectedProject.imageUrl ? [selectedProject.imageUrl] : []),
-    ...(selectedProject.images || [])
-  ].filter(Boolean);
+  const project = selectedProject;
+  const hasMore =
+    project.description.length > 160 ||
+    (project.longDescription?.length ?? 0) > 100;
 
-  const openLightbox = (index: number) => {
-    setLightboxImageIndex(index);
-    setShowLightbox(true);
-  };
+  const next = () => setIndex((p) => (p + 1) % images.length);
+  const prev = () => setIndex((p) => (p - 1 + images.length) % images.length);
 
-  const closeLightbox = () => {
-    setShowLightbox(false);
-  };
-
-  const nextLightboxImage = () => {
-    setLightboxImageIndex((prev) => (prev + 1) % allImages.length);
-  };
-
-  const prevLightboxImage = () => {
-    setLightboxImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-  };
-
-  const nextSlideImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-  };
-
-  const prevSlideImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-  };
-  
   return (
     <div
-      className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 z-[180] flex items-end justify-center bg-foreground/70 p-0 backdrop-blur-sm sm:items-center sm:p-6"
       onClick={closeProjectModal}
-      style={{ overflowY: 'auto' }}
+      role="presentation"
     >
       <div
-        className="relative bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50 shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-label={project.title}
+        className="flex max-h-[94svh] w-full max-w-4xl flex-col overflow-hidden border border-hairline bg-background sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Header */}
-        <div className="flex-shrink-0 p-6 border-b border-amber-100/50 dark:border-amber-800/50 flex items-start justify-between bg-gradient-to-r from-amber-50/80 via-white/80 to-amber-100/80 dark:from-amber-900/30 dark:via-neutral-900/80 dark:to-amber-900/30 rounded-t-2xl">
-          <div className="flex-1 min-w-0 pr-4">
-            <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white break-words">
-                {selectedProject.title}
-              </h2>
-              {selectedProject.featured && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 flex-shrink-0">
-                  ⭐ Featured
-                </span>
-              )}
-            </div>
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-              {selectedProject.category || 'Project'} • {selectedProject.status ? selectedProject.status.charAt(0).toUpperCase() + selectedProject.status.slice(1) : 'Active'}
-            </p>
+        <header className="flex shrink-0 items-start justify-between gap-4 border-b border-hairline p-5 sm:p-6">
+          <div className="min-w-0">
+            <span className="label-mono text-ink-soft">
+              {project.category} · {project.status}
+            </span>
+            <h2 className="mt-2 font-display text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+              {project.title}
+            </h2>
           </div>
           <button
+            ref={closeRef}
+            type="button"
             onClick={closeProjectModal}
-            className="flex-shrink-0 text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors duration-200 p-2 rounded-full bg-amber-50 dark:bg-amber-900/30 shadow-sm hover:bg-amber-100 dark:hover:bg-amber-800/50"
-            aria-label="Close modal"
+            aria-label="Close project"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hairline transition-colors hover:border-signal hover:text-signal"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
-        </div>
+        </header>
 
-        {/* Modal Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
-          {/* Project Images Slideshow */}
-          {allImages.length > 0 && (
-            <div className="relative">
-              <div className="w-full h-48 md:h-64 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl overflow-hidden shadow-md">
+        <div className="flex-1 overflow-y-auto">
+          {images.length > 0 && (
+            <div className="border-b border-hairline p-5 sm:p-6">
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
                 <Image
-                  src={allImages[currentImageIndex]}
-                  alt={`${selectedProject.title} - Image ${currentImageIndex + 1}`}
-                  width={800}
-                  height={400}
-                  className="w-full h-full object-cover cursor-pointer"
-                  priority={false}
-                  unoptimized={true}
-                  onClick={() => openLightbox(currentImageIndex)}
+                  src={images[index]}
+                  alt={`${project.title} — image ${index + 1} of ${images.length}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 896px"
+                  unoptimized
+                  className="cursor-zoom-in object-cover"
+                  onClick={() => setLightbox(true)}
                 />
               </div>
-              
-              {/* Navigation arrows for slideshow */}
-              {allImages.length > 1 && (
-                <>
-                  <button
-                    onClick={prevSlideImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    aria-label="Previous image"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={nextSlideImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                    aria-label="Next image"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </>
-              )}
-              
-              {/* Image counter */}
-              {allImages.length > 1 && (
-                <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
-                  {currentImageIndex + 1} / {allImages.length}
-                </div>
-              )}
-              
-              {/* Thumbnail strip */}
-              {allImages.length > 1 && (
-                <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
-                  {allImages.map((image, index) => (
+              {images.length > 1 && (
+                <div className="mt-4 flex items-center justify-between gap-4">
+                  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                    {images.map((img, i) => (
+                      <button
+                        key={img}
+                        type="button"
+                        onClick={() => setIndex(i)}
+                        aria-label={`Show image ${i + 1}`}
+                        aria-current={i === index}
+                        className={`relative h-12 w-16 shrink-0 overflow-hidden border transition-colors ${
+                          i === index ? "border-signal" : "border-hairline hover:border-foreground"
+                        }`}
+                      >
+                        <Image src={img} alt="" fill sizes="64px" unoptimized className="object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="label-mono text-ink-soft">
+                      {index + 1}/{images.length}
+                    </span>
                     <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                        index === currentImageIndex
-                          ? 'border-amber-500 scale-105'
-                          : 'border-neutral-300 dark:border-neutral-600 hover:border-amber-300'
-                      }`}
+                      type="button"
+                      onClick={prev}
+                      aria-label="Previous image"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-hairline transition-colors hover:border-signal hover:text-signal"
                     >
-                      <Image
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        width={64}
-                        height={48}
-                        className="w-full h-full object-cover"
-                        unoptimized={true}
-                      />
+                      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={next}
+                      aria-label="Next image"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-hairline transition-colors hover:border-signal hover:text-signal"
+                    >
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Project Details */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-            <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-0">
-              {/* Description */}
-              <div>
-                <h3 className="text-base md:text-lg font-semibold text-amber-700 dark:text-amber-300 mb-3">
-                  About This Project
-                </h3>
-                <div className="space-y-3 text-sm md:text-base">
-                  <div 
-                    className={`transition-all duration-300 ${
-                      isDescriptionExpanded 
-                        ? 'max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-amber-400 scrollbar-track-neutral-200 dark:scrollbar-track-neutral-700' 
-                        : 'max-h-none overflow-hidden'
-                    }`}
-                  >
-                    <p className={`text-neutral-600 dark:text-neutral-400 leading-relaxed break-words ${!isDescriptionExpanded ? 'line-clamp-3' : ''}`}>
-                      {selectedProject.description}
-                    </p>
-                    {selectedProject.longDescription && (
-                      <div className={`text-neutral-600 dark:text-neutral-400 leading-relaxed break-words mt-3 ${!isDescriptionExpanded ? 'line-clamp-2' : ''}`}>
-                        <MarkdownRenderer content={selectedProject.longDescription || ''} />
-                      </div>
+          <div className="grid gap-10 p-5 sm:p-6 lg:grid-cols-[1.6fr_1fr]">
+            <div className="min-w-0">
+              <h3 className="label-mono text-ink-soft">About this project</h3>
+              <div className="mt-4">
+                <p
+                  className={`text-sm leading-relaxed text-foreground ${
+                    !expanded && hasMore ? "line-clamp-3" : ""
+                  }`}
+                >
+                  {project.description}
+                </p>
+                {project.longDescription && (
+                  <div className={!expanded ? "mt-3 line-clamp-4" : "mt-3"}>
+                    <MarkdownRenderer content={project.longDescription} />
+                  </div>
+                )}
+              </div>
+              {hasMore && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((v) => !v)}
+                  className="label-mono mt-4 text-signal transition-opacity hover:opacity-70"
+                >
+                  {expanded ? "See less" : "See more"}
+                </button>
+              )}
+
+              <h3 className="label-mono mt-10 text-ink-soft">Stack</h3>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {project.technologies.length > 0 ? (
+                  project.technologies.map((tech) => (
+                    <li
+                      key={tech}
+                      className="border border-hairline px-3 py-1.5 text-xs text-ink-soft"
+                    >
+                      {tech}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-sm text-ink-soft">No technologies listed</li>
+                )}
+              </ul>
+            </div>
+
+            <aside className="space-y-8">
+              {(project.liveUrl || project.githubUrl) && (
+                <div>
+                  <h3 className="label-mono text-ink-soft">Links</h3>
+                  <div className="mt-4 flex flex-col gap-3">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-signal"
+                      >
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        Live demo
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-signal"
+                      >
+                        <Github className="h-4 w-4" aria-hidden="true" />
+                        Source code
+                      </a>
                     )}
                   </div>
-                  {(selectedProject.description.length > 150 || (selectedProject.longDescription && selectedProject.longDescription.length > 100)) && (
-                    <button
-                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                      className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 text-sm font-medium transition-colors duration-200 flex items-center gap-1 mt-2"
-                    >
-                      {isDescriptionExpanded ? (
-                        <>
-                          <span>See less</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
-                          </svg>
-                        </>
-                      ) : (
-                        <>
-                          <span>See more</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </>
-                      )}
-                    </button>
-                  )}
                 </div>
-              </div>
+              )}
 
-              {/* Technologies */}
               <div>
-                <h3 className="text-base md:text-lg font-semibold text-amber-700 dark:text-amber-300 mb-3">
-                  Technologies Used
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProject.technologies && selectedProject.technologies.length > 0 ? (
-                    selectedProject.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 md:px-3 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-full text-xs md:text-sm font-medium shadow-sm break-keep"
-                      >
-                        {tech}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-neutral-500 dark:text-neutral-400 text-sm">No technologies specified</span>
+                <h3 className="label-mono text-ink-soft">Details</h3>
+                <dl className="mt-4 space-y-3 text-sm">
+                  {project.client && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-soft">Client</dt>
+                      <dd className="text-right">{project.client}</dd>
+                    </div>
                   )}
-                </div>
+                  {project.role && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-soft">Role</dt>
+                      <dd className="text-right">{project.role}</dd>
+                    </div>
+                  )}
+                  {project.teamSize && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-soft">Team</dt>
+                      <dd className="text-right">{project.teamSize}</dd>
+                    </div>
+                  )}
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-ink-soft">Year</dt>
+                    <dd className="text-right">
+                      {new Date(project.createdAt).getFullYear()}
+                    </dd>
+                  </div>
+                </dl>
               </div>
-            </div>
-
-            {/* Project Info Sidebar */}
-            <div className="space-y-4 md:space-y-6 min-w-0">
-              {/* Project Links */}
-              <div>
-                <h3 className="text-base md:text-lg font-semibold text-amber-700 dark:text-amber-300 mb-3">
-                  Links
-                </h3>
-                <div className="space-y-2">
-                  {selectedProject.liveUrl && (
-                    <a
-                      href={selectedProject.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors duration-200 font-medium text-sm break-all"
-                    >
-                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Live Demo
-                    </a>
-                  )}
-                  {selectedProject.githubUrl && (
-                    <a
-                      href={selectedProject.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors duration-200 font-medium text-sm break-all"
-                    >
-                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                      </svg>
-                      Source Code
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Project Meta */}
-              <div>
-                <h3 className="text-base md:text-lg font-semibold text-amber-700 dark:text-amber-300 mb-3">
-                  Project Info
-                </h3>
-                <div className="space-y-2 text-xs md:text-sm">
-                  {selectedProject.client && (
-                    <div className="break-words">
-                      <span className="text-neutral-500 dark:text-neutral-400">Client:</span>
-                      <span className="text-neutral-900 dark:text-white ml-2">{selectedProject.client}</span>
-                    </div>
-                  )}
-                  {selectedProject.role && (
-                    <div className="break-words">
-                      <span className="text-neutral-500 dark:text-neutral-400">Role:</span>
-                      <span className="text-neutral-900 dark:text-white ml-2">{selectedProject.role}</span>
-                    </div>
-                  )}
-                  {selectedProject.teamSize && (
-                    <div>
-                      <span className="text-neutral-500 dark:text-neutral-400">Team Size:</span>
-                      <span className="text-neutral-900 dark:text-white ml-2">{selectedProject.teamSize} members</span>
-                    </div>
-                  )}
-                  {selectedProject.startDate && (
-                    <div>
-                      <span className="text-neutral-500 dark:text-neutral-400">Duration:</span>
-                      <span className="text-neutral-900 dark:text-white ml-2">
-                        {new Date(selectedProject.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                        {selectedProject.endDate && (
-                          <> - {new Date(selectedProject.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            </aside>
           </div>
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      {showLightbox && (
-        <div 
-          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60]"
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[190] flex items-center justify-center bg-black/95 p-4"
           onClick={(e) => {
             e.stopPropagation();
-            closeLightbox();
+            setLightbox(false);
           }}
         >
-          <div 
-            className="relative max-w-[90vw] max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox(false);
+            }}
+            aria-label="Close image"
+            className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white"
           >
-            {/* Close button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                closeLightbox();
-              }}
-              className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-              aria-label="Close lightbox"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Main lightbox image */}
-            <div className="relative">
-              <Image
-                src={allImages[lightboxImageIndex]}
-                alt={`${selectedProject.title} - Image ${lightboxImageIndex + 1}`}
-                width={1200}
-                height={800}
-                className="max-w-full max-h-[90vh] object-contain"
-                unoptimized={true}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-
-            {/* Navigation arrows for lightbox */}
-            {allImages.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevLightboxImage();
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextLightboxImage();
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
-                  aria-label="Next image"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
-
-            {/* Image counter for lightbox */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-              {lightboxImageIndex + 1} / {allImages.length}
-            </div>
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <div className="relative max-h-[90vh] max-w-[92vw]" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={images[index]}
+              alt={`${project.title} — enlarged image ${index + 1}`}
+              width={1400}
+              height={900}
+              unoptimized
+              className="max-h-[90vh] w-auto object-contain"
+            />
           </div>
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prev();
+                }}
+                aria-label="Previous image"
+                className="absolute left-5 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-white"
+              >
+                <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  next();
+                }}
+                aria-label="Next image"
+                className="absolute right-5 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 text-white"
+              >
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>
   );
-};
-
-export default ProjectModal;
+}

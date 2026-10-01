@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { Check, Copy, Trash2, Upload } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 
 interface ImageItem {
@@ -13,7 +14,7 @@ interface ImageItem {
   filename: string;
 }
 
-export const ImageManagement = ({}) => {
+export function ImageManagement() {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFolder, setSelectedFolder] = useState<string>("all");
@@ -24,13 +25,9 @@ export const ImageManagement = ({}) => {
     try {
       setLoading(true);
       const folderParam = selectedFolder === "all" ? "" : selectedFolder;
-
       const response = await fetch(`/api/images?folder=${folderParam}`);
-
       const data = await response.json();
-      if (data.success) {
-        setImages(data.images);
-      }
+      if (data.success) setImages(data.images);
     } catch (error) {
       console.error("Error fetching images:", error);
     } finally {
@@ -43,20 +40,14 @@ export const ImageManagement = ({}) => {
   }, [fetchImages]);
 
   const deleteImage = async (key: string) => {
-    if (!confirm("Are you sure you want to delete this image?")) return;
-
+    if (!confirm("Delete this image?")) return;
     try {
-      const response = await fetch(
-        `/api/images?key=${encodeURIComponent(key)}`,
-        {
-          method: "DELETE",
-        }
-      );
-
+      const response = await fetch(`/api/images?key=${encodeURIComponent(key)}`, {
+        method: "DELETE",
+      });
       const data = await response.json();
       if (data.success) {
         setImages((prev) => prev.filter((img) => img.key !== key));
-        alert("Image deleted successfully");
       } else {
         throw new Error(data.error);
       }
@@ -81,180 +72,135 @@ export const ImageManagement = ({}) => {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
-  const folders = [
-    "all",
-    ...Array.from(new Set(images.map((img) => img.folder))),
-  ];
-
+  const folders = ["all", ...Array.from(new Set(images.map((img) => img.folder)))];
   const filteredImages =
-    selectedFolder === "all"
-      ? images
-      : images.filter((img) => img.folder === selectedFolder);
+    selectedFolder === "all" ? images : images.filter((img) => img.folder === selectedFolder);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent">
-            Image Management
-          </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-            Manage your uploaded images ({filteredImages.length} images)
-          </p>
+          <span className="label-mono text-ink-soft">Media</span>
+          <h2 className="display-lg mt-2 text-foreground">Images</h2>
+          <p className="mt-2 text-sm text-ink-soft">{filteredImages.length} images</p>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Upload Button */}
           <button
-            onClick={() => setShowUpload(!showUpload)}
-            className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
-              showUpload
-                ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                : 'bg-blue-500 hover:bg-blue-600 text-white'
-            }`}
+            type="button"
+            onClick={() => setShowUpload((v) => !v)}
+            className="label-mono inline-flex h-11 items-center gap-2 border border-hairline px-4 transition-colors hover:border-signal hover:text-signal"
           >
-            {showUpload ? 'Cancel Upload' : 'Upload Images'}
+            <Upload className="h-4 w-4" aria-hidden="true" />
+            {showUpload ? "Cancel" : "Upload"}
           </button>
-
-          {/* Refresh Button */}
           <button
+            type="button"
             onClick={fetchImages}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
+            className="label-mono inline-flex h-11 items-center border border-hairline px-4 transition-colors hover:border-signal hover:text-signal"
           >
             Refresh
           </button>
         </div>
       </div>
 
-      {/* Upload Section */}
       {showUpload && (
-        <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-            Upload New Images
-          </h3>
+        <div className="border border-hairline p-5">
+          <h3 className="label-mono mb-4 text-ink-soft">Upload new images</h3>
           <ImageUpload
             currentImage=""
             onImageChange={(url) => {
               if (url) {
-                // Refresh images after upload
                 fetchImages();
-                // Show success message
-                alert('Image uploaded successfully!');
+                alert("Image uploaded successfully.");
               }
             }}
-            folder={selectedFolder === 'all' ? 'uploads' : selectedFolder}
-            label="Select Images to Upload"
+            folder={selectedFolder === "all" ? "uploads" : selectedFolder}
+            label="Select images to upload"
             className="w-full"
           />
         </div>
       )}
 
-      {/* Folder Filter */}
-      <div className="flex flex-wrap gap-2">
-        {folders.map((folder) => (
-          <button
-            key={folder}
-            onClick={() => setSelectedFolder(folder)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              selectedFolder === folder
-                ? "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300"
-                : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-            }`}
-          >
-            {folder === "all" ? "All Folders" : folder}
-          </button>
-        ))}
-      </div>
-
-      {/* Loading State */}
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-amber-500 border-t-transparent"></div>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!loading && filteredImages.length === 0 && (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-8 h-8 text-neutral-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      {folders.length > 1 && (
+        <div className="flex flex-wrap gap-2">
+          {folders.map((folder) => (
+            <button
+              key={folder}
+              type="button"
+              onClick={() => setSelectedFolder(folder)}
+              aria-pressed={selectedFolder === folder}
+              className={`label-mono inline-flex h-9 items-center border px-3 transition-colors ${
+                selectedFolder === folder
+                  ? "border-signal text-signal"
+                  : "border-hairline text-ink-soft hover:border-foreground hover:text-foreground"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-            No images found
-          </h3>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Upload some images to get started.
-          </p>
+              {folder === "all" ? "All" : folder}
+            </button>
+          ))}
         </div>
       )}
 
-      {/* Images Grid */}
-      {!loading && filteredImages.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {loading ? (
+        <p className="py-12 text-center text-sm text-ink-soft">Loading images…</p>
+      ) : filteredImages.length === 0 ? (
+        <div className="border border-dashed border-hairline px-6 py-16 text-center">
+          <p className="font-display text-xl font-bold">No images</p>
+          <p className="mt-2 text-sm text-ink-soft">Upload some images to get started.</p>
+        </div>
+      ) : (
+        <ul className="grid grid-cols-2 gap-px border border-hairline bg-hairline sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {filteredImages.map((image) => (
-            <div
-              key={image.key}
-              className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              {/* Grid View */}
-              <div className="aspect-square relative bg-neutral-100 dark:bg-neutral-700">
+            <li key={image.key} className="bg-background">
+              <div className="relative aspect-square bg-muted">
                 <Image
                   src={image.url}
                   alt={image.filename}
                   fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  unoptimized
                   className="object-cover"
-                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-                  unoptimized={true}
                   onError={(e) => {
-                    console.error('Image load error:', e);
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               </div>
               <div className="p-3">
-                <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate mb-1">
+                <p className="truncate text-xs font-medium" title={image.filename}>
                   {image.filename}
                 </p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">
-                  {formatFileSize(image.size)}
-                </p>
-                <div className="flex gap-1">
+                <p className="label-mono text-ink-soft">{formatFileSize(image.size)}</p>
+                <div className="mt-3 flex gap-2">
                   <button
+                    type="button"
                     onClick={() => copyToClipboard(image.url)}
-                    className="flex-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-900/30 transition-colors"
-                    title="Copy URL"
+                    className="label-mono inline-flex h-9 flex-1 items-center justify-center gap-1.5 border border-hairline transition-colors hover:border-signal hover:text-signal"
                   >
-                    {copiedUrl === image.url ? "✓" : "Copy"}
+                    {copiedUrl === image.url ? (
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    {copiedUrl === image.url ? "Copied" : "Copy"}
                   </button>
                   <button
+                    type="button"
                     onClick={() => deleteImage(image.key)}
-                    className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded text-xs font-medium hover:bg-red-200 dark:hover:bg-red-900/30 transition-colors"
-                    title="Delete"
+                    aria-label={`Delete ${image.filename}`}
+                    className="inline-flex h-9 w-9 items-center justify-center border border-hairline transition-colors hover:border-destructive hover:text-destructive"
                   >
-                    🗑️
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
                 </div>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
-};
+}

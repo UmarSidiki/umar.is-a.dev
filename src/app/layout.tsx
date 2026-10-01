@@ -1,46 +1,57 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Header from "@/components/Header/Header";
-import CustomCursor from "@/components/CustomCursor";
+import { SmoothScrollProvider } from "@/providers/SmoothScrollProvider";
+import { TransitionProvider } from "@/providers/TransitionProvider";
+import SiteHeader from "@/components/layout/SiteHeader";
+import SiteFooter from "@/components/layout/SiteFooter";
+import Cursor from "@/components/motion/Cursor";
+import Preloader from "@/components/motion/Preloader";
 import { generateCompletePageMetadata, generateStructuredData, seoConfig } from "@/lib/seo";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-import "@/styles/app.css";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
+  variable: "--font-display-face",
+  display: "swap",
+});
+
+const sans = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans-face",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-face",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
-  ...generateCompletePageMetadata({ pageKey: 'home' }),
-  manifest: '/manifest.json',
+  ...generateCompletePageMetadata({ pageKey: "home" }),
+  manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/logo.png', sizes: '192x192', type: 'image/png' },
+      { url: "/favicon.ico" },
+      { url: "/logo.png", sizes: "192x192", type: "image/png" },
     ],
-    apple: '/logo.png',
+    apple: "/logo.png",
   },
 };
 
-// Viewport configuration for optimal mobile experience
 export const viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f59e0b' },
-    { media: '(prefers-color-scheme: dark)', color: '#d97706' }
-  ]
+    { media: "(prefers-color-scheme: light)", color: "#f1ebe0" },
+    { media: "(prefers-color-scheme: dark)", color: "#232120" },
+  ],
 };
 
 export default function RootLayout({
@@ -48,41 +59,44 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Generate structured data for the website
   const websiteStructuredData = generateStructuredData("website");
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+    >
       <head>
-        {/* Website Structured Data */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ 
-            __html: JSON.stringify(websiteStructuredData, null, 0) 
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteStructuredData, null, 0),
           }}
-          suppressHydrationWarning={true}
+          suppressHydrationWarning
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="grain min-h-screen bg-background text-foreground">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            {/* Universal Background with subtle pattern */}
-            <div className="fixed inset-0 bg-gradient-to-br from-amber-50 via-amber to-amber-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 z-0">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgb(163_163_163_/_15%)_1px,_transparent_0)] [background-size:20px_20px] dark:bg-[radial-gradient(circle_at_1px_1px,_rgb(255_255_255_/_15%)_1px,_transparent_0)]"></div>
-            </div>
-            
-            <Header />
-              {children}
-              <Analytics />
-            <CustomCursor />
-          </AuthProvider>
+          <SmoothScrollProvider>
+            <TransitionProvider>
+              <AuthProvider>
+                <SiteHeader />
+                <div id="main" className="relative z-10">
+                  {children}
+                </div>
+                <SiteFooter />
+                <Cursor />
+                <Preloader />
+                <Analytics />
+              </AuthProvider>
+            </TransitionProvider>
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

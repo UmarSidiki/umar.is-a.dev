@@ -80,7 +80,6 @@ const nextConfig: NextConfig = {
   experimental: {
     // optimizeCss: true, // Temporarily disabled due to critters dependency
     scrollRestoration: true,
-    viewTransition: true,
   },
 
   // Bundle analyzer (enable when needed)

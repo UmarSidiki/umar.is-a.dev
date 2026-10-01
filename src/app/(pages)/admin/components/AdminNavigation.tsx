@@ -1,5 +1,7 @@
-import React from "react";
-import { BarChart, FileText, Rocket, Image as ImageIcon } from "lucide-react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { BarChart3, FileText, Image as ImageIcon, LogOut, Menu, Rocket, X } from "lucide-react";
 import { AdminTab } from "../types";
 
 interface AdminNavigationProps {
@@ -8,181 +10,139 @@ interface AdminNavigationProps {
   onLogout: () => void;
 }
 
-export const AdminNavigation: React.FC<AdminNavigationProps> = ({
-  activeTab,
-  onTabChange,
-  onLogout,
-}) => {
-  const tabs = [
-    {
-      id: "dashboard" as AdminTab,
-      label: "Dashboard",
-      icon: <BarChart className="w-5 h-5" />,
-    },
-    {
-      id: "posts" as AdminTab,
-      label: "Posts",
-      icon: <FileText className="w-5 h-5" />,
-    },
-    {
-      id: "projects" as AdminTab,
-      label: "Projects",
-      icon: <Rocket className="w-5 h-5" />,
-    },
-    {
-      id: "images" as AdminTab,
-      label: "Images",
-      icon: <ImageIcon className="w-5 h-5" />,
-    },
-  ];
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
+const TABS: { id: AdminTab; label: string; Icon: IconComponent }[] = [
+  { id: "dashboard", label: "Dashboard", Icon: BarChart3 },
+  { id: "posts", label: "Posts", Icon: FileText },
+  { id: "projects", label: "Projects", Icon: Rocket },
+  { id: "images", label: "Images", Icon: ImageIcon },
+];
+
+export function AdminNavigation({ activeTab, onTabChange, onLogout }: AdminNavigationProps) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const select = (tab: AdminTab) => {
+    onTabChange(tab);
+    setOpen(false);
+  };
+
+  const logout = () => {
+    if (confirm("Sign out of the admin panel?")) onLogout();
+  };
 
   return (
-    <>
-      {/* Mobile Header */}
-      <div className="relative z-10 mb-6 sm:mb-8">
-        {/* Mobile Top Bar */}
-        <div className="flex items-center justify-between mb-4 sm:hidden px-1">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-primary-foreground text-lg font-bold">
-                A
-              </span>
-            </div>
-            <div>
-              <span className="text-base font-semibold text-foreground block">
-                Admin Panel
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Welcome back
-              </span>
-            </div>
-          </div>
+    <header className="border-b border-hairline">
+      <div className="flex items-center justify-between gap-4 py-5">
+        <div>
+          <span className="label-mono text-ink-soft">Admin</span>
+          <h1 className="font-display text-2xl font-bold tracking-tight">Dashboard</h1>
+        </div>
 
-          {/* Mobile Logout Button */}
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => {
-              if (confirm("Are you sure you want to logout?")) {
-                onLogout();
-              }
-            }}
-            className="relative z-10 bg-destructive hover:bg-destructive/90 active:bg-destructive/80 text-destructive-foreground px-4 py-2.5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 font-medium text-sm"
-            title="Logout from admin panel"
+            type="button"
+            onClick={logout}
+            className="label-mono hidden h-11 items-center gap-2 border border-hairline px-4 transition-colors hover:border-destructive hover:text-destructive sm:inline-flex"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span className="hidden xs:inline">Logout</span>
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            Sign out
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-controls="admin-menu"
+            aria-label="Open admin menu"
+            className="inline-flex h-11 w-11 items-center justify-center border border-hairline sm:hidden"
+          >
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
-
-        {/* Desktop Header */}
-        <div className="hidden sm:flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-              Admin Dashboard
-            </h1>
-            <p className="text-muted-foreground">
-              Manage your blog content, comments, and monitor website analytics
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="text-right">
-              <div className="text-sm font-medium text-foreground">
-                Welcome back
-              </div>
-              <div className="text-xs text-muted-foreground">Admin User</div>
-            </div>
-
-            <button
-              onClick={() => {
-                if (confirm("Are you sure you want to logout?")) {
-                  onLogout();
-                }
-              }}
-              className="relative z-10 bg-destructive hover:bg-destructive/90 active:bg-destructive/80 text-destructive-foreground px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-              title="Logout from admin panel"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Title */}
-        <div className="sm:hidden px-1">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Manage your content and monitor analytics
-          </p>
-        </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="relative z-10 mb-6 sm:mb-8">
-        {/* Mobile Navigation - Scrollable horizontal tabs */}
-        <div className="sm:hidden">
-          <div className="flex space-x-1 bg-muted/50 p-1.5 rounded-xl backdrop-blur-sm overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => (
+      {/* Desktop tabs */}
+      <nav aria-label="Admin sections" className="hidden sm:block">
+        <ul className="flex gap-1">
+          {TABS.map(({ id, label, Icon }) => (
+            <li key={id}>
               <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "bg-background text-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                type="button"
+                onClick={() => onTabChange(id)}
+                aria-current={activeTab === id ? "page" : undefined}
+                className={`inline-flex h-12 items-center gap-2 border-b-2 px-4 text-sm font-medium transition-colors ${
+                  activeTab === id
+                    ? "border-signal text-signal"
+                    : "border-transparent text-ink-soft hover:text-foreground"
                 }`}
               >
-                <span className="text-base">{tab.icon}</span>
-                <span>{tab.label}</span>
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {label}
               </button>
-            ))}
-          </div>
-        </div>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-        {/* Desktop Navigation */}
-        <div className="hidden sm:flex items-center justify-between">
-          <div className="flex space-x-1 bg-muted/50 p-1 rounded-xl backdrop-blur-sm">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`relative flex items-center space-x-3 px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? "bg-background text-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-                }`}
-              >
-                <span className="text-lg">{tab.icon}</span>
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </div>
+      {/* Mobile drawer */}
+      <div
+        id="admin-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin menu"
+        aria-hidden={!open}
+        inert={!open}
+        className={`fixed inset-0 z-[200] bg-background transition-opacity sm:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="flex h-16 items-center justify-between border-b border-hairline px-5">
+          <span className="label-mono text-ink-soft">Menu</span>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Close admin menu"
+            className="inline-flex h-11 w-11 items-center justify-center border border-hairline"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
         </div>
+        <nav aria-label="Admin sections" className="p-5">
+          <ul className="flex flex-col">
+            {TABS.map(({ id, label, Icon }) => (
+              <li key={id} className="border-b border-hairline">
+                <button
+                  type="button"
+                  onClick={() => select(id)}
+                  aria-current={activeTab === id ? "page" : undefined}
+                  className={`flex w-full items-center gap-3 py-5 text-left font-display text-xl font-bold ${
+                    activeTab === id ? "text-signal" : "text-foreground"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                  {label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={logout}
+            className="label-mono mt-8 inline-flex h-12 items-center gap-2 border border-hairline px-5 transition-colors hover:border-destructive hover:text-destructive"
+          >
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            Sign out
+          </button>
+        </nav>
       </div>
-    </>
+    </header>
   );
-};
+}
