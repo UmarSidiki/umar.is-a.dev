@@ -80,7 +80,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // optimizeCss: true, // Temporarily disabled due to critters dependency
     scrollRestoration: true,
-    viewTransition: true,
+    // viewTransition: no longer an experimental flag; React <ViewTransition>
+    // works in the App Router without configuration (key rejected by Next 16.3.x).
   },
 
   // Bundle analyzer (enable when needed)
