@@ -9,10 +9,10 @@ export const formatDate = (dateString: string) => {
 };
 
 export const getAuthHeaders = () => {
-  const token = localStorage.getItem("adminToken");
+  // Authentication is carried by the httpOnly session cookie, which fetch
+  // sends automatically for same-origin requests. No token is handled in JS.
   return {
     "Content-Type": "application/json",
-    Authorization: token ? `Bearer ${token}` : "",
   };
 };
 

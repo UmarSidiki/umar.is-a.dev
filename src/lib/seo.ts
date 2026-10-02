@@ -32,7 +32,6 @@ export const seoConfig = {
           '/api/auth*',
           '/_next*',
           '/private*',
-          '/api/test-db*',
           '/api/upload*',
         ],
       },

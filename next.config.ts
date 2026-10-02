@@ -35,7 +35,12 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Headers for SEO and security
+  // Headers for SEO and security.
+  // NOTE: /api/* Cache-Control is intentionally NOT configured here. It is set
+  // per route handler: admin/auth/write endpoints use `private, no-store`,
+  // while genuinely public GET reads use a short public CDN TTL. A blanket
+  // public cache rule here previously caused authenticated responses to be
+  // cached and served to other visitors.
   async headers() {
     return [
       {
@@ -60,24 +65,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/api/blog$',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, must-revalidate',
-          },
-        ],
-      },
-      {
-        source: '/api/((?!blog$).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, s-maxage=31536000, stale-while-revalidate=59',
-          },
-        ],
-      },
-      {
         source: '/_next/static/(.*)',
         headers: [
           {
@@ -93,7 +80,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // optimizeCss: true, // Temporarily disabled due to critters dependency
     scrollRestoration: true,
-    viewTransition: true,
+    // viewTransition: no longer an experimental flag; React <ViewTransition>
+    // works in the App Router without configuration (key rejected by Next 16.3.x).
   },
 
   // Bundle analyzer (enable when needed)

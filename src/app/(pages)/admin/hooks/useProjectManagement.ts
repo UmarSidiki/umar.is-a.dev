@@ -44,7 +44,6 @@ export const useProjectFormManagement = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
         },
         body: JSON.stringify(body),
       });
@@ -112,9 +111,6 @@ export const useProjectActions = () => {
     try {
       const response = await fetch(`/api/projects?id=${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
       });
 
       const result = await response.json();

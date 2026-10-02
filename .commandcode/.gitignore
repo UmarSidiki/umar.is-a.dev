@@ -1,0 +1,15 @@
+# Machine-local Command Code artifacts — never commit these.
+settings.local.json
+settings.local.*
+file-history/
+file-history/**
+plans/
+plans/**
+sessions/
+sessions/**
+history/
+*.log
+*.tmp
+
+# Shared project configuration stays committable:
+#   AGENTS.md, skills/**

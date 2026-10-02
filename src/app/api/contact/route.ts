@@ -5,9 +5,25 @@ import {
   sendAutoReply, 
   type EmailData 
 } from '@/lib/email';
+import {
+  getClientIp,
+  isRateLimited,
+  recordRateLimitAttempt,
+  rateLimitExceededResponse,
+} from '@/lib/auth';
+
+const CONTACT_WINDOW_MS = 60 * 60 * 1000;
+const CONTACT_MAX_ATTEMPTS = 5;
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateKey = `contact:${ip}`;
+    if (isRateLimited(rateKey, CONTACT_MAX_ATTEMPTS)) {
+      return rateLimitExceededResponse();
+    }
+    recordRateLimitAttempt(rateKey, CONTACT_WINDOW_MS);
+
     // Parse the request body
     const body = await request.json();
     
@@ -18,7 +34,7 @@ export async function POST(request: NextRequest) {
           success: false, 
           error: 'Invalid or missing required fields. Please ensure all fields are filled out correctly.' 
         },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
       );
     }
 
@@ -50,7 +66,7 @@ export async function POST(request: NextRequest) {
           success: false, 
           error: 'Email service is temporarily unavailable. Please try again later.' 
         },
-        { status: 503 }
+        { status: 503, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
       );
     }
 

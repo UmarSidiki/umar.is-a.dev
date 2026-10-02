@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
-import { verifyAdminToken } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth';
 
 // GET - Fetch analytics data (admin only)
 export async function GET(request: NextRequest) {
   try {
     // Verify admin authentication
-    const user = verifyAdminToken(request);
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized: Admin access required' },
-        { status: 401, headers: { 'Cache-Control': 'no-store' } }
-      );
+    const auth = await requireAdmin(request);
+    if (!auth.ok) {
+      return auth.response;
     }
     const db = await getDatabase();
     const postsCollection = db.collection('blogposts');
@@ -97,8 +94,7 @@ export async function GET(request: NextRequest) {
       data: analytics
     }, { 
       headers: { 
-        'Cache-Control': 'private, max-age=60, s-maxage=120, stale-while-revalidate=300',
-        'Vary': 'Authorization, Accept-Encoding'
+        'Cache-Control': 'private, no-store, must-revalidate',
       } 
     });
 

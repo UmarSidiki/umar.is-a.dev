@@ -181,6 +181,7 @@ export async function GET(req: NextRequest) {
     console.log(`${error}`)
     return new Response(`Failed to generate the image`, {
       status: 500,
+      headers: { 'Cache-Control': 'private, no-store, must-revalidate' },
     })
   }
 }
