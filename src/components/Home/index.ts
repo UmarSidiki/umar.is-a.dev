@@ -1,6 +1,8 @@
-export { default as ProjectModal } from './ProjectModal';
-export { default as ProjectCard } from './ProjectCard';
-export { default as ProjectsSection } from './ProjectsSection';
-export { default as WhatIDo } from './WhatIDo';
-export { default as TechnologyIcons } from './TechnologyIcons';
-export { DynamicHeadline } from './DynamicHeadline';
+export { default as Hero } from "./Hero";
+export { default as Statement } from "./Statement";
+export { default as ServicesTrack } from "./ServicesTrack";
+export { default as FeaturedProjects } from "./FeaturedProjects";
+export { default as TechStack } from "./TechStack";
+export { default as AboutSection } from "./AboutSection";
+export { default as ContactCTA } from "./ContactCTA";
+export { default as ProjectModal } from "./ProjectModal";

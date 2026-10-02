@@ -1,4 +1,4 @@
-export { AdminNavigation } from "./AdminNavigation";
+export { AdminShell } from "./AdminShell";
 export { DashboardStats } from "./DashboardStats";
 export { CreatePostForm } from "./CreatePostForm";
 export { ManagePosts } from "./ManagePosts";

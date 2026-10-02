@@ -4,7 +4,6 @@ import {
   generateStructuredData,
 } from "@/lib/seo";
 import ContactClient from "./ContactClient";
-import { ViewTransition as VT } from "react";
 
 export const metadata: Metadata = generateCompletePageMetadata({
   pageKey: "contact",
@@ -26,9 +25,7 @@ export default function ContactPage() {
         suppressHydrationWarning={true}
       />
 
-      <VT enter={"fade-in"} exit={"fade-out"}>
-        <ContactClient />
-      </VT>
+      <ContactClient />
     </>
   );
 }

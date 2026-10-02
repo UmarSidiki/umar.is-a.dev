@@ -3,12 +3,13 @@ import BlogClient from "./BlogClient";
 import { generateCompletePageMetadata, generateStructuredData } from "@/lib/seo";
 import { getDatabase } from "@/lib/mongodb";
 import { BlogPost } from "@/types/blog";
-import { ViewTransition as VT } from "react";
 
 export const metadata: Metadata = generateCompletePageMetadata({
   pageKey: 'blog',
   url: '/blog'
 });
+
+export const dynamic = "force-dynamic";
 
 // Server Component with metadata
 export default async function BlogPage() {
@@ -43,9 +44,7 @@ export default async function BlogPage() {
           __html: JSON.stringify(blogStructuredData),
         }}
       />
-      <VT enter={"fade-in"} exit={"fade-out"}>
-        <BlogClient initialPosts={initialPosts} />
-      </VT>
+      <BlogClient initialPosts={initialPosts} />
     </>
   );
 }

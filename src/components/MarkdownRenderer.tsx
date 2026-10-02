@@ -13,82 +13,51 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-// Custom components for react-markdown with proper typing
 const components: Components = {
-  // Custom heading renderer with anchor links
   h1: ({ children, ...props }) => (
-    <h1
-      className="text-4xl font-bold text-neutral-900 dark:text-white mt-8 mb-6 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h1 className="mt-10 mb-6 font-display text-3xl font-bold leading-tight text-foreground scroll-mt-28 lg:text-4xl" {...props}>
       {children}
     </h1>
   ),
   h2: ({ children, ...props }) => (
-    <h2
-      className="text-3xl font-bold text-neutral-900 dark:text-white mt-8 mb-5 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h2 className="mt-10 mb-5 font-display text-2xl font-bold leading-tight text-foreground scroll-mt-28 lg:text-3xl" {...props}>
       {children}
     </h2>
   ),
   h3: ({ children, ...props }) => (
-    <h3
-      className="text-2xl font-semibold text-neutral-900 dark:text-white mt-6 mb-4 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h3 className="mt-8 mb-4 font-display text-xl font-bold leading-tight text-foreground scroll-mt-28" {...props}>
       {children}
     </h3>
   ),
   h4: ({ children, ...props }) => (
-    <h4
-      className="text-xl font-semibold text-neutral-900 dark:text-white mt-6 mb-3 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h4 className="mt-6 mb-3 font-display text-lg font-semibold leading-tight text-foreground scroll-mt-28" {...props}>
       {children}
     </h4>
   ),
   h5: ({ children, ...props }) => (
-    <h5
-      className="text-lg font-medium text-neutral-900 dark:text-white mt-4 mb-3 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h5 className="mt-5 mb-3 font-medium text-foreground scroll-mt-28" {...props}>
       {children}
     </h5>
   ),
   h6: ({ children, ...props }) => (
-    <h6
-      className="text-base font-medium text-neutral-900 dark:text-white mt-4 mb-2 leading-tight scroll-mt-20"
-      {...props}
-    >
+    <h6 className="mt-4 mb-2 text-base font-medium text-foreground scroll-mt-28" {...props}>
       {children}
     </h6>
   ),
 
-  // Paragraph with proper spacing
   p: ({ children, ...props }) => (
-    <p
-      className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-6"
-      {...props}
-    >
+    <p className="mb-6 leading-relaxed text-foreground/90" {...props}>
       {children}
     </p>
   ),
 
-  // Lists with proper styling
   ul: ({ children, ...props }) => (
-    <ul
-      className="list-disc space-y-2 mb-6 pl-6 text-neutral-700 dark:text-neutral-300 [&>li]:pl-2"
-      {...props}
-    >
+    <ul className="mb-6 list-disc space-y-2 pl-6 text-foreground/90 [&>li]:pl-1" {...props}>
       {children}
     </ul>
   ),
   ol: ({ children, ...props }) => (
-    <ol
-      className="list-decimal space-y-2 mb-6 pl-6 text-neutral-700 dark:text-neutral-300 [&>li]:pl-2"
-      {...props}
-    >
+    <ol className="mb-6 list-decimal space-y-2 pl-6 text-foreground/90 [&>li]:pl-1" {...props}>
       {children}
     </ol>
   ),
@@ -98,54 +67,34 @@ const components: Components = {
     </li>
   ),
 
-  // Task lists (GitHub Flavored Markdown)
   input: ({ checked, ...props }) => (
-    <input
-      type="checkbox"
-      checked={checked}
-      disabled
-      className="mr-2 accent-amber-500"
-      {...props}
-    />
+    <input type="checkbox" checked={checked} disabled className="mr-2 accent-[var(--signal)]" {...props} />
   ),
 
-  // Blockquotes with beautiful styling
   blockquote: ({ children, ...props }) => (
     <blockquote
-      className="border-l-4 border-amber-500 bg-amber-50/50 dark:bg-amber-900/10 pl-6 py-4 my-6 rounded-r-lg italic text-neutral-700 dark:text-neutral-300"
+      className="my-8 border-l-2 border-signal bg-signal/5 py-4 pl-6 pr-4 italic text-foreground/90"
       {...props}
     >
       {children}
     </blockquote>
   ),
 
-  // Code blocks with syntax highlighting
   pre: ({ children, ...props }) => (
-    <div className="relative my-8">
-      <pre
-        className="bg-neutral-900 dark:bg-neutral-950 text-neutral-100 p-6 rounded-xl overflow-x-auto border border-neutral-700 dark:border-neutral-800 shadow-lg"
-        {...props}
-      >
-        {children}
-      </pre>
-      <div className="absolute top-3 right-3">
-        <div className="flex space-x-1">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-        </div>
-      </div>
-    </div>
+    <pre
+      className="my-8 overflow-x-auto border border-hairline bg-[oklch(0.17_0.01_70)] p-5 text-sm text-neutral-100"
+      {...props}
+    >
+      {children}
+    </pre>
   ),
 
-  // Inline code
   code: ({ children, className, ...props }) => {
     const isInline = !className?.includes("language-");
-
     if (isInline) {
       return (
         <code
-          className="bg-neutral-100 dark:bg-neutral-800 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-sm font-mono border border-neutral-200 dark:border-neutral-700"
+          className="border border-hairline bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-signal"
           {...props}
         >
           {children}
@@ -159,79 +108,47 @@ const components: Components = {
     );
   },
 
-  // Tables with beautiful styling
   table: ({ children, ...props }) => (
-    <div className="overflow-x-auto my-8">
-      <table
-        className="min-w-full border-collapse bg-white dark:bg-neutral-800 rounded-lg overflow-hidden shadow-sm border border-neutral-200 dark:border-neutral-700"
-        {...props}
-      >
+    <div className="my-8 overflow-x-auto">
+      <table className="w-full border border-hairline" {...props}>
         {children}
       </table>
     </div>
   ),
   thead: ({ children, ...props }) => (
-    <thead className="bg-neutral-50 dark:bg-neutral-700" {...props}>
+    <thead className="bg-muted" {...props}>
       {children}
     </thead>
   ),
-  tbody: ({ children, ...props }) => (
-    <tbody
-      className="divide-y divide-neutral-200 dark:divide-neutral-600"
-      {...props}
-    >
-      {children}
-    </tbody>
-  ),
+  tbody: ({ children, ...props }) => <tbody {...props}>{children}</tbody>,
   tr: ({ children, ...props }) => (
-    <tr
-      className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
-      {...props}
-    >
+    <tr className="border-b border-hairline" {...props}>
       {children}
     </tr>
   ),
   th: ({ children, ...props }) => (
-    <th
-      className="px-6 py-4 text-left text-sm font-semibold text-neutral-900 dark:text-neutral-100 border-b border-neutral-200 dark:border-neutral-600"
-      {...props}
-    >
+    <th className="border-b border-hairline px-4 py-3 text-left text-sm font-semibold text-foreground" {...props}>
       {children}
     </th>
   ),
   td: ({ children, ...props }) => (
-    <td
-      className="px-6 py-4 text-sm text-neutral-700 dark:text-neutral-300 border-b border-neutral-200 dark:border-neutral-600"
-      {...props}
-    >
+    <td className="border-b border-hairline px-4 py-3 text-sm text-foreground/90" {...props}>
       {children}
     </td>
   ),
 
-  // Links with proper styling
   a: ({ href, children, ...props }) => {
-    const isExternal = href?.startsWith("http") || href?.startsWith("https");
-    const isAnchor = href?.startsWith("#");
+    const isExternal = href?.startsWith("http");
+    const className =
+      "font-medium text-signal underline underline-offset-4 decoration-signal/40 transition-colors hover:decoration-signal";
 
-    if (isExternal) {
+    if (isExternal || href?.startsWith("#")) {
       return (
         <a
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium underline decoration-amber-500/30 hover:decoration-amber-500 transition-all duration-200"
-          {...props}
-        >
-          {children}
-        </a>
-      );
-    }
-
-    if (isAnchor) {
-      return (
-        <a
-          href={href}
-          className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium underline decoration-amber-500/30 hover:decoration-amber-500 transition-all duration-200"
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className={className}
           {...props}
         >
           {children}
@@ -240,75 +157,49 @@ const components: Components = {
     }
 
     return (
-      <Link
-        href={href || "#"}
-        className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium underline decoration-amber-500/30 hover:decoration-amber-500 transition-all duration-200"
-        {...props}
-      >
+      <Link href={href || "#"} className={className} {...props}>
         {children}
       </Link>
     );
   },
 
-  // Images with Next.js optimization
   img: ({ src, alt, ...props }) => {
     if (!src) return null;
-
-    // The 'props' from react-markdown can contain width and height as strings.
-    // We need to parse them to numbers for the Next.js Image component.
     const { width, height, ...rest } = props;
-    const imageWidth = width ? parseInt(String(width), 10) : 800;
-    const imageHeight = height ? parseInt(String(height), 10) : 400;
+    const imageWidth = width ? parseInt(String(width), 10) : 1200;
+    const imageHeight = height ? parseInt(String(height), 10) : 675;
 
     return (
-      <div className="my-8">
+      <span className="my-8 block">
         <Image
           src={src as string}
           alt={alt || ""}
           width={imageWidth}
           height={imageHeight}
-          className="rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 w-full h-auto"
-          style={{ objectFit: "cover" }}
+          className="h-auto w-full border border-hairline"
           {...rest}
         />
         {alt && (
-          <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-2 italic">
-            {alt}
-          </p>
+          <span className="mt-3 block text-center text-sm italic text-ink-soft">{alt}</span>
         )}
-      </div>
+      </span>
     );
   },
 
-  // Horizontal rule
-  hr: ({ ...props }) => (
-    <hr
-      className="my-8 border-0 h-px bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent"
-      {...props}
-    />
-  ),
+  hr: ({ ...props }) => <hr className="my-10 h-px border-0 bg-hairline" {...props} />,
 
-  // Strong and emphasis
   strong: ({ children, ...props }) => (
-    <strong
-      className="font-bold text-neutral-900 dark:text-neutral-100"
-      {...props}
-    >
+    <strong className="font-bold text-foreground" {...props}>
       {children}
     </strong>
   ),
   em: ({ children, ...props }) => (
-    <em className="italic text-neutral-700 dark:text-neutral-300" {...props}>
+    <em className="italic text-foreground/90" {...props}>
       {children}
     </em>
   ),
-
-  // Strikethrough
   del: ({ children, ...props }) => (
-    <del
-      className="line-through text-neutral-500 dark:text-neutral-400"
-      {...props}
-    >
+    <del className="text-ink-soft line-through" {...props}>
       {children}
     </del>
   ),
